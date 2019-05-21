@@ -37,8 +37,8 @@
                     <el-button @click="queryName" style="margin-left:10px;" size="small">查询</el-button>    
                 </div>
                 <div>
-                    <el-button size="small" icon="el-icon-setting"  @click="setRecord()"></el-button>  
-                    <el-button size="small" icon="el-icon-download"  @click="outExcel()"></el-button>   
+                    <el-button size="small" icon="el-icon-plus"  @click="addRecord()"></el-button>  
+                    <el-button size="small" icon="el-icon-upload2"  @click="outExcel()"></el-button>   
                 </div>
                    
             </div> 
@@ -72,7 +72,8 @@
                    
                     <el-table-column v-if="navjurisdiction2()" header-align="center" label="操作" width="120">
                         <template slot-scope="scope" style="position: relative;">
-                            <div @click="disposeState(scope.row)" style="color:#4CABFD; cursor: pointer;text-align:center">立即处理</div> 
+                            <div v-if="scope.row.disciplineRecordType==0" @click="disposeState(scope.row)" style="color:#4CABFD; cursor: pointer;text-align:center">立即处理</div> 
+                            <div v-else  @click="disposeState(scope.row)" style="color:#4CABFD; cursor: pointer;text-align:center">查看</div> 
                             <div v-if="false">{{scope.row}}</div>                         
                         </template>
                     </el-table-column>
@@ -91,6 +92,8 @@
         :studentInfoMsg='studentInfoMsg'
         @newCall='newCall'
         @newSave='newSave'
+        @newSave2='newSave2'
+        @getStudentInfo='getStudentInfo'
         :newName='newName'
         ref="child"
         ></new-students>  
@@ -104,7 +107,13 @@ import {formatDate} from '../../js/date.js'
 import bus from '../../js/bus.js'
 import { arealist_2,floorList} from '@/axios/api1'
 import { 
- queryMenuById
+ queryMenuById,
+ queryDisciplineRecord,
+ addDisciplineRecord,
+ updateDisciplineRecord,
+BreakRecordDelete,
+queryStudentByStudentInfoNo,
+disciplineRecordExcel
 } from '@/axios/api'
 const Students1=[
                               
@@ -120,7 +129,7 @@ export default {
         return{
             activeName:"调寝",
             activeIndex:'',
-            loading:true,
+            loading:false,
             newName:'',
             total:0,
             id:'student',
@@ -133,18 +142,15 @@ export default {
             fileList:[],//导入   
             studentInfoMsg:{},       
             //查询
-            Select1:'',         
+            Select1:null,         
            value1:'',
            value2:'',
-           value3:'',
-            value4:'',
-           value5:'',        
-           
+           value3:'',                    
              //状态
             types: [
-            {id: '',label: '全部',name:'全部'}, 
-            {id: '1',label: '已处理 ',name:'已处理   '}, 
-            {id: '2',label: '未处理',name:'未处理'}, 
+            {id:null,label: '全部',name:'全部'}, 
+            {id:1,label: '已处理 ',name:'已处理   '}, 
+            {id:0,label: '未处理',name:'未处理'}, 
             ],
                 
           
@@ -154,19 +160,21 @@ export default {
             dataHeader:[
                  {name:'姓名',props:'studentInfoName'},      
                 {name:'学号',props:'studentInfoNo'},
-                {name:'标题',props:'studentInfoSex'},
-                {name:'处理意见',props:'teacherMsg'},    
-                {name:'处理时间',props:'parentMsg'}, 
-                {name:'处理人',props:'parentMsg'}, 
+                {name:'标题',props:'disciplineRecordTitle'},
+                {name:'处理意见',props:'disciplineRecordInfo'},    
+                {name:'处理时间',props:'disciplineRecordApprovalTime'}, 
+                {name:'处理人',props:'handleUserInfoName'}, 
             ],//表格头部                         
             value: '',
             multipleSelection: [], //表格多选
             tableData: [                   
-                 {studentInfoName:'姓名',props:'studentInfoName'},     
             ],
             roleInfoMenu:[],
             roleId:null,
-            popupTitle:''
+            popupTitle:'',
+            userInfoId:null,
+            studentInfoId:null,
+            disciplineRecordId:null
         }
     },
         filters:{
@@ -183,17 +191,19 @@ export default {
             }
         },
         mounted() {        
-            this.loading=false
             bus.$on('handleSizeChange2',(val)=>{
                 this.handleSizeChange2(val)
             })
             bus.$on('newCall',this.newCall)
         },
         created(){
-            this.roleInfoMenu=this.$store.state.roleInfoMenu
+            this.roleInfoMenu=this.$store.state.roleInfoMenu          
+            this.userInfoId=localStorage.getItem('userInfoId')
+            // this.queryDisciplineRecords()
               console.log(this.roleInfoMenu)
                let roleId=localStorage.getItem('roleId')  
                 this.roleId=roleId
+            this.queryDisciplineRecords()
                if(this.roleInfoMenu.length<1){    
                    if(roleId==1){
                        return
@@ -215,6 +225,9 @@ export default {
             navjurisdiction2(){
                 return function(){
                     if(this.roleId==1){
+                        return true
+                    }
+                     else if(this.roleInfoMenu.length<1){
                         return true
                     }
                     else{
@@ -248,20 +261,36 @@ export default {
                  else if(this.activeName=='请假'){
                 }
                 
-            },          
-            handlePreview(file) {
-                console.log(file);
-            },
-            //文件长度限制钩子
-            handleExceed(files, fileList) {
-                this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
             }, 
-            preview(event){
-                let files = document.getElementById(this.id).files[0]
-                // this.imgDataUrl =this.getObjectURL(files)
-                // this.$emit('sendImgUrl',this.imgDataUrl,this.id)
-                console.log(files)
-                },
+            open(msg){
+                this.$message(msg)
+            }, 
+            open2(msg){
+                 this.$message({
+                    message:msg,
+                    type: 'success'
+                });
+            }, 
+            //查询
+            queryDisciplineRecords(){
+                this.loading=true
+                queryDisciplineRecord({
+                    disciplineType:this.Select1,
+                    disciplineRecordSubmintTime_Start:this.value1,
+                    disciplineRecordSubmintTime_end:this.value2,
+                    nameOrNo:this.value3,
+                    pageNum:this.pageNum,
+                    pageSize:this.pageSize
+                }).then(res=>{
+                     this.loading=false
+                    if(res.data.code==200){
+                        this.tableData=res.data.data.list
+                        this.total=res.data.data.total
+                    }else{
+                        this.open('查询失败 '+res.data.msg)
+                    }
+                })
+            },                        
             blobs(data,msg){
                 const content = data
                 const blob = new Blob([content])
@@ -281,27 +310,100 @@ export default {
             },
             //导出
             outExcel(){
-
+                if(this.multipleSelection.length<1){
+                    this.open('请选择要导出的数据')
+                }
+                else{               
+                     disciplineRecordExcel({jsonObject:this.multipleSelection}).then(res=>{
+                             if(res.status==200&&res.data!=null){
+                                this.blobs(res.data,'违纪记录.xls')
+                            }else{
+                                this.open('导出失败',res.data.msg)
+                            }
+                        })
+                }
+                
             },
-            //设置
-            setRecord(){
+            //新增
+            addRecord(){
               this.newName=1
               this.newVisible=true
               this.popupTitle='提交违纪'
+              this.studentInfoMsg={}
+
             }, 
+              
+        //获取学生信息
+        getStudentInfo(val){
+            console.log(val)
+            queryStudentByStudentInfoNo({studentInfoNo:val}).then(res=>{
+                console.log('学生信息',res)
+                if(res.data.code==200&&res.data.data!=null){
+                    this.studentInfoMsg=res.data.data
+                    this.studentInfoId=res.data.data.studentInfoId
+                }else{
+                    this.open('查询学生信息失败 ',res.data.msg)
+                }
+            })
+        }  ,
             //新增保存
-            newSave(){
+            newSave(val){
+                console.log(val)
+               if(this.studentInfoId==null||this.userInfoId==null||val.newInput2==''||val.newInput3==''){
+                   this.open('新增信息或学生信息不能为空')
+                   console.log(this.studentInfoId,this.userInfoId)
+                   return
+               }
+                addDisciplineRecord({
+                    studentInfoId:this.studentInfoId,
+                    sbmintUserInfoId:Number(this.userInfoId),
+                    disciplineRecordTitle:val.newInput2,
+                    disciplineRecordContent:val.newInput3
+                }).then(res=>{
+                     if(res.data.code==200){
+                            this.open2('新增成功')
+                             this.queryDisciplineRecords()  
+                    }else{
+                        this.open('新增失败 '+res.data.msg)
+                    }
+                })
                  this.newVisible=false
-            },                                            
+            },    
+             //处理保存
+            newSave2(val){
+                console.log(val)
+               if(val.newInput4==''){
+                   this.open('处理意见不能为空')
+                   return
+               }
+                updateDisciplineRecord({
+                    studentInfoId:this.studentInfoId,
+                    disciplineRecordId:this.disciplineRecordId,
+                    disciplineRecordInfo:val.newInput4,
+                    handleUserInfoId:Number(this.userInfoId),             
+                }).then(res=>{
+                     if(res.data.code==200){
+                            this.open2('处理成功')
+                            this.queryDisciplineRecords()  
+                    }else{
+                        this.open('处理失败 '+res.data.msg)
+                    }
+                })
+                 this.newVisible=false
+            },                                         
             //点击立即处理
             disposeState(val){
                  this.newName=2
                  this.newVisible=true
                   this.popupTitle='违纪查看'
+                  this.studentInfoMsg=val
+                  this.disciplineRecordId=val.disciplineRecordId
+                  this.studentInfoId=val.studentInfoId
                 console.log(val)
             },
             //查询
-            queryName(){            
+            queryName(){     
+                this.queryDisciplineRecords()       
                 console.log(this.Select1,this.value1,this.value2,this.value3,)
             },        
             //取消模态框
@@ -318,31 +420,13 @@ export default {
             handleSizeChange2(val) {
                 console.log(`每页 ${val} 条`);
                     this.pageSize=val
-                    if(this.activeIndex=='0'){
-                    }
-                    else if(this.activeIndex=='1'){
-                    }
-                    else if(this.activeIndex=='2'){
-                    }
-                    else if(this.activeIndex=='3'){
-                    }
-                    else if(this.activeIndex=='4'){
-                    }
+               this.queryDisciplineRecords()  
             },
             //点击分页
              handleCurrentChange(val) {
                 console.log(`当前页: ${val}`);   
                 this.pageNum=val   
-                if(this.activeIndex=='0'){
-                }
-                else if(this.activeIndex=='1'){
-                }
-                else if(this.activeIndex=='2'){
-                }
-                 else if(this.activeIndex=='3'){
-                }
-                 else if(this.activeIndex=='4'){
-                }
+               this.queryDisciplineRecords()   
             },
         },
        
@@ -357,6 +441,7 @@ export default {
     padding:50px 20px 20px 20px;
     display: flex;
     flex-direction: column;
+     overflow: hidden;
     .ClassManage-top{
         min-height:120px;
         width: 100%;
@@ -397,11 +482,10 @@ export default {
         border-radius:15px;
         display: flex;
         flex-direction: column;
-        margin-bottom: 10px;
         // position: relative;
         .tableBox{
             flex: 1;
-            overflow: auto;  
+            overflow: hidden;
             border-radius:15px 15px 0 0;  
             th{
                 color: $color;

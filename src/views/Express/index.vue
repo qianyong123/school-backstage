@@ -75,8 +75,9 @@
             </div>
         </div>
         <span slot="footer" class="dialog-footer">
-            <el-button size="small" type="primary" @click="newSave">确 定</el-button>
-            <el-button size="small" @click="newVisible = false">取 消</el-button>
+            <el-button v-if="popupTitle=='新增'" size="small" type="primary" @click="newSave">确定</el-button>
+            <el-button v-else size="small" type="primary" @click="newSave2">确定</el-button>
+            <el-button size="small" @click="newVisible = false">取消</el-button>
         </span>
         </el-dialog>
   </div>
@@ -88,7 +89,11 @@ import {formatDate} from '../../js/date.js'
 import bus from '../../js/bus.js'
 import { arealist_2,floorList} from '@/axios/api1'
 import { 
- queryMenuById
+ queryMenuById,
+ addExpressSite,
+ queryExpressSiteAll,
+ deleteExpressSiteById,
+ updateExpressSite
 } from '@/axios/api'
 
 export default {
@@ -100,7 +105,7 @@ export default {
         return{
             activeName:"调寝",
             activeIndex:'',
-            loading:true,
+            loading:false,
             newName:'',
             total:0,
             id:'student',
@@ -116,58 +121,34 @@ export default {
             Select1:'',         
            value1:'',
            value2:'',
-           value3:'',
-            value4:'',
-           value5:'',        
-           
-             //状态
-            types: [
-            {id: '',label: '全部',name:'全部'}, 
-            {id: '1',label: '已处理 ',name:'已处理   '}, 
-            {id: '2',label: '未处理',name:'未处理'}, 
-            ],
-                
-          
-            //编辑弹框
-            EditCollegeNmae:'',//编辑班级名
-
+           value3:'',                                
             dataHeader:[
-                 {name:'站点名称',props:'studentInfoName'},      
-                {name:'站点位置',props:'studentInfoNo'},
-                {name:'联系方式',props:'studentInfoSex'},
+                 {name:'站点名称',props:'expressSiteName'},      
+                {name:'站点位置',props:'expressSitePosition'},
+                {name:'联系方式',props:'expressSitePhone'},
             ],//表格头部                         
             value: '',
             multipleSelection: [], //表格多选
             tableData: [                   
-                 {studentInfoName:'姓名',props:'studentInfoName'},     
+                   
             ],
             roleInfoMenu:[],
             roleId:null,
-            popupTitle:''
+            popupTitle:'',
+            expressSiteId:0
         }
     },
         filters:{
-            manageClass(name){
-                let names=''
-                // console.log(name)
-                if(name.length>8){
-                    names=name.slice(0,8)+'...'
-                }
-                else{
-                    names=name
-                }
-                return names
-            }
+           
         },
         mounted() {        
-            this.loading=false
             bus.$on('handleSizeChange2',(val)=>{
                 this.handleSizeChange2(val)
-            })
-            bus.$on('newCall',this.newCall)
+            })          
         },
         created(){
             this.roleInfoMenu=this.$store.state.roleInfoMenu
+            this.queryExpressSiteAlls()
               console.log(this.roleInfoMenu)
                let roleId=localStorage.getItem('roleId')  
                 this.roleId=roleId
@@ -194,6 +175,9 @@ export default {
                     if(this.roleId==1){
                         return true
                     }
+                     else if(this.roleInfoMenu.length<1){
+                        return true
+                    }
                     else{
                         return this.roleInfoMenu[13].indexOf('14')==-1?false:true
                     }
@@ -205,15 +189,7 @@ export default {
             
          },      
         methods: {
-            //导入成功或失败
-            handleAvatarSuccess(file){
-                console.log(file)
-                 let fd = new FormData();
-                fd.append('file',file.raw);//传文件
-                this.fileList=[]
-              
-                
-            },                    
+                              
             //多删除
             deletes(){
                 if(this.multipleSelection.length<1){
@@ -221,17 +197,46 @@ export default {
                             message: '请选择需要删除的信息!'
                         });
                 }else{
+                    let expressSiteId=[]
+                    this.multipleSelection.forEach(data=>{
+                        expressSiteId.push(data.expressSiteId)
+                    })
+                    console.log(expressSiteId)
                    this.$confirm('此操作将永久删除该信息, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning',           
                     }).then(() => {
-                        // this.$message({
-                        //     type: 'success',
-                        //     message: '删除成功!'
-                        // });
+                         deleteExpressSiteById({expressSiteId:expressSiteId.join(',')}).then(res=>{
+                              if(res.data.code==200){
+                                this.$message({
+                                    type: 'success',
+                                    message: '删除成功'
+                                });
+                                this.queryExpressSiteAlls()
+                                }else{
+                                    this.$message({
+                                        message: '删除失败 '+res.data.msg
+                                    });
+                                }
+                            })
                     }) 
                 }
+            },
+            //查询站点
+            queryExpressSiteAlls(){
+                this.loading=true
+                queryExpressSiteAll({pageSize:this.pageSize,pageNum:this.pageNum}).then(res=>{
+                     this.loading=false
+                     if(res.data.code==200){
+                        this.tableData=res.data.data.list
+                        this.total=res.data.data.total
+                    }else{
+                        this.$message({
+                            message: '查询失败 '+res.data.msg
+                        });
+                    }
+                })
             },
             //新增
             addRecord(){         
@@ -243,6 +248,35 @@ export default {
             }, 
             //新增保存
             newSave(){
+                let phone=/^1[3456789]\d{9}$/;
+                if(this.value1==''){
+                    this.$message({
+                            message:'请输入站点名称'
+                        });  
+                }
+                else if(this.value3!=''&&!phone.test(this.value3)){
+                    this.$message({
+                            message:'请输入11位手机号码'
+                        });
+                        return 
+                }
+                addExpressSite({
+                    expressSiteName:this.value1,
+                    expressSitePhone:this.value3,
+                    expressSitePosition:this.value2
+                }).then(res=>{
+                    if(res.data.code==200){
+                        this.$message({
+                            type: 'success',
+                            message: '新增成功'
+                        });
+                        this.queryExpressSiteAlls()
+                    }else{
+                        this.$message({
+                            message: '新增失败 '+res.data.msg
+                        });
+                    }
+                })
                 this.newVisible=false
             },    
               //点击操作
@@ -259,9 +293,46 @@ export default {
             //编辑
             handleEdit(row){
                 console.log(row)
-              this.newVisible=true
-              this.popupTitle='修改'
-                
+                this.newVisible=true
+                this.popupTitle='修改'
+                this.value1=row.expressSiteName
+                this.value3=row.expressSitePhone
+                this.value2=row.expressSitePosition
+                this.expressSiteId=row.expressSiteId
+            },
+            //编辑保存
+            newSave2(){              
+                let phone=/^1[3456789]\d{9}$/;
+                if(this.value1==''){
+                    this.$message({
+                            message:'请输入站点名称'
+                        });  
+                }
+                else if(this.value3!=''&&!phone.test(this.value3)){
+                    this.$message({
+                            message:'请输入11位手机号码'
+                        });
+                        return 
+                }
+                updateExpressSite({
+                    expressSiteId:this.expressSiteId,
+                    expressSiteName:this.value1,
+                    expressSitePhone:this.value3,
+                    expressSitePosition:this.value2
+                }).then(res=>{
+                    if(res.data.code==200){
+                        this.$message({
+                            type: 'success',
+                            message: '修改成功'
+                        });
+                        this.queryExpressSiteAlls()
+                    }else{
+                        this.$message({
+                            message: '修改失败 '+res.data.msg
+                        });
+                    }
+                })
+                this.newVisible=false
             },
             //删除单个
             handleDelete(row){
@@ -271,10 +342,20 @@ export default {
                     cancelButtonText: '取消',
                     type: 'warning',           
                     }).then(() => {
-                        // this.$message({
-                        //     type: 'success',
-                        //     message: '删除成功!'
-                        // });
+                        deleteExpressSiteById({expressSiteId:row.expressSiteId }).then(res=>{
+                              if(res.data.code==200){
+                                this.$message({
+                                    type: 'success',
+                                    message: '删除成功'
+                                });
+                                this.queryExpressSiteAlls()
+                                }else{
+                                    this.$message({
+                                        message: '删除失败 '+res.data.msg
+                                    });
+                                }
+                            })
+                        
                     })
             },
             //查询
@@ -294,13 +375,15 @@ export default {
              //分页弹出框
             handleSizeChange2(val) {
                 console.log(`每页 ${val} 条`);
-                    this.pageSize=val
+                this.pageSize=val
+                 this.queryExpressSiteAlls()
                    
             },
             //点击分页
              handleCurrentChange(val) {
                 console.log(`当前页: ${val}`);   
-                this.pageNum=val   
+                this.pageNum=val  
+                 this.queryExpressSiteAlls() 
                
             },
         },
@@ -316,6 +399,7 @@ export default {
     padding:50px 20px 20px 20px;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     .ClassManage-top{
         min-height:120px;
         width: 100%;
@@ -355,13 +439,11 @@ export default {
         border-radius:15px;
         display: flex;
         flex-direction: column;
-        margin-bottom: 10px;
         // position: relative;
         .tableBox{
             flex: 1;
-            overflow: auto;  
             border-radius:15px 15px 0 0;
-              
+             overflow: hidden; 
             th{
                 color: $color;
             }  

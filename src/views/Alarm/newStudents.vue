@@ -7,7 +7,7 @@
     width="560px"
     :show-close="false"
     center>
-    <div v-if="newNames(newName)" class="ApplyRecordNew">
+    <div v-if="newNames(newName)" class="AlarmNew">
         <i class="el-icon-close close" @click="$emit('newCall')"></i>           
         <div class="logImg">
             <div style="background:#ccc;width:130px;height:150px;">
@@ -62,7 +62,7 @@
             </div>
         </div>
      </div> 
-     <div v-else class="ApplyRecordNew" style="flex-direction: column;">
+     <div v-else class="AlarmNew" style="flex-direction: column;">
          <i class="el-icon-close close" @click="$emit('newCall')"></i>  
         <div class="div div2">
             <span class="span2" style="margin-right:15px;">处理人</span>
@@ -165,7 +165,7 @@ export default {
 <style lang="scss">
      //查看
      
-    .ApplyRecordNew{
+    .AlarmNew{
         width: 100%;
         // min-height:80px;      
         display: flex;

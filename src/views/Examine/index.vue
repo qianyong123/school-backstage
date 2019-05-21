@@ -26,10 +26,15 @@
                     </el-select>
                     <el-button size="small">查询</el-button> 
                 </div>                          
-                <el-button size="small" icon="el-icon-download"  @click="deletes"></el-button>                            
+                <el-button size="small" icon="el-icon-upload2"  @click="deletes"></el-button>                            
             </div> 
         </div>
-        
+         <div class="types2">
+            <span class="span1"></span>
+            <span>在寝室</span>
+            <span class="span1 span2"></span>
+            <span>不在寝室</span>
+        </div>
         <div class="ClassManage-main" 
         v-loading="loading"               
         element-loading-text="拼命加载中"
@@ -38,12 +43,7 @@
         >
             <div class="tableBox" v-for="(item,index) in tableData" :key="index">
                 <div class="types">
-                    <div class="types2">
-                        <span class="span1"></span>
-                        <span>在寝室</span>
-                        <span class="span1 span2"></span>
-                        <span>不在寝室</span>
-                    </div>
+                   
                     <div style="color:#333;">
                        <span>{{item.floor}}层</span> 
                        <span style="margin-left:20px;">房间数：{{item.amount}}</span>
@@ -58,39 +58,9 @@
                     </div>
                 </div>
               
-                <!-- <el-table
-                    ref="multipleTable"
-                    v-loading="loading"               
-                    element-loading-text="拼命加载中"
-                    element-loading-spinner="el-icon-loading"
-                    element-loading-background="rgba(255, 255, 255, 0.8)"
-                    :data="tableData"
-                    tooltip-effect="dark"                                       
-                    height="100%"
-                    @selection-change="handleSelectionChange"
-                    style="min-width:50%">
-                    
-                    <el-table-column
-                    v-for="(item,index) in dataHeader"
-                    :key="index"
-                    :prop="item.props"
-                    :label="item.name"
-                    width="80px"
-                   >     
-                       <template slot-scope="scope" style="position: relative;">
-                            <div>
-                                {{scope.row.studentInfoName}}
-                            </div>                          
-                        </template>        
-                    </el-table-column>
-                 
-                </el-table> -->
                 
             </div>
-            <!-- <paginations     
-            @handleCurrentChange='handleCurrentChange'
-            :total='total'
-            ></paginations> -->
+            
         </div>
         <!-- 查看详情 -->
     <el-dialog
@@ -370,6 +340,9 @@ export default {
                     if(this.roleId==1){
                         return true
                     }
+                     else if(this.roleInfoMenu.length<1){
+                        return true
+                    }
                     else{
                         return this.roleInfoMenu[0].indexOf('1')==-1?false:true
                     }
@@ -483,8 +456,7 @@ export default {
     padding:50px 20px 20px 20px;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    
+    overflow: hidden;  
     .ClassManage-top{
         min-height:120px;
         width: 100%;
@@ -519,6 +491,37 @@ export default {
     }
        
     }
+    //在寝状态
+    .types{
+        height:50px;
+        display: flex;
+        align-items: center;
+        text-align:left;
+        font-size: 14px;
+        color: #888;
+        padding:0 15px;
+        justify-content: space-between;
+        // border-bottom:1px solid rgba(237,237,237,1);  
+         
+       
+    }
+     .types2{  
+            height:50px;
+            width: 100%;
+            display: flex;
+            align-items: center; 
+             .span1{
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            background: #4CABFD;
+            margin-right:5px;
+            }
+            .span2{
+                background: #FF6C79;
+                margin-left:30px;
+            }
+        }
      //查看
     .ApplyRecordNew{
         width: 100%;
@@ -541,6 +544,7 @@ export default {
             flex-wrap: wrap;
             align-content: flex-start;
             justify-content: space-between;
+            margin-top: 6px;
         }
          .userIfoBox2{           
             flex: 1;   
@@ -561,24 +565,24 @@ export default {
         }
         .div{
             width: 50%; 
-            min-height: 32px; 
+            min-height: 10px; 
             display: flex;
             line-height: 20px;
-            align-items: center;   
-            margin-bottom: 10px;
+            align-items: flex-start;   
+            margin-bottom: 20px;
             .span{
                 display: inline-block;
                 min-width:85px;
                 text-align: right;
-                // margin-right: 10px;
+                // margin-right: 20px;
             }    
         }     
         .div2{
             width: 100%; 
-            min-height: 32px; 
+            min-height: 10px; 
             display: flex;
-            align-items:center;  
-            margin-bottom: 10px;
+            align-items:flex-start;  
+            margin-bottom: 20px;
             // cursor: pointer;
             .span2{
                 display: inline-block;
@@ -593,12 +597,10 @@ export default {
 
     .ClassManage-main{
         flex: 1;
-      
-        // white-space: nowrap;  
-        // border-radius:15px;    
+          
         overflow:auto;  
       
-        // position: relative;
+      
         .tableBox{
             width:100%;
             background:rgba(255,255,255,1);
@@ -607,38 +609,8 @@ export default {
             border-radius:15px;  
             margin-bottom: 20px;
             color: #333;
-            // overflow:auto;
-            // div{
-            //     width: 100px;
-            //     height: 50px;
-            //     // line-height: 50px;
-            // }
-            .types{
-                height:50px;
-                display: flex;
-                align-items: center;
-                text-align:left;
-                font-size: 14px;
-                color: #888;
-                padding:0 15px;
-                justify-content: space-between;
-                // border-bottom:1px solid rgba(237,237,237,1);  
-                .types2{
-                    display: flex;
-                    align-items: center; 
-                }  
-                .span1{
-                    display: inline-block;
-                    width: 14px;
-                    height: 14px;
-                    background: #4CABFD;
-                    margin-right:5px;
-                }
-                .span2{
-                    background: #FF6C79;
-                    margin-left:30px;
-                }
-            }
+          
+       
             .allUser{
                 display: flex;
                 // display:inline-block;

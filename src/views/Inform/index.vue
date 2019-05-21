@@ -119,7 +119,8 @@ export default {
             value: '',
             multipleSelection: [], //表格多选
             tableData: [                   
-                 {type:'报警',name:'类容',time:'2018-12-12 10:20:22'},     
+                 {type:'报警',name:'类容',time:'2018-12-12 10:20:22',type2:'晚归'},   
+                 {type:'申请',name:'类容',time:'2018-12-12 10:20:22',type2:'物品出楼'},   
             ],
             roleInfoMenu:[],
             roleId:null,
@@ -139,35 +140,11 @@ export default {
               console.log(this.roleInfoMenu)
                let roleId=localStorage.getItem('roleId')  
                 this.roleId=roleId
-            //    if(this.roleInfoMenu.length<1){ 
-            //        if(roleId==1){
-            //            return
-            //        }                        
-            //         queryMenuById({roleId}).then(res=>{     
-            //             console.log('权限菜单')                   
-            //             if(res.data.code==200&&res.data.data.roleInfoMenuMain!=null){                   
-            //                     this.roleInfoMenu=res.data.data.roleInfoMenu==null?[]:res.data.data.roleInfoMenu
-            //                     this.$store.commit('roleInfoMenus',res.data.data.roleInfoMenu)                                                    
-            //             }else{
-            //                 this.$router.push('/hideIndex')
-            //             }
-            //         })
-                                 
-            // }
+           
         },
         computed:{
            
-            // navjurisdiction2(){
-            //     return function(){
-            //         if(this.roleId==1){
-            //             return true
-            //         }
-            //         else{
-            //             return this.roleInfoMenu[13].indexOf('14')==-1?false:true
-            //         }
-                    
-            //     }
-            // }
+         
         },
          watch: {
             
@@ -188,7 +165,26 @@ export default {
             //查看
             handleEdit(row){
                 console.log(row)           
-                
+                if(row.type=='报警'){
+                    this.$router.push({
+                        name:'Alarm',
+                        params:{
+                           type:row.type2 
+                        }
+                    })
+                    this.$store.commit('indexs','/Alarm')
+                    this.$store.commit('homes',3)
+                }
+                else if(row.type=='申请'){
+                      this.$router.push({
+                        name:'ApplyRecord',
+                        params:{
+                           type:row.type2 
+                        }
+                    })
+                    this.$store.commit('indexs','/ApplyRecord')
+                    this.$store.commit('homes',3)
+                }
             },
          
           
@@ -217,6 +213,7 @@ export default {
     padding:50px 20px 20px 20px;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     .ClassManage-top{
         min-height:60px;
         width: 100%;
@@ -260,9 +257,8 @@ export default {
         // position: relative;
         .tableBox{
             flex: 1;
-            overflow: auto;  
             border-radius:15px 15px 0 0;
-              
+             overflow: hidden; 
             th{
                 color: $color;
             }  

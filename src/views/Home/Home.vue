@@ -98,7 +98,9 @@
 <script>
 import Navs from '@/components/Navs.vue'
 import Header from '@/components/Header.vue'
-// import { setInterval, clearInterval } from 'timers';
+import {  
+   
+  } from '@/axios/api.js'
 
     export default {
         name:"Home",
@@ -119,10 +121,12 @@ import Header from '@/components/Header.vue'
                 downTime:59,
                 password:'',
                 password2:'',
-                newUsername:''
+                newUsername:'',
+                queryNationList:[]
             }
         },
         methods: {
+        
             //退出登录
              quit(){
                  this.$confirm('你确定要退出登录吗?', '提示', {
@@ -201,7 +205,7 @@ import Header from '@/components/Header.vue'
             }
         },
         created() {
-             
+        //    this.$router.push('/index') 
         },
     }
 </script>
@@ -213,6 +217,7 @@ import Header from '@/components/Header.vue'
         height: 100%;
         width: 100%;
         position: relative;
+        overflow-x: hidden;
         .userSeet{
             height: 100px;
             padding-left: 20px;

@@ -1,6 +1,6 @@
 <template>
 <!-- 分页 -->
-    <div class="pagexs">
+    <div class="natic-pagexs2">
          <div class="pagination_1">
           <el-pagination
       @size-change="handleSizeChange"
@@ -19,7 +19,7 @@
       :page-size="pageSize"
       layout="prev, pager, next,jumper,slot"
       :total="total">
-      <span style="margin-left:1%;"> <el-button style="border:1px solid #dcdfe6">确认</el-button></span>
+      <span style="margin-left:1%;"> <el-button class="pagination-btn" style="border:1px solid #dcdfe6">确认</el-button></span>
     </el-pagination>
     </div>
      </div>
@@ -49,10 +49,16 @@ methods:{
 </script>
 
 <style>
- .pagexs{
+.natic-pagexs2 /deep/ .pagination_2 .el-input{
+    width: 46px;
+}
+.natic-pagexs2 /deep/ .pagination_1 .el-input{
+    width:100px;
+}
+ .natic-pagexs2{
     z-index: 55;
     height: 50px;
-     width: 100%;
+    width: 100%;
     display: flex;
     align-items: center;
     border-top: 1px solid rgba(238,238,238,1);

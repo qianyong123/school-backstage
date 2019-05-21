@@ -57,44 +57,44 @@
                             <span class="spanName">时间：</span>
                             <el-date-picker
                             v-model="timevalue1"
-                            type="date"
-                            style="width:120px"
-                            format="yyyy/MM/dd"
+                            type="datetime"
+                            style="width:160px;"
+                            format="yyyy/MM/dd HH:mm"
                             :clearable="false"
                             value-format="timestamp"
-                            placeholder="年/月/日">
+                            placeholder="年/月/日 时/分">
                             </el-date-picker>
                             <span style="margin:0 5px;">-</span>
                             <el-date-picker
                             v-model="timevalue2"
-                            type="date"
-                            style="width:120px"
+                            type="datetime"
+                            style="width:160px;"
                             :clearable="false"
-                            format="yyyy/MM/dd"
+                            format="yyyy/MM/dd HH:mm"
                             value-format="timestamp"
-                            placeholder="年/月/日">
+                            placeholder="年/月/日 时/分">
                             </el-date-picker>
                             
                             <el-input
-                            placeholder="姓名/学号"
+                            placeholder="姓名/证件号"
                             v-model="value1"
-                            style="width:120px;margin:0 10px;"
+                            style="width:120px;margin:10px 10px 10px 10px;"
                             >
                             </el-input>
-                            <el-button @click="queryName(1)" size="small">查询</el-button>
+                            <el-button style="margin-right:10px" @click="queryName(1)" size="small">查询</el-button>
+                            <el-button style="margin:0" v-if="isdownload==1" @click="exportData(1)" size="small" icon="el-icon-upload2"></el-button>                               
                         </div>                    
-                        <el-button @click="exportData(1)" size="small" icon="el-icon-download"></el-button>   
+                        <el-button style="margin:0" v-if="isdownload==0" @click="exportData(1)" size="small" icon="el-icon-upload2"></el-button>   
                     </div>
                 </el-tab-pane>
                 <el-tab-pane label="考勤分析" name="考勤分析">
                     <div class="collegeNmaeBox">
-                        <div class="collegeNmae">
-                            
+                        <div class="collegeNmae">                         
                             <span class="spanName" style="margin-left:0;">学院：</span>
                              <el-select style="width:120px;" @change="queryMajor" v-model="Select5" placeholder="请选择">
                                  <el-option                                                           
                                 :label="'全部'"                                                                                                       
-                                :value="''">
+                                :value="null">
                                 </el-option>
                                 <el-option                              
                                 v-for="(item,index) in classList1"
@@ -107,7 +107,7 @@
                              <el-select style="width:120px;" v-model="Select6" placeholder="请选择">
                                  <el-option                                                           
                                 :label="'全部'"                            
-                                :value="''">
+                                :value="null">
                                 </el-option>
                                 <el-option                              
                                 v-for="(item,index) in classList2"
@@ -120,7 +120,7 @@
                              <el-select style="width:120px;" v-model="Select7" placeholder="请选择">
                                  <el-option                                                           
                                 :label="'全部'"                            
-                                :value="''">
+                                :value="null">
                                 </el-option>
                                 <el-option                              
                                 v-for="(item,index) in classList3"
@@ -135,7 +135,7 @@
                             style="width:120px;margin:0 10px;"
                             >
                             </el-input>
-                            <el-button @click="queryName(2)" size="small">查询</el-button>
+                            <el-button  @click="queryName(2)" size="small">查询</el-button>
                         </div>                    
                         <el-button @click="setRecord(1)" size="small" icon="el-icon-setting"></el-button>                        
                     </div>                                                             
@@ -177,17 +177,27 @@
                         <el-input
                         placeholder="姓名/证件号"
                         v-model="value3"
-                        style="width:120px;margin:0 10px;"
+                        style="width:120px;margin-left:10px;"
                         >
                         </el-input>
-                        <el-button @click="queryName(3)" size="small">查询</el-button>
+                        <span class="spanName">状态：</span>
+                        <el-select style="width:120px;" v-model="Select8" placeholder="请选择">  
+                            <el-option                              
+                            v-for="(item,index) in type3"
+                            :key="index"
+                            :label="item.label"                            
+                            :value="item.value">
+                            </el-option>
+                            </el-select> 
+                        <el-button style="margin-left:10px;" @click="queryName(3)" size="small">查询</el-button>
                 </div>
-                    <el-button @click="exportData(2)" size="small" icon="el-icon-download"></el-button> 
+                    <el-button @click="exportData(2)" size="small" icon="el-icon-upload2"></el-button> 
                 </div>
                 <div class="collegeNmae" style="font-size:14px;margin-top:5px;">
                     <span>
-                        该时间段内，人均外出总时长19.6h，人均每日外出时长5.6h。
+                        该时间段内，人均外出总时长
                     </span>
+                    <span style="font-weight: 600;">19.6h。</span>
                     <span style="color:#FF6C79;">
                         外出时长低于平均值25%，6人；低于50%，3人；低于75%，1人
                     </span>
@@ -218,8 +228,8 @@
                    label="照片"
                     >
                     <template slot-scope="scope">
-                        <div>
-                            <img :src="scope.row.peopleImg" alt="" style="height:50px;width:50px;">
+                        <div class="imgBox">
+                            <img :src="scope.row.peopleImg==null?'':scope.row.peopleImg" alt="" class="img">
                         </div>                      
                     </template>                  
                     </el-table-column>           
@@ -249,7 +259,7 @@
                     label="身份类型"
                     >
                     <template slot-scope="scope">
-                        <div>{{(scope.row.roleInfoId) | types}}</div>                  
+                        <div>{{scope.row.roleInfoId}}</div>                  
                     </template>                  
                     </el-table-column>  
                     <el-table-column        
@@ -270,7 +280,7 @@
                     label="出入标示"
                     >
                     <template slot-scope="scope">
-                        <div>{{(scope.row.accessRecordType) | churu}}</div>                  
+                        <div>{{(scope.row.accessRecordType)| churu}}</div>                  
                     </template>                  
                     </el-table-column>                        
                 </el-table>
@@ -337,7 +347,7 @@
                    >                 
                     </el-table-column>  
                      <el-table-column
-                    label="外出时长"
+                    label="外出时长（h）"
                     >
                     <template style="height:48px;" slot-scope="scope">
                         <div class="tableBox-time" :class="{timeColor:scope.row.status==0}">
@@ -350,13 +360,25 @@
                    
                     </el-table-column>    
                     <el-table-column
-                    label="辅导员信息"
+                    label="状态"
                     >
                     <template style="height:48px;" slot-scope="scope">
-                        <div>{{scope.$index}}</div>
+                        <div >
+                            <span>{{scope.row.name}}</span>                                         
+                        </div>
                     </template>
                    
-                    </el-table-column>              
+                    </el-table-column>   
+                     <el-table-column
+                    label="当日人均外出时长（h）"
+                    >
+                    <template style="height:48px;" slot-scope="scope">
+                        <div >
+                            <span>{{scope.row.name}}</span>                                         
+                        </div>
+                    </template>
+                   
+                    </el-table-column>          
                     <el-table-column v-if="navjurisdiction2()" label="操作" width="100">
                         <template slot-scope="scope" style="position: relative;">
                             <div>
@@ -466,6 +488,7 @@
 <script>
 import Paginations from './Paginations'
 import {formatDate} from '../../js/date.js'
+import {exportLists} from '../../js/date.js'
 import bus from '../../js/bus.js'
 import {arealist_2,floorlist_2} from '@/axios/api1'
 import { 
@@ -474,8 +497,11 @@ import {
  queryMajorByTerm,
  queryByYearName,
  queryAccessRecord,
- queryMajorById
+ queryMajorById,
+ accessRecordExcelOut
 } from '@/axios/api'
+import { type } from 'os';
+import { stringify } from 'querystring';
 
 
 export default {
@@ -522,10 +548,10 @@ export default {
             Select2:null,
             Select3:null,
             Select4:null,
-            Select5:'',
-            Select6:'',
-            Select7:'',
-           
+            Select5:null,
+            Select6:null,
+            Select7:null,
+            Select8:null,
             
            timevalue1:'',
            timevalue2:'',
@@ -565,6 +591,7 @@ export default {
             {name:'所在年级',props:'studentInfoNo'},
             {name:'所属专业',props:'studentInfoSex'},
             {name:'所属学院',props:'teacherMsg'},    
+            {name:'辅导员信息',props:'teacherMsg'},   
             {name:'考勤时间',props:'parentMsg'},  
             // {name:'处理状态',props:'parentMsg'},  
         ],
@@ -584,7 +611,14 @@ export default {
             {value:3,label: '辅导员',name:'辅导员'}, 
             {value:0,label: '其他',name:'其他'}, 
             ],
-            
+             //考勤分析状态
+             type3: [
+            {value:null,label: '全部'}, 
+            {value:1,label: '正常'}, 
+            {value:2,label: '低于25%以上'}, 
+            {value:3,label: '低于50%以上'}, 
+            {value:4,label: '低于75%以上'}, 
+            ],
            
             //所有区域
             arealist: [             
@@ -605,7 +639,7 @@ export default {
             value: '',
             multipleSelection: [], //表格多选
             tableData: [                                        
-               {studentInfoName:'步骤',props:'step'},      
+            //    {studentInfoName:'步骤',props:'step'},      
             ],    
             tableData2: [                                        
                 {studentInfoName:'步骤',props:'step'},      
@@ -613,7 +647,7 @@ export default {
             ],    
              tableData3: [                                        
                 {studentInfoName:'步骤',props:'step',status:0,},      
-                {studentInfoName:'步骤',props:'step',status:1,},      
+                // {studentInfoName:'步骤',props:'step',status:1,},      
             ],    
             roleInfoMenu:[],
             classList1:[],
@@ -622,7 +656,8 @@ export default {
             roleId:null,
             popupTitle:'',
             roleId:1,
-            setTime:0
+            setTime:0,
+            isdownload:0,
         }
     },
         filters:{
@@ -660,6 +695,10 @@ export default {
                 this.handleSizeChange2(val)
             })
             this.roleId=localStorage.getItem('roleId')
+            let widths=document.documentElement.clientWidth
+            if(widths<=1630){
+                this.isdownload=1
+            }
             //区域
             arealist_2().then(res=>{
                 
@@ -715,6 +754,9 @@ export default {
                     if(this.roleId==1){
                         return true
                     }
+                    else if(this.roleInfoMenu.length<1){
+                        return true
+                    }
                     else{
                         return this.roleInfoMenu[3].indexOf('4')==-1?false:true
                     }
@@ -726,7 +768,8 @@ export default {
              activeIndex(){                     
                 this.pageNum=1
                 this.tableData=[]
-                this.loading=true     
+                this.loading=true    
+                this.total=0 
                 this.$refs.multipleTable.clearSelection();
                 if(this.activeIndex=='0'){                   
                     this.newName=1
@@ -764,7 +807,7 @@ export default {
             //学院下拉事件
             queryMajor(collegeId){
                     this.classList2=[]
-                    this.Select6=''
+                    this.Select6=null
                      queryMajorById({
                     collegeId,MajorName:'',pageNum :0,pageSize :0 
                 }).then(res=>{                   
@@ -773,7 +816,7 @@ export default {
                             this.classList2=res.data.data.list
                                                                    
                     }else{
-                        this.$message('查询专业失败' +res.data.msg)
+                        this.open('查询专业失败' +res.data.msg)
                     }
                 })             
             },
@@ -804,30 +847,50 @@ export default {
            blobs(data,msg){
                 const content = data
                 const blob = new Blob([content])
-                const fileName =msg
-                if ('download' in document.createElement('a')) { // 非IE下载
-                const elink = document.createElement('a')
-                elink.download = fileName
-                elink.style.display = 'none'
-                elink.href = URL.createObjectURL(blob)
-                document.body.appendChild(elink)
-                elink.click()
-                URL.revokeObjectURL(elink.href) // 释放URL 对象
-                document.body.removeChild(elink)
+                const fileName =msg          
+               if ('download' in document.createElement('a')) { // 非IE下载 Content-Type: application/x-www-form-urlencoded
+                    console.log('11')
+                    const elink = document.createElement('a')
+                    elink.download = fileName
+                    elink.style.display = 'none'
+                    elink.href = URL.createObjectURL(blob)
+                    // window.location.href = URL.createObjectURL(blob)
+                    document.body.appendChild(elink)
+                    elink.click()
+                    
+                    URL.revokeObjectURL(elink.href) // 释放URL 对象
+                    document.body.removeChild(elink)
                 } else { // IE10+下载
-                navigator.msSaveBlob(blob, fileName)
+                    console.log('10')
+                    navigator.msSaveBlob(blob, fileName)
                 }
             },
            //导出
            exportData(id){
                console.log(id)
-                // dormRecordExcel().then(res=>{
-                //         if(res.status==200&&res.data!=null){
-                //         this.blobs(res.data,'导出归寝记录.xls')
-                //     }else{
-                //             this.$message('导出失败' +res.data.msg)
-                //     }
-                // })
+               if(id==1){                
+                    accessRecordExcelOut({
+                        accessRecordDate_start:this.timevalue1,
+                        accessRecordDate_end:this.timevalue2,
+                        nameOrNo:this.value1,
+                        accessRecordType:this.Select3,
+                        roleInfoId:this.Select4,
+                        regionId:this.Select1,
+                        floorId:this.Select2
+                    }).then(res=>{
+                        console.log(res)
+                            if(res.status==200&&res.data!=null){
+                                console.log('成功')
+                            this.blobs(res.data,'出入记录.xls')
+                        }else{
+                                this.open('导出失败' +res.data.msg)
+                        }
+                    })
+               }
+               else if(id==2){
+
+               }
+               
            },
            //查看考勤
            checkAnalyze(row){
@@ -835,12 +898,12 @@ export default {
                this.ischeck=false
                this.activeIndex=2
            },
-           //查看考勤分析
+           //查看考勤分析模态框
            checkAnalyze2(row){
                this.VisibleLogin=true
                console.log(row)
            },
-           //查询考勤分析
+           //查询考勤分析模态框
            analyzeTime(){
                console.log('分析',this.timevalue7,this.timevalue8)
            },
@@ -958,6 +1021,8 @@ export default {
     padding:50px 20px 20px 20px;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    // overflow-x: auto;          
     .ClassManage-top{
         min-height:150px;
         width: 100%;
@@ -986,15 +1051,19 @@ export default {
             min-height:32px;
             align-items: center;
             color: #333;
-            
+            flex-wrap: wrap;
+            // flex-wrap: wrap;  
         }
+       
         .collegeNmae2{
             margin-right: 10px;
             display: flex;
         }
+        
         .spanName{
             color: $haedColor;
             margin-left: 10px;
+            // min-width: 30px;
         }
        
     }
@@ -1004,7 +1073,6 @@ export default {
         border-radius:15px;
         display: flex;
         flex-direction: column;
-        margin-bottom: 10px;
         // position: relative;
         .tableBox{
             flex: 1;
@@ -1032,13 +1100,29 @@ export default {
             .timeColor{
                 color: #FF6C79;
             }
+            .imgBox{
+                height:50px;
+                width:50px;
+                overflow: hidden;
+                border-radius:50%;
+                display: flex;
+                align-items: center;
+                .img{
+                max-height:100%;
+                width:100%;
+                border-radius:50%;
+                }
+            }
         }
         .operate{
             position:absolute;
             left:-20px;
             top: 0px;
+            bottom: 0;
+            right: 0;
+            margin:auto;
             width:100%;
-            min-height:60px;
+            height:30px;
             background: #fff;
             border-radius: 4px;
             z-index:9999;

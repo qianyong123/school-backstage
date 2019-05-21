@@ -101,9 +101,9 @@
                         type="datetime"
                         style="width:200px;margin:0 15px;"                    
                         :clearable="false"
-                        value-format="timestamp"
-                         format="yyyy/MM/dd hh:mm"
-                        placeholder="年/月/日 时/分">
+                        value-format="timestamp"  
+                         format="yyyy/MM/dd HH:mm"                      
+                        placeholder="年/月/日 时分">
                         </el-date-picker>
                                             
                     </div>
@@ -129,7 +129,7 @@
                     </div>
                 </div>
             </div>
-            
+            <div class="collegeChart2" style="margin-left:20px; background:none;"></div>
         </div>
     </div> 
      <div class="collegeDetail">
@@ -229,7 +229,7 @@
   center>
     <el-table
         :data="tableData"
-        height="350"
+        height="400"
         style="width: 100%">
         <el-table-column
         prop="name"
@@ -263,6 +263,9 @@ import {mapState}  from 'vuex'
 import { setTimeout } from 'timers';
     export default {
         name:"Index",
+         props:[
+            'isdownload'
+        ],
         components:{
          
         },      
@@ -298,13 +301,17 @@ import { setTimeout } from 'timers';
                     theme: "bubble"
                 },
                 myChart:null,
-                loading:null
+                loading:null,
+                radius:[145,150],//环形图的大小
             }
         },
         created() { 
           
         },       
-        mounted(){    
+        mounted(){  
+            if(this.isdownload==1){
+                this.radius=[120,125]                   
+            }   
             this.college()                  
         
         },
@@ -342,18 +349,19 @@ import { setTimeout } from 'timers';
             userDetail(){
                 console.log('详情')
                 this.details=true
-                this.detailsName='昨日概况'
+                this.detailsName='今日概况'
             },       
             //未归名单点击
             backData(){
                 this.details=true
-                this.detailsName='2019/12/12 22:12'+' '+'未归名单'
+                this.detailsName='2019/12/12 22:12'+'\xa0\xa0\xa0'+'未归名单'
             },
                //学院概况图表
          college(){
                 var total = this.total;//最大温度数据单独出来定义，方便环形总数的修改              
                 var collegeValue1=this.collegeValue1
                 var rate=parseInt((collegeValue1/total)*100)+'%'
+                var radius=this.radius
                 console.log(collegeValue1)
                 var  myChart =this.$echarts.init(document.getElementById('college'))
                 var placeHolderStyle={
@@ -412,7 +420,7 @@ import { setTimeout } from 'timers';
                         type: 'pie',
                         clockWise: true, //顺时加载
                         hoverAnimation: false, //鼠标移入变大
-                        radius: [145, 150],
+                        radius,
                         itemStyle: placeHolderStyle,
                         label: {
                             normal: {
@@ -465,7 +473,7 @@ import { setTimeout } from 'timers';
            .details{
                     cursor: pointer;
                     &:hover{
-                        color: rgba(229,0,98,1);
+                        // color: rgba(229,0,98,1);
                     }
                 }
          .collegeDetail-top,.collegeStatistics{
@@ -633,7 +641,7 @@ import { setTimeout } from 'timers';
             display: flex;   
             width: 100%;   
             // font-weight: 600;
-            .collegeChart1,.collegeChart2,.collegeChart3,.collegeChart4{
+            .collegeChart1,.collegeChart2,{
                 min-height: 472px;
                 width:50%;   
                 background:#fff;

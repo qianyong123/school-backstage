@@ -10,7 +10,7 @@
     <div class="ApplyRecordNew">
         <i class="el-icon-close close" @click="$emit('newCall')"></i>           
         <div class="logImg">
-            <div style="background:#ccc;width:130px;height:150px;">
+            <div style="width:130px;height:150px;">
                 <img :src="studentInfoMsg.studentInfoImg" alt="">
             </div>
             <!-- <img src="../../../static/img/t1.png" alt=""> -->
@@ -53,7 +53,7 @@
      </div>     
      <div class="ApplyRecordNew">
         <div class="logImg">
-            <div v-if="newName==4" style="background:#ccc;width:130px;height:150px;">
+            <div v-if="newName==4" style="width:130px;height:150px;">
                 <img :src="studentInfoMsg.applyVisitorVisitImg" alt="">
             </div>
             <!-- <img src="../../../static/img/t1.png" alt=""> applyVisitorVisitImg-->
@@ -77,7 +77,7 @@
                     <span class="span">审核备注：</span>
                     <span style="color:#E01763">{{studentInfoMsg.applyChangeBedApprovalInfo}}</span>
                 </div>
-                 <div v-if="schedule=='1'" class="div div2">
+                 <div v-if="schedule=='1'" class="div div2 divstart">
                     <span class="span">处理进度：</span>
                     <el-input v-model="newInput1" placeholder="请输入内容"></el-input>
                 </div>
@@ -181,7 +181,7 @@
                     <span style="color:#E01763">{{studentInfoMsg.applyLeaveApprovalInfo}}</span>
                 </div>
             </div>
-             <div v-if="schedule=='0'" class="div div2">
+             <div v-if="schedule=='0'" class="div div2 divstart">
                 <span class="span">审核意见：</span>
                 <el-input v-model="newInput1" placeholder="请输入内容"></el-input>
             </div>
@@ -518,11 +518,13 @@ export default {
             flex: 1;
             // padding-left: 20px;
             flex-wrap: wrap;
+            margin-top: 6px;
             align-content: flex-start;
             justify-content: space-between;
         }
          .userIfoBox2{           
-            flex: 1;   
+            flex: 1;  
+            // margin-top: 6px; 
             // padding-left: 20px;             
         }
          .logImg{
@@ -540,24 +542,23 @@ export default {
         }
         .div{
             width: 50%; 
-            min-height: 32px; 
+            min-height: 10px; 
             display: flex;
             line-height: 20px;
-            align-items: center;   
-            margin-bottom: 10px;
+            align-items: flex-start;   
+            margin-bottom: 20px;
             .span{
                 display: inline-block;
                 min-width:85px;
                 text-align: right;
-                // margin-right: 10px;
             }    
         }     
         .div2{
             width: 100%; 
-            min-height: 32px; 
+            min-height: 10px; 
             display: flex;
-            align-items: center;  
-            margin-bottom: 10px;
+            align-items: flex-start;  
+            margin-bottom: 20px;
             // cursor: pointer;
             .span2{
                 display: inline-block;
@@ -566,55 +567,12 @@ export default {
                 margin-right: 12px;
             }
         }
-      
-    }
+         .divstart{
+         align-items: center;
+     }  
      
+    }
     
-        .div4{
-            width: 100%; 
-            min-height: 32px;      
-            align-items: center;  
-            margin-bottom: 10px;        
-            // cursor: pointer;
-            .span2{
-                display: inline-block;
-                min-width: 60px;
-                text-align: right;
-                margin-right: 12px;
-            } 
-        }
-        .div5{
-            width: 100%; 
-            min-height: 32px;      
-            align-items: center;  
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .div3{
-           width:100%;
-        //    border-top:1px solid #ccc;
-            min-height: 150px;
-           padding: 10px 0;
-           position: relative;
-           .logImg2{
-              width: 150px;
-            height: 150px; 
-               position: absolute;
-                left:0px;
-               top:0px;
-                     
-           }
-           .logImg3{
-              width: 150px;
-            height: 150px; 
-               position: absolute;
-               margin-right: 20px;
-                left:0px;
-               top:200px;
-                        
-           }        
-        }
         .patriarchs{
             li{
                 margin-bottom: 10px;

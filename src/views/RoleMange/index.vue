@@ -23,25 +23,13 @@
          label="操作"
          v-if="navjurisdiction()"
          width="100">
-      <template slot-scope="scope" style="position: relative;">
-        <!-- <el-button
-          size="small"
-          @click="handleEdit(scope.row)">查看</el-button>
-        <el-button
-          size="small"
-          type="primary"
-          v-if="handleDelete2(scope.row)"
-          @click="handleDelete(scope.row)">权限管理</el-button>
-        <el-button
-          size="small"
-          v-if="scope.row.roleInfoId==1"
-          @click="handleDelete3(scope.row)">权限查看</el-button> -->
+      <template slot-scope="scope" style="position: relative;">      
             <div>
                 <i class="el-icon-more" @click.stop="clickOperate(scope, scope.row)"></i>
-                <div class="operate" v-if="scope.$index==deleteId">
+                <div class="operate" :class="{operate2:handleDelete3(scope.row)}" v-if="scope.$index==deleteId">
                     <p @click="handleEdit(scope.row)">查看</p>
                     <p v-if="handleDelete2(scope.row)" @click="handleDelete(scope.row)">权限管理</p>  
-                    <p  v-if="scope.row.roleInfoId==1" @click="handleDelete3(scope.row)">权限查看</p>                                       
+                    <p  v-if="scope.row.roleInfoId==1" @click="handleDelete4(scope.row)">权限查看</p>                                       
                 </div>
             </div>
       </template>
@@ -104,7 +92,6 @@
             </el-form-item>
              <el-form-item :label-width="formLabelWidth" style="border:none;padding-left:110px;">
                 <el-checkbox-group v-model="checkList5" @change='check_value_5_2($event)'>
-                <!-- <el-checkbox label="记录查询" style="visibility:hidden" ></el-checkbox> -->
                 <el-checkbox style="width:110px;" label="访客记录"></el-checkbox>
                 <el-checkbox label="5">操作</el-checkbox>
             </el-checkbox-group>
@@ -375,6 +362,9 @@ const item = {
                     if(this.roleId==1){
                         return true
                     }
+                     else if(this.roleInfoMenu.length<1){
+                        return true
+                    }
                     else{
                       
                         return this.roleInfoMenu[14].indexOf('15')==-1?false:true
@@ -448,7 +438,7 @@ const item = {
                     }
                 })
             },
-            handleDelete3(val){
+            handleDelete4(val){
                 this.dialogFormVisible =true 
                this.roleInfoId=val.roleInfoId
             },
@@ -528,7 +518,13 @@ const item = {
                     return true
                 }
             },
-           
+           handleDelete3(item){
+               if(item.roleInfoId==5||item.roleInfoId==6){
+                    return true
+                }else{
+                    return false
+                }
+           }
            
         },
        
@@ -541,6 +537,7 @@ const item = {
         padding:50px 20px 20px 20px;
         display: flex;
         flex-direction: column;
+        overflow: hidden;
         .authority{
             display: flex;
         }
@@ -569,7 +566,7 @@ const item = {
                     flex: 1;
                     padding:0 20px;
                     border-radius:15px 15px 0 0;
-                    overflow-y: auto;
+                    overflow: hidden;
                 }
                .operate{
                 position:absolute;
@@ -577,11 +574,14 @@ const item = {
                 top: 0px;
                 width:100%;
                 min-height:60px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
                 background: #fff;
                 border-radius: 4px;
                 z-index:9999;
                 border: 1px solid #FAFAFA;
-                cursor: pointer;
+                cursor: pointer;             
                 p{
                     line-height: 30px;
                     text-align: center;               
@@ -591,11 +591,16 @@ const item = {
                                 }
                     }
                 }
+                 .operate2{
+                  min-height:30px; 
+                  top: 10px;
+                }
             }
          }
    
-    .el-checkbox+.el-checkbox{
+   .RoleMange /deep/ .el-checkbox{
             margin-left: 30px;
+            margin-right: 0;
             width: 110px;
     }
     .bounced{
@@ -606,6 +611,7 @@ const item = {
     .chakan{
         width:100%;
         text-align: left;
+        
         .user_description{
             position: relative;
             width: 360px;

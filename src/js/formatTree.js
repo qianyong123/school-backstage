@@ -1,3 +1,4 @@
+//树形下拉框
 export function getTrees(list,parentId) {
     let items= {};
     // 获取每个节点的直属子节点，*记住是直属，不是所有子节点

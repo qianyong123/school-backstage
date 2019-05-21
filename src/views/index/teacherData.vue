@@ -72,7 +72,11 @@
         
         <div class="collegeChart1Box">
             <div class="collegeChart1">
-                <div class="collegeChart1-top">
+                <div class="collegeChart1-top" :class="{'collegeChart1-top2':isdownload==1}">
+                     <div class="collegeChart-p" v-if="isdownload==1">
+                        <p class="top" style=" font-weight: 600;">考勤分析</p>
+                        <p class="details"  @click="abnormityData">异常名单</p>
+                    </div>
                     <div>
                         <el-dropdown @command="handleCommand" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;">
@@ -102,14 +106,18 @@
                             placeholder="年/月/日">
                         </el-date-picker>                                                                  
                     </div>
-                    <p class="top" style=" font-weight: 600;">考勤分析</p>
-                    <p class="details"  @click="abnormityData">异常名单</p>
+                    <p v-if="isdownload==0" class="top" style=" font-weight: 600;">考勤分析</p>
+                    <p v-if="isdownload==0" class="details"  @click="abnormityData">异常名单</p>
                 </div>
                 <div id="collegeCharts2" style="height:420px;width:100%;"></div>
                 <div class="collegeChart1-data">人均外出总时长<span>16.8h</span> ， 人均每日外出时长<span>5.6h</span> </div>
             </div>
             <div class="collegeChart2" style="margin-left:20px;">
-                <div class="collegeChart1-top">
+                <div class="collegeChart1-top" :class="{'collegeChart1-top2':isdownload==1}">
+                     <div class="collegeChart-p" v-if="isdownload==1">
+                         <p class="top" style=" font-weight: 600;">实时归寝人数</p>
+                        <p class="details" @click="backData">未归名单</p> 
+                    </div>
                     <div>
                         <el-dropdown @command="handleCommand2" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;">
@@ -125,14 +133,14 @@
                         type="datetime"
                         style="width:200px;margin:0 15px;"                    
                         :clearable="false"
-                        value-format="timestamp"
-                         format="yyyy/MM/dd hh:mm"
-                        placeholder="年/月/日 时/分">
+                        value-format="timestamp" 
+                         format="yyyy/MM/dd HH:mm"              
+                        placeholder="年/月/日 时分">
                         </el-date-picker>
                                             
                     </div>
-                    <p class="top" style=" font-weight: 600;">实时归寝人数</p>
-                     <p class="details" @click="backData">未归名单</p>               
+                    <p  v-if="isdownload==0" class="top" style=" font-weight: 600;">实时归寝人数</p>
+                     <p  v-if="isdownload==0" class="details" @click="backData">未归名单</p>               
                 </div>
                 <div class="divBox">
                     <div id="college" style="height:420px;width:50%;"></div>
@@ -235,7 +243,7 @@
   center>
     <el-table
         :data="tableData"
-        height="350"
+        height="400"
         style="width: 100%">
         <el-table-column
         prop="name"
@@ -313,6 +321,9 @@ import {mapState}  from 'vuex'
 import { setTimeout } from 'timers';
     export default {
         name:"Index",
+         props:[
+            'isdownload'
+        ],
         components:{
          
         },      
@@ -373,7 +384,8 @@ import { setTimeout } from 'timers';
                     theme: "bubble"
                 },
                 myChart:null,
-                loading:null
+                loading:null,
+                radius:[145,150],//环形图的大小
             }
         },
         created() { 
@@ -382,11 +394,16 @@ import { setTimeout } from 'timers';
                     this.collegeList=res.data.data
                 }
             })
-        },       
-        mounted(){    
+        }, 
+             
+        mounted(){  
+            if(this.isdownload==1){
+                this.radius=[120,125]                   
+            }  
             this.college()      
             // this.collegeLine()
             this.collegeColumnar()
+             
             // this.collegeColumnar2()
             // this.collegeLine2()        
         
@@ -455,18 +472,19 @@ import { setTimeout } from 'timers';
             abnormityData(){
                 this.abnormityTime=true
                 let data='2019/12/12'
-                this.abnormityName=`${data}~${data} 考勤异常名单`
+                this.abnormityName=`${data}~${data} \xa0\xa0\xa0考勤异常名单`
             },
             //未归名单点击
             backData(){
                 this.details=true
-                this.detailsName='2019/12/12 22:12'+' '+'未归名单'
+                this.detailsName='2019/12/12 22:12'+'\xa0\xa0\xa0'+'未归名单'
             },
                //学院概况图表
          college(){
                 var total = this.total;//最大温度数据单独出来定义，方便环形总数的修改              
                 var collegeValue1=this.collegeValue1
                 var rate=parseInt((collegeValue1/total)*100)+'%'
+                var radius=this.radius
                 console.log(collegeValue1)
                 var  myChart =this.$echarts.init(document.getElementById('college'))
                 var placeHolderStyle={
@@ -525,7 +543,7 @@ import { setTimeout } from 'timers';
                         type: 'pie',
                         clockWise: true, //顺时加载
                         hoverAnimation: false, //鼠标移入变大
-                        radius: [145, 150],
+                        radius,
                         itemStyle: placeHolderStyle,
                         label: {
                             normal: {
@@ -825,7 +843,7 @@ import { setTimeout } from 'timers';
            .details{
                     cursor: pointer;
                     &:hover{
-                        color: rgba(229,0,98,1);
+                        // color: rgba(229,0,98,1);
                     }
                 }
          .collegeDetail-top,.collegeStatistics{
@@ -996,12 +1014,19 @@ import { setTimeout } from 'timers';
                 margin-bottom: 20px;    
                  .collegeChart1-top{
                             width: 100%;
-                            height: 35px;
+                            min-height: 35px;
                             display: flex;
                             justify-content: space-between;
                             align-items: center; 
                             margin-bottom:10px;
                             position: relative;
+                               .collegeChart-p{
+                                display: flex;
+                                margin-bottom: 15px;
+                                p:nth-child(1){
+                                    margin-right: 15px;
+                                }
+                            }
                                // .top{
                             //     position: absolute;  
                             //     width: 100px;                 
@@ -1015,11 +1040,13 @@ import { setTimeout } from 'timers';
                             // }
                             
                         }        
-                    
+                     .collegeChart1-top2{
+                            flex-direction: column;
+                        } 
                     .collegeChart2-right{
                         display: flex;
                         align-items: center; 
-                        min-height: 32px;
+                        min-height: 35px;
                     } 
                     .collegeChart1-data{
                         display: flex;

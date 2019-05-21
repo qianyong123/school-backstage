@@ -19,7 +19,7 @@
       :page-size="pageSize"
       layout="prev, pager, next,jumper,slot"
       :total="total">
-      <span style="margin-left:1%;"> <el-button style="border:1px solid #dcdfe6">确认</el-button></span>
+      <span style="margin-left:1%;"> <el-button class="pagination-btn" style="border:1px solid #dcdfe6;">确认</el-button></span>
     </el-pagination>
     </div>
      </div>

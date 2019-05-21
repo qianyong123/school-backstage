@@ -51,9 +51,9 @@
                 placeholder="年/月/日">
                 </el-date-picker>
                 <el-input style="width:120px;margin-left:10px;" v-model="value3" placeholder="姓名/学号"></el-input>                       
-            <el-button style="margin-left:10px;" size="small">查询</el-button>    
+            <el-button style="margin-left:10px;" size="small"  @click="queryCallerRecord">查询</el-button>    
         </div>
-        <el-button size="small" icon="el-icon-download"  @click="queryCallerRecord"></el-button>      
+        <el-button size="small" icon="el-icon-upload2"  @click="exportData"></el-button>      
       </div>
     </div>
     <div class="content">
@@ -68,6 +68,14 @@
           <el-table-column width="30">
                     <template slot-scope="scope">
                         <div style=" visibility: hidden;">{{scope.$index}}</div>
+                    </template>
+                   
+            </el-table-column> 
+           <el-table-column width="150" :label="'照片'">
+                    <template slot-scope="scope">
+                      <div class="imgBox">
+                          <img class="img" :src="scope.row.visitorImg==null?'':scope.row.visitorImg" alt="">
+                      </div>
                     </template>
                    
             </el-table-column> 
@@ -121,47 +129,55 @@
       <div class="CallerRecordss">
         
          <div class="logImg">
-            <div style="background:#ccc;width:130px;height:150px;">
-                <!-- <img src="" alt=""> -->
+            <div style="width:130px;height:150px;">
+                <img :src="userMsg.visitorImg==null?'':userMsg.visitorImg" alt="">
             </div>
         </div> 
         <div class="userIfoBox">
             <div class="div">
                 <span class="span">访客姓名：</span>
-                <span>姓名sd</span>
+                <span>{{userMsg.visitorName}}</span>
             </div>
             <div class="div">
                 <span class="span">手机：</span>
-                <span>12365478999</span>
+                <span>{{userMsg.visitorPhone}}</span>
             </div>
             
-            <div class="div">
-                <span class="span">辅导员：</span>
-                <span>阿萨德</span>
+            <div class="div div2">
+                <span class="span">身份证号：</span>
+                <span>{{userMsg.visitorIdnum}}</span>
             </div>
             <div class="div">
-                <span>辅导员手机：</span>
-                <span>12365478999</span>
+                <span class="span">访问对象：</span>
+                <span>{{userMsg.studentInfoName}}</span>
+            </div>
+            <div class="div">
+                <span class="span">学号：</span>
+                <span>{{userMsg.studentInfoNo}}</span>
             </div>
             <div class="div div2">
-                <span class="span">班级信息：</span>
-                <span class="span2">电影学院-好莱坞电影专业-2018级-好莱坞电影专业</span>
+                <span class="span">访问地址：</span>
+                <span class="span2">{{userMsg.roomMsg}}</span>
             </div>
             <div class="div div2">
-                <span class="span">房间信息：</span>
-                <span class="span2">a区-5栋-501</span>
+                <span class="span">来访时间：</span>
+                <span class="span2">{{userMsg.visitorCome}}</span>
+            </div>
+            <div class="div div2">
+                <span class="span">离开时间：</span>
+                <span class="span2">{{userMsg.visitorTo}}</span>
             </div>
             <div class="div">
                 <span class="span">关系：</span>
-                <span>男</span>
+                <span>{{userMsg.applyVisitorType}}</span>
             </div>
-           <div class="div">
+           <div class="div" v-if="userMsg.applyVisitorType!='同学'">
                 <span class="span">性别：</span>
-                <span>男</span>
+                <span>{{userMsg.studentInfoSex}}</span>
             </div>
             <div class="div div2">
                 <span class="span">访问事由：</span>
-                <span>色粉</span>
+                <span>{{userMsg.visitorReason}}</span>
             </div>
         </div>
       </div>
@@ -175,7 +191,9 @@
 
 <script>
 import {
-  queryMenuById
+  queryMenuById,
+  queryVisitorRecord,
+  visitorRecordExcelOut
   } from '@/axios/api.js'
 import {
   floorlist_2,
@@ -193,33 +211,34 @@ export default {
         selectValue1:null,
         selectValue2:null,
 
-        value1:null,
-        value2:null,
-        value3:null,
+        value1:'',
+        value2:'',
+        value3:'',
         value4:null,
       deleteId:null,
       more:false,
       accountList: [
-        { name: "照片", props: "roleInfoName" },
-        { name: "姓名", props: "userInfoName"},
-        { name: "电话", props: "manageRange" },
-        { name: "来访时间", props: "userName" },
-        { name: "离开实际", props: "userName" },
-        { name: "访问对象", props: "userName" },
-         { name: "房间信息", props: "userName" },
-          { name: "事由", props: "userName" },
+        // { name: "照片", props: "visitorImg" },
+        { name: "访问姓名", props: "visitorName"},
+        { name: "电话", props: "visitorPhone" },
+        { name: "来访时间", props: "visitorCome" },
+        { name: "离开时间", props: "visitorTo" },
+        { name: "访问对象", props: "studentInfoName" },
+         { name: "房间信息", props: "roomMsg" },
+          { name: "事由", props: "visitorReason" },
       ],
       // tableList: [],
       multipleSelection: [],
-      tableData: [{roleInfoName:'名字'}],
+      tableData: [],
       pageSize:10,
-      pageNum1:1,
+      pageNum:1,
       total:0,
       currentPage2: 1,
       options1:[],
       options2:[],
       roleInfoMenu:[],
       roleId:null,
+      userMsg:{}
     };
   },
   mounted () {
@@ -232,6 +251,7 @@ export default {
  },
  created(){
        this.roleInfoMenu=this.$store.state.roleInfoMenu
+       this.queryVisitorRecords()
           let roleId=localStorage.getItem('roleId')  
           this.roleId=roleId
           if(this.roleInfoMenu.length<1){    
@@ -257,6 +277,9 @@ export default {
                 if(this.roleId==1){
                     return true
                 }
+                 else if(this.roleInfoMenu.length<1){
+                        return true
+                    }
                 else{
                     return this.roleInfoMenu[4].indexOf('5')==-1?false:true
                 }
@@ -269,34 +292,78 @@ export default {
     //页数量
       handleSizeChange(val) {
         this.pageSize =val
-        
+         this.queryVisitorRecords()
 
       },
       // 页码
       handleCurrentChange(val) {
            this.pageNum =val
-          
+           this.queryVisitorRecords()
         },
-        //tab列表请求
-      list(){
-        
+      
+        blobs(data,msg){
+          const content = data
+          const blob = new Blob([content])
+          const fileName =msg
+          if ('download' in document.createElement('a')) { // 非IE下载
+          const elink = document.createElement('a')
+          elink.download = fileName
+          elink.style.display = 'none'
+          elink.href = URL.createObjectURL(blob)
+          document.body.appendChild(elink)
+          elink.click()
+          URL.revokeObjectURL(elink.href) // 释放URL 对象
+          document.body.removeChild(elink)
+          } else { // IE10+下载
+          navigator.msSaveBlob(blob, fileName)
+          }
+            },
+        //导出数据    
+      exportData(){
+         visitorRecordExcelOut({
+          regionId:this.selectValue1,
+          floorId:this.selectValue1,
+          visitorCome_start:this.value1,
+          visitorCome_end:this.value2,
+          nameOrNo:this.value3,       
+        }).then(res=>{
+                if(res.status==200&&res.data!=null){
+                      this.blobs(res.data,'访问记录.xls')
+                  }else{
+                      this.$message('导出失败',res.data.msg)
+                  }
+              })
+      },
+      //查询访客记录
+      queryVisitorRecords(){
+        queryVisitorRecord({
+          regionId:this.selectValue1,
+          floorId:this.selectValue1,
+          visitorCome_start:this.value1,
+          visitorCome_end:this.value2,
+          nameOrNo:this.value3,
+          pageNum:this.pageNum,
+          pageSize:this.pageSize
+        }).then(res=>{
+          console.log('访客记录',res)
+          if(res.data.code==200){
+            this.tableData=res.data.data.list
+            this.total=res.data.data.total
+          }else{
+            this.$message('查询访客记录失败 ' +res.data.msg);
+          }
+        })
       },
     //查询
      queryCallerRecord() {
         console.log('查询访客记录')
-
+        this.queryVisitorRecords()
       },
       //模态框消失
       shutModal(){
           
       },
-      //新增账号
-      addUserIfo(){
-        let userInfoName=/^\w{6,16}$/
-        let phone=/^1[3456789]\d{9}$/
       
-     
-      },
       //区域下拉
       changeArea(){
             floorlist_2({ regionId:this.selectValue1}).then(res => {
@@ -308,14 +375,7 @@ export default {
             }
           });
       },
-      //编辑保存
-      updateUserManages(){
       
-      },
-      //新增账号接口
-      addUserManages(){
-        
-      },
     //点击操作
      clickOperate(scope,row){
           console.log(scope,row)
@@ -327,19 +387,7 @@ export default {
     handleEdit(val){
         this.more=true
        console.log(val)
-       
-    },
-
-    
-    
-    //查询
-    search(){
-    
-      
-    },
-    //新增
-    dialogAdds( ){
-    
+      this.userMsg=val
     },
    
   }
@@ -352,6 +400,7 @@ export default {
   padding: 50px 20px 20px 20px;
   display: flex;
   flex-direction: column;
+   overflow: hidden;
   .header {
     min-height:120px;
     width: 100%;
@@ -372,7 +421,6 @@ export default {
           width: 100%;
         justify-content: space-between;
           padding: 5px 0;
-         
         .collegeNmae2{       
             display: flex;
             min-height:32px;
@@ -394,13 +442,25 @@ export default {
     flex-direction: column;
     .tablesx {
       flex: 1;
-      overflow: auto;
+       overflow: hidden;
       border-radius:15px 15px 0 0;
-
+      .imgBox{
+        height:50px;
+        width:50px;
+        overflow: hidden;
+        border-radius:50%;
+        display: flex;
+        align-items: center;
+        .img{
+          max-height:100%;
+          width:100%;
+          border-radius:50%;
+        }
+      }
     }
    
   }
-    // 弹框 新增
+    // 查看
     .CallerRecordss{
             width: 100%;
             min-height:100px;      
@@ -420,6 +480,7 @@ export default {
                 padding-left: 20px;
                 flex-wrap: wrap;
                 align-content: flex-start;
+                margin-top:6px;
                 justify-content: space-between;
             }
             .logImg{
@@ -436,11 +497,11 @@ export default {
             }
             .div{
                 width: 50%; 
-                min-height: 32px; 
+                min-height:10px; 
                 display: flex;
                 line-height: 20px;
-                align-items: center;   
-                margin-bottom: 10px;
+                align-items: flex-start;   
+                margin-bottom: 20px;
                 .span{
                     display: inline-block;
                     min-width:85px;
@@ -450,10 +511,10 @@ export default {
             }     
             .div2{
                 width: 100%; 
-                min-height: 32px; 
+                min-height:10px; 
                 display: flex;
-                align-items:center;  
-                margin-bottom :10px;
+                align-items:flex-start;  
+                margin-bottom :20px;
                 // margin-top: 6px;
                 // cursor: pointer;
                 .span2{
@@ -471,6 +532,7 @@ export default {
         width: 100%;
         display: flex;
         align-items: center;
+        height: 50px;
     }
     .pagination_2{
         margin: 0 auto;

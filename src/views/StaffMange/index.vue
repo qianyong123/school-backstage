@@ -21,7 +21,7 @@
                                 :auto-upload='false'
                                 :on-exceed="handleExceed"
                                 :file-list="fileList">
-                                <el-button size="small" icon="el-icon-upload2"></el-button>
+                                <el-button size="small" icon="el-icon-download"></el-button>
                                 <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
                                 </el-upload>
                             </div>
@@ -42,7 +42,7 @@
                             </el-input>
                             <el-button @click="StudentsData(1)" size="small">查询</el-button>
                         </div>                    
-                        <el-button @click="outExcelStudents" size="small" icon="el-icon-download"></el-button>   
+                        <el-button @click="outExcelStudents" size="small" icon="el-icon-upload2"></el-button>   
                         <!-- <input type="file" :id="id" name="image" class="getImgUrl_file" @change="preview($event)">                    -->
                     </div>
                 </el-tab-pane>
@@ -64,7 +64,7 @@
                                 :auto-upload='false'
                                 :on-exceed="handleExceed"
                                 :file-list="fileList">
-                                 <el-button size="small" icon="el-icon-upload2"></el-button>
+                                 <el-button size="small" icon="el-icon-download"></el-button>
                                 <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
                                 </el-upload>
                             </div> 
@@ -98,7 +98,7 @@
                             </el-input>
                             <el-button @click="StudentsData(2)" size="small">查询</el-button>
                         </div> 
-                        <el-button size="small" @click="outExcelStudents" icon="el-icon-download"></el-button>                       
+                        <el-button size="small" @click="outExcelStudents" icon="el-icon-upload2"></el-button>                       
                     </div>
                                                                 
                 </el-tab-pane>
@@ -119,7 +119,7 @@
                                 :auto-upload='false'
                                 :on-exceed="handleExceed"
                                 :file-list="fileList">
-                                 <el-button size="small" icon="el-icon-upload2"></el-button>
+                                 <el-button size="small" icon="el-icon-download"></el-button>
                                 <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
                                 </el-upload>
                             </div>   
@@ -157,7 +157,7 @@
                             </el-input>
                             <el-button @click="StudentsData(3)" size="small">查询</el-button>
                         </div>             
-                        <el-button size="small" @click="outExcelStudents" icon="el-icon-download"></el-button>                                               
+                        <el-button size="small" @click="outExcelStudents" icon="el-icon-upload2"></el-button>                                               
                     </div>   
                 </el-tab-pane>
                 <el-tab-pane label="其他" name="其他">
@@ -177,7 +177,7 @@
                                 :auto-upload='false'
                                 :on-exceed="handleExceed"
                                 :file-list="fileList">
-                                 <el-button size="small" icon="el-icon-upload2"></el-button>
+                                 <el-button size="small" icon="el-icon-download"></el-button>
                                 <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
                                 </el-upload>
                             </div> 
@@ -199,7 +199,7 @@
                             <el-button @click="StudentsData(4)" size="small">查询</el-button>
                         </div>
                        
-                        <el-button @click="outExcelStudents" size="small" icon="el-icon-download"></el-button>                       
+                        <el-button @click="outExcelStudents" size="small" icon="el-icon-upload2"></el-button>                       
                     </div> 
                 </el-tab-pane>
                 <el-tab-pane label="黑名单库" name="黑名单库">
@@ -219,7 +219,7 @@
                                 :auto-upload='false'
                                 :on-exceed="handleExceed"
                                 :file-list="fileList">
-                                 <el-button size="small" icon="el-icon-upload2"></el-button>
+                                 <el-button size="small" icon="el-icon-download"></el-button>
                                 <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
                                 </el-upload>
                             </div>
@@ -232,7 +232,7 @@
                             <el-button @click="StudentsData(5)" size="small">查询</el-button>
                         </div>
                      
-                        <el-button @click="outExcelStudents" size="small" icon="el-icon-download"></el-button>                       
+                        <el-button @click="outExcelStudents" size="small" icon="el-icon-upload2"></el-button>                       
                     </div>
                 </el-tab-pane>
             </el-tabs>
@@ -240,9 +240,50 @@
           
         </div>
         <div class="ClassManage-main">
-            <div class="tableBox">
-                <el-table     
-                    v-if="activeName!='黑名单库'"           
+            <div class="tableBox" v-if="isTable"  >
+                <el-table                                
+                    ref="multipleTable"
+                    v-loading="loading"               
+                     element-loading-text="拼命加载中"
+                    element-loading-spinner="el-icon-loading"
+                    element-loading-background="rgba(255, 255, 255, 0.8)"
+                    :data="tableData"
+                    tooltip-effect="dark"
+                    stripe
+                    @cell-mouse-enter="mouseTable"                 
+                    height="100%"
+                    @selection-change="handleSelectionChange"
+                    style="width:100%">
+                    <el-table-column
+                    type="selection"
+                    width="55">
+                    </el-table-column>                  
+                    <el-table-column
+                    v-for="(item,index) in dataHeader"
+                    :key="index"
+                    :prop="item.props"
+                    :label="item.name"
+                   >    
+                           
+                    </el-table-column>
+                    
+                   
+                  
+                    <el-table-column v-if="navjurisdiction2()" label="操作" width="80">
+                        <template slot-scope="scope" style="position: relative;">
+                            <div>
+                                <i class="el-icon-more" @click.stop="clickOperate(scope, scope.row)"></i>
+                                <div class="operate" v-if="scope.$index==deleteId">
+                                    <p @click="handleEdit(scope, scope.row)">编辑</p>
+                                    <p @click="handleDelete(scope.$index, scope.row)">删除</p>                                  
+                                </div>
+                            </div>                          
+                        </template>
+                    </el-table-column>
+                </el-table>              
+            </div>
+             <div class="tableBox" v-else-if="activeName=='辅导员'"  >
+                <el-table                                
                     ref="multipleTable"
                     v-loading="loading"               
                      element-loading-text="拼命加载中"
@@ -286,9 +327,48 @@
                             </el-tooltip>
                            
                         </template>
+                    </el-table-column>                  
+                    <el-table-column v-if="navjurisdiction2()" label="操作" width="80">
+                        <template slot-scope="scope" style="position: relative;">
+                            <div>
+                                <i class="el-icon-more" @click.stop="clickOperate(scope, scope.row)"></i>
+                                <div class="operate" v-if="scope.$index==deleteId">
+                                    <p @click="handleEdit(scope, scope.row)">编辑</p>
+                                    <p @click="handleDelete(scope.$index, scope.row)">删除</p>                                  
+                                </div>
+                            </div>                          
+                        </template>
                     </el-table-column>
+                </el-table>              
+            </div>
+            <div class="tableBox" v-else-if="activeName=='宿管'"  >
+                <el-table                                
+                    ref="multipleTable"
+                    v-loading="loading"               
+                     element-loading-text="拼命加载中"
+                    element-loading-spinner="el-icon-loading"
+                    element-loading-background="rgba(255, 255, 255, 0.8)"
+                    :data="tableData"
+                    tooltip-effect="dark"
+                    stripe
+                    @cell-mouse-enter="mouseTable"                 
+                    height="100%"
+                    @selection-change="handleSelectionChange"
+                    style="width:100%">
                     <el-table-column
-                    v-if="activeName=='宿管'&&dataHeader.length>1"   
+                    type="selection"
+                    width="55">
+                    </el-table-column>                  
+                    <el-table-column
+                    v-for="(item,index) in dataHeader"
+                    :key="index"
+                    :prop="item.props"
+                    :label="item.name"
+                   >    
+                           
+                    </el-table-column>
+                    
+                    <el-table-column                 
                     label="管理楼栋"         
                     >
                         <template slot-scope="scope">
@@ -305,7 +385,7 @@
                             </el-tooltip>
                            
                         </template>
-                    </el-table-column>
+                    </el-table-column>                 
                     <el-table-column v-if="navjurisdiction2()" label="操作" width="80">
                         <template slot-scope="scope" style="position: relative;">
                             <div>
@@ -317,9 +397,10 @@
                             </div>                          
                         </template>
                     </el-table-column>
-                </el-table>
-                <el-table
-                    v-else
+                </el-table>              
+            </div>
+            <div class="tableBox"  v-else-if="activeName=='黑名单库'">
+                <el-table               
                     ref="multipleTable"
                     v-loading="loading"               
                      element-loading-text="拼命加载中"
@@ -340,8 +421,8 @@
                     label="照片"         
                     >
                         <template slot-scope="scope">                        
-                           <div style="width:50px;height:50px;">
-                               <img style="width:50px;height:50px;" :src="(scope.row.blacklistImg) | blacklistsImg" alt="">
+                           <div class="imgBox">
+                               <img class="img" :src="(scope.row.blacklistImg) | blacklistsImg" alt="">
                            </div>
                         </template>
                     </el-table-column>
@@ -444,7 +525,8 @@ import {
     saveExcelOtherPeopleTest,
     saveExcelOtherPeople,
     outExcelBlacklist,
-    saveExcelBlacklist
+    saveExcelBlacklist,
+   
 } from '@/axios/api'
 import { parse } from 'semver';
 import { setTimeout } from 'timers';
@@ -577,6 +659,7 @@ export default {
                 return names
             },
               blacklistsImg(row){
+                // console.log(row)
                 let img=null
                 if(row!=''&&row!=null){
                     // console.log('img',row)
@@ -628,6 +711,9 @@ export default {
                     if(this.roleId==1){
                         return true
                     }
+                     else if(this.roleInfoMenu.length<1){
+                        return true
+                    }
                     else if(id==1){
                        return this.roleInfoMenu[10].indexOf('学生')==-1?false:true
                     }
@@ -642,6 +728,9 @@ export default {
             navjurisdiction2(){
                 return function(){
                     if(this.roleId==1){
+                        return true
+                    }
+                     else if(this.roleInfoMenu.length<1){
                         return true
                     }
                     else if(this.activeName=='学生'){
@@ -662,6 +751,12 @@ export default {
                         // return this.roleInfoMenu[10].indexOf('11-5')==-1?false:true
                     }
                 }
+            },
+            isTable(){
+                if(this.activeName=='学生'||this.activeName=='其他'){
+                    return true
+                }
+                else false
             }
         },
       
@@ -676,6 +771,7 @@ export default {
              }
          },      
         methods: {
+      
             //导入成功或失败
             handleAvatarSuccess(file){
                 console.log(file)
@@ -795,15 +891,16 @@ export default {
             outExcelStudents(){
                 if(this.activeName=='学生'){
                     outExcelStudent().then(res=>{
+                        console.log('blob学生',res)
                          if(res.status==200&&res.data!=null){
-                            this.blobs(res.data,'导出学生.xls')
+                            this.blobs(res.data,'学生.xls')
                         }
                     })
                 }
                 else if(this.activeName=='宿管'){
                     HousemasterInfooutExcel().then(res=>{
                         if(res.status==200&&res.data!=null){
-                            this.blobs(res.data,'导出宿管.xls')
+                            this.blobs(res.data,'宿管.xls')
                         }
                         
                     })
@@ -811,21 +908,21 @@ export default {
                 else if(this.activeName=='辅导员'){
                     TeacherInfoOutExcel().then(res=>{
                         if(res.status==200&&res.data!=null){
-                            this.blobs(res.data,'导出辅导员.xls')
+                            this.blobs(res.data,'辅导员.xls')
                         }
                     })
                 }
                  else if(this.activeName=='其他'){
                      outExcelOtherPeople().then(res=>{
                         if(res.status==200&&res.data!=null){
-                            this.blobs(res.data,'导出其他人.xls')
+                            this.blobs(res.data,'其他人.xls')
                         }
                     })
                 }
                  else if(this.activeName=='黑名单库'){
                       outExcelBlacklist().then(res=>{
                         if(res.status==200&&res.data!=null){
-                            this.blobs(res.data,'导出黑名单.xls')
+                            this.blobs(res.data,'黑名单.xls')
                         }
                     })
                 }
@@ -2227,6 +2324,7 @@ export default {
     padding:50px 20px 20px 20px;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     .ClassManage-top{
         min-height:150px;
         width: 100%;
@@ -2270,7 +2368,6 @@ export default {
         border-radius:15px;
         display: flex;
         flex-direction: column;
-        margin-bottom: 10px;
         // position: relative;
         .tableBox{
             flex: 1;
@@ -2284,6 +2381,19 @@ export default {
             }  
             td{
             color: $haedColor;
+            }
+              .imgBox{
+                height:50px;
+                width:50px;
+                overflow: hidden;
+                border-radius:50%;
+                display: flex;
+                align-items: center;
+                .img{
+                max-height:100%;
+                width:100%;
+                border-radius:50%;
+                }
             }
         }
         .operate{

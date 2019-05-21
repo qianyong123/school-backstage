@@ -8,8 +8,8 @@
                     <div class="collegeNmaeBox">                                
                         <div class="collegeNmae">
                             <div class="collegeNmae2">
-                                <el-button size="small" icon="el-icon-plus" @click="newly(1)"></el-button>
-                                 <el-upload
+                                <el-button size="small" icon="el-icon-setting" @click="newly(1)"></el-button>
+                                 <!-- <el-upload
                                 class="upload-demo"
                                 style="margin:0 10px;"
                                 action="https://jsonplaceholder.typicode.com/posts/"
@@ -21,8 +21,7 @@
                                 :on-exceed="handleExceed"
                                 :file-list="fileList">
                                 <el-button size="small" icon="el-icon-upload2"></el-button>
-                                <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
-                                </el-upload>
+                                </el-upload> -->
                                 <el-button size="small" icon="el-icon-delete" @click="deleteDate(1)"></el-button>
                             </div>
                             <span class="spanName" style="margin-left:0;">类型：</span>
@@ -75,12 +74,13 @@
                             <el-input
                             placeholder="设备编号"
                             v-model="value"
-                            style="width:120px;margin:0 10px;"
+                            style="width:120px;margin-left:10px;"
                             >
                             </el-input>
-                            <el-button @click="queryName(1)" size="small">查询</el-button>
+                            <el-button style="margin-left:10px;" v-if="isdownload==0" @click="queryName(1)" size="small">查询</el-button>
+                             <el-button v-else style="margin:10px 10px 5px 0;" @click="queryName(1)" size="small">查询</el-button>
                         </div>                    
-                        <el-button @click="outExcelStudents" size="small" icon="el-icon-download"></el-button>   
+                        <!-- <el-button @click="outExcelStudents" size="small" icon="el-icon-download"></el-button>    -->
                         <!-- <input type="file" :id="id" name="image" class="getImgUrl_file" @change="preview($event)">                    -->
                     </div>
                 </el-tab-pane>
@@ -90,7 +90,7 @@
                         <div class="collegeNmae">
                             <div class="collegeNmae2">
                                 <el-button size="small" icon="el-icon-plus" @click="newly(2)"></el-button>
-                                <el-upload
+                                <!-- <el-upload
                                 class="upload-demo"
                                 style="margin:0 10px;"
                                 action="https://jsonplaceholder.typicode.com/posts/"
@@ -102,8 +102,7 @@
                                 :on-exceed="handleExceed"
                                 :file-list="fileList">
                                  <el-button size="small" icon="el-icon-upload2"></el-button>
-                                <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
-                                </el-upload>
+                                </el-upload> -->
                                 <el-button size="small" icon="el-icon-delete" @click="deleteDate(2)"></el-button>
                             </div> 
                             <span class="spanName" style="margin-left:0;">依附设备：</span>
@@ -144,7 +143,7 @@
                             </el-input>
                             <el-button @click="queryName(2)" size="small">查询</el-button>
                         </div> 
-                        <el-button size="small" @click="outExcelStudents" icon="el-icon-download"></el-button>                       
+                        <!-- <el-button size="small" @click="outExcelStudents" icon="el-icon-download"></el-button>                        -->
                     </div>
                                                                 
                 </el-tab-pane>
@@ -153,7 +152,7 @@
                       <div class="collegeNmae">
                             <div class="collegeNmae2">
                                 <el-button size="small" icon="el-icon-plus" @click="newly(3)"></el-button>
-                                <el-upload
+                                <!-- <el-upload
                                 class="upload-demo"
                                 style="margin:0 10px;"
                                 action="https://jsonplaceholder.typicode.com/posts/"
@@ -165,8 +164,7 @@
                                 :on-exceed="handleExceed"
                                 :file-list="fileList">
                                  <el-button size="small" icon="el-icon-upload2"></el-button>
-                                <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
-                                </el-upload>
+                                </el-upload> -->
                                 <el-button size="small" icon="el-icon-delete" @click="deleteDate(3)"></el-button>
                             </div>   
                             <span class="spanName" style="margin-left:0;">厂家：</span>
@@ -222,12 +220,13 @@
                             <el-input
                             placeholder="设备编号"
                             v-model="value3"
-                            style="width:120px;margin:0 10px;"
+                            style="width:120px;margin-left:10px;"
                             >
                             </el-input>
-                            <el-button @click="queryName(3)" size="small">查询</el-button>
+                            <el-button style="margin-left:10px;" v-if="isdownload==0" @click="queryName(3)" size="small">查询</el-button>
+                            <el-button v-else style="margin:10px 0 5px 0;" @click="queryName(1)" size="small">查询</el-button>
                         </div>             
-                        <el-button size="small" @click="outExcelStudents" icon="el-icon-download"></el-button>                                               
+                        <!-- <el-button size="small" @click="outExcelStudents" icon="el-icon-download"></el-button>                                                -->
                     </div>   
                 </el-tab-pane>
                 <el-tab-pane label="大屏" name="大屏" v-if="navjurisdiction(4)" >
@@ -235,7 +234,7 @@
                         <div class="collegeNmae">
                              <div class="collegeNmae2">                    
                                 <el-button size="small" icon="el-icon-plus" @click="newly(4)"></el-button>
-                                <el-upload
+                                <!-- <el-upload
                                 class="upload-demo"
                                 style="margin:0 10px;"
                                 action="https://jsonplaceholder.typicode.com/posts/"
@@ -247,8 +246,7 @@
                                 :on-exceed="handleExceed"
                                 :file-list="fileList">
                                  <el-button size="small" icon="el-icon-upload2"></el-button>
-                                <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
-                                </el-upload>
+                                </el-upload> -->
                                 <el-button size="small" icon="el-icon-delete" @click="deleteDate(4)"></el-button>
                             </div> 
                             <span class="spanName" style="margin-left:0;">状态：</span>
@@ -300,7 +298,7 @@
                             <el-button @click="queryName(4)" size="small">查询</el-button>
                         </div>
                        
-                        <el-button @click="outExcelStudents" size="small" icon="el-icon-download"></el-button>                       
+                        <!-- <el-button @click="outExcelStudents" size="small" icon="el-icon-download"></el-button>                        -->
                     </div> 
                 </el-tab-pane>
                 <el-tab-pane label="固件更新" name="固件更新" v-if="navjurisdiction(5)" >
@@ -320,6 +318,70 @@
                         </div>                   
                     </div>
                 </el-tab-pane>
+                 <el-tab-pane label="未绑定终端" name="未绑定终端" v-if="navjurisdiction(6)" >
+                    <div class="collegeNmaeBox">  
+                      <div class="collegeNmae">
+                            <div class="collegeNmae2">
+                                <el-button size="small" icon="el-icon-delete" @click="deleteDate(6)"></el-button>
+                            </div>
+                             <span class="spanName" style="margin-left:0">获取时间：</span>
+                             <el-date-picker
+                            v-model="queryTime"
+                            type="date"
+                            format="yyyy/MM/dd"
+                            :clearable="false"
+                             style="width:130px;"
+                            value-format="timestamp"
+                            placeholder="年/月/日">
+                            </el-date-picker>
+                            <span style="margin:0 5px;">-</span>
+                            <el-date-picker
+                            v-model="queryTime2"
+                            type="date"
+                            format="yyyy/MM/dd"
+                            :clearable="false"
+                            style="width:130px;"
+                            value-format="timestamp"
+                            placeholder="年/月/日">
+                            </el-date-picker>
+                            <el-input
+                            placeholder="设备名称"
+                            v-model="value6"
+                            style="width:130px;margin:0 10px;"
+                            >
+                            </el-input>
+                            <el-button @click="queryName(6)" size="small">查询</el-button>
+                        </div>                   
+                    </div>
+                </el-tab-pane>
+                  <el-tab-pane label="同步日志" name="同步日志" v-if="navjurisdiction(7)" >
+                    <div class="collegeNmaeBox">  
+                      <div class="collegeNmae">
+                           
+                             <span class="spanName" style="margin-left:0">时间：</span>
+                             <el-date-picker
+                            v-model="queryTime3"
+                            type="date"
+                            format="yyyy/MM/dd"
+                            :clearable="false"
+                             style="width:130px;"
+                            value-format="timestamp"
+                            placeholder="年/月/日">
+                            </el-date-picker>
+                            <span style="margin:0 5px;">-</span>
+                            <el-date-picker
+                            v-model="queryTime4"
+                            type="date"
+                            format="yyyy/MM/dd"
+                            :clearable="false"
+                            style="width:130px;margin-right:10px;"
+                            value-format="timestamp"
+                            placeholder="年/月/日">
+                            </el-date-picker>                         
+                            <el-button @click="queryName(7)" size="small">查询</el-button>
+                        </div>                   
+                    </div>
+                </el-tab-pane>
             </el-tabs>
             </div>
           
@@ -327,10 +389,10 @@
         <div class="ClassManage-main">
             <div class="tableBox">
                 <el-table
-                    ref="multipleTable"
+                    ref="multipleTable2"
                     v-loading="loading"  
                     v-show="activeName=='赤眸'"             
-                     element-loading-text="拼命加载中"
+                    element-loading-text="拼命加载中"
                     element-loading-spinner="el-icon-loading"
                     element-loading-background="rgba(255, 255, 255, 0.8)"
                     :data="tableData"
@@ -351,27 +413,7 @@
                            <div>{{scope.row.name}}</div>
                         </template>
                     </el-table-column>
-                     <el-table-column                 
-                    label="类型"         
-                    >
-                        <template slot-scope="scope">                         
-                           <div>{{scope.row.name}}</div>
-                        </template>
-                    </el-table-column>
-                     <el-table-column                 
-                    label="所在位置"         
-                    >
-                        <template slot-scope="scope">                         
-                           <div>{{scope.row.name}}</div>
-                        </template>
-                    </el-table-column>
-                     <el-table-column                 
-                    label="标识"         
-                    >
-                        <template slot-scope="scope">                         
-                           <div>{{scope.row.name}}</div>
-                        </template>
-                    </el-table-column>
+                   
                      <el-table-column                 
                     label="状态"         
                     >
@@ -433,9 +475,94 @@
                             </div>                          
                         </template>
                     </el-table-column>
-                </el-table>
+                </el-table>  
                 <el-table
-                    v-show="activeName!='赤眸'"     
+                    v-show="activeName=='同步日志'"                 
+                    v-loading="loading"               
+                     element-loading-text="拼命加载中"
+                    element-loading-spinner="el-icon-loading"
+                    element-loading-background="rgba(255, 255, 255, 0.8)"
+                    :data="tableData"
+                    tooltip-effect="dark"
+                    stripe
+                    @cell-mouse-enter="mouseTable"                 
+                    height="100%"               
+                    style="width:100%">   
+                    <el-table-column   
+                    width="30"       
+                    >
+                        <template  slot-scope="scope">                         
+                           <div style=" visibility: hidden;">{{scope.$index}}</div>
+                        </template>
+                    </el-table-column>             
+                     <el-table-column                 
+                    label="标题"         
+                    >
+                        <template slot-scope="scope">                         
+                           <div>{{scope.row.name}}</div>
+                        </template>
+                    </el-table-column>  
+                     <el-table-column                 
+                    label="设备名称"         
+                    >
+                        <template slot-scope="scope">                         
+                           <div>{{scope.row.name}}</div>
+                        </template>
+                    </el-table-column> 
+                     <el-table-column                 
+                    label="发送状态"         
+                    >
+                        <template slot-scope="scope">                         
+                            <div :class="{statusColor:scope.row.status=='未发送'}">{{scope.row.status}}</div>
+                        </template>
+                    </el-table-column> 
+                      <el-table-column                 
+                    label="发送提示"         
+                    >
+                        <template slot-scope="scope">                         
+                           <div>{{scope.row.name}}</div>
+                        </template>
+                    </el-table-column>   
+                      <el-table-column                 
+                    label="接收状态"         
+                    >
+                        <template slot-scope="scope">                         
+                           <div :class="{statusColor:scope.row.status=='未发送'}">{{scope.row.status}}</div>
+                        </template>
+                    </el-table-column>   
+                      <el-table-column                 
+                    label="接收提示"         
+                    >
+                        <template slot-scope="scope">                         
+                           <div>{{scope.row.name}}</div>
+                        </template>
+                    </el-table-column>    
+                      <el-table-column                 
+                    label="时间"         
+                    >
+                        <template slot-scope="scope">                         
+                           <div>{{scope.row.name}}</div>
+                        </template>
+                    </el-table-column>  
+                     <el-table-column                 
+                    label="备注"         
+                    >
+                        <template slot-scope="scope">                         
+                           <div>{{scope.row.name}}</div>
+                        </template>
+                    </el-table-column>   
+                     <el-table-column                 
+                    label="设置" 
+                    width="100"        
+                    >
+                        <template slot-scope="scope">                         
+                           <div style="color:#09f;cursor: pointer;">重发</div>
+                           <div v-if="false">{{scope.$index}}</div>
+                        </template>
+                    </el-table-column>                   
+                </el-table>                     
+                <el-table
+                    v-show="showTable"   
                     ref="multipleTable"
                     v-loading="loading"               
                      element-loading-text="拼命加载中"
@@ -459,22 +586,14 @@
                     :label="item.name"
                    >                 
                     </el-table-column>
-                   
-                    <!-- <el-table-column
-                    v-if="activeName=='宿管'"   
-                    label="管理楼栋"         
-                    >
-                        <template slot-scope="scope">
-                           
-                           
-                        </template>
-                    </el-table-column> -->
+                 
                     <el-table-column v-if="navjurisdiction2()" label="操作" width="80">
                         <template slot-scope="scope" style="position: relative;">
                             <div>
                                 <i class="el-icon-more" @click.stop="clickOperate(scope, scope.row)"></i>
                                 <div class="operate" v-if="scope.$index==deleteId">
-                                    <p @click="handleEdit(scope, scope.row)">编辑</p>
+                                    <p v-if="activeName!='未绑定终端'" @click="handleEdit(scope, scope.row)">编辑</p>
+                                     <p v-else @click="handleEdit(scope, scope.row)">绑定</p>
                                     <p v-if="activeName=='固件更新'" @click="handTuisong">推送</p>
                                     <p @click="handleDelete(scope.$index, scope.row)">删除</p>                                  
                                 </div>
@@ -580,6 +699,11 @@ const Students4=[
         {name:'文件大小',props:'majorAmount'},
         {name:'更新说明',props:'classAmount'},
     ]
+     const Students6=[
+        {name:'设备名称',props:'name'},      
+        {name:'IP',props:'majorAmount'},
+        {name:'获取时间',props:'classAmount'},
+    ]
 export default {
     name:"ClassManage",
     components:{
@@ -625,11 +749,16 @@ export default {
             Select16:null,
             Select17:null,
             tuisongValue:0,
-           value:'',
-           value2:'',
-           value3:'',
-           value4:'',
-           value5:'',
+            queryTime:'',
+            queryTime2:'',
+            queryTime3:'',
+            queryTime4:'',
+            value:'',
+            value2:'',
+            value3:'',
+            value4:'',
+            value5:'',
+            value6:'',
 
             //类型
             types: [
@@ -685,12 +814,13 @@ export default {
             value: '',
             multipleSelection: [], //表格多选
             tableData: [                   
-             {parentMsg:'在保',props:'parentMsg'},
-             {parentMsg:'已过保',props:'parentMsg'},
+            //  {parentMsg:'在保',props:'parentMsg',status:'已发送',},
+            //  {parentMsg:'已过保',props:'parentMsg',status:'未发送',},
             ],
             roleInfoMenu:[],
             roleId:null,
-            popupTitle:''
+            popupTitle:'',
+            isdownload:0,
         }
     },
         filters:{
@@ -713,8 +843,11 @@ export default {
             bus.$on('handleSizeChange2',(val)=>{
                 this.handleSizeChange2(val)
             })
-            bus.$on('newCall',this.newCall)
-            
+            bus.$on('newCall',this.newCall)   
+             let widths=document.documentElement.clientWidth
+            if(widths<=1366){
+                this.isdownload=1
+            }        
             this.arealist()
         },
         created(){
@@ -744,6 +877,9 @@ export default {
                     if(this.roleId==1){
                         return true
                     }
+                    else if(this.roleInfoMenu.length<1){
+                        return true
+                    }
                     else if(id==1){
                        return this.roleInfoMenu[12].indexOf('赤眸')==-1?false:true
                     }
@@ -760,12 +896,16 @@ export default {
                        return this.roleInfoMenu[12].indexOf('固件更新')==-1?false:true
                     }
                 }
+               
             },
             navjurisdiction2(){
                 return function(){
                     if(this.roleId==1){
                         return true
-                    }                 
+                    }     
+                     else if(this.roleInfoMenu.length<1){
+                        return true
+                    }            
                     else if(this.activeName=='赤眸'){
                         return this.roleInfoMenu[12].indexOf('13-1')==-1?false:true
                     }
@@ -782,12 +922,19 @@ export default {
                         return this.roleInfoMenu[12].indexOf('13-5')==-1?false:true
                     }
                 }
+            },
+             showTable(){
+                if(this.activeName=='赤眸'||this.activeName=='同步日志'){
+                    return false
+                }
+                else return true
             }
         },
          watch: {
              activeIndex(){
                 this.multipleSelection=[]
                 this.$refs.multipleTable.clearSelection()
+                 this.$refs.multipleTable2.clearSelection()
                 this.pageNum=1
                 // this.tableData=[]
                 this.loading=true
@@ -809,11 +956,15 @@ export default {
                   else if(this.activeName=='固件更新'){
                     this.dataHeader=Students5
                 }
+                 else if(this.activeName=='未绑定终端'){
+                    this.dataHeader=Students6
+                }
              }
          },      
         methods: {
             //导入成功或失败
             handleAvatarSuccess(file){
+             
                 console.log(file)
                  let fd = new FormData();
                 fd.append('file',file.raw);//传文件
@@ -830,6 +981,7 @@ export default {
                  else if(this.activeName=='大屏'){
                 }
                  else if(this.activeName=='固件更新'){
+                     
                 }
                 
             },          
@@ -956,7 +1108,13 @@ export default {
                  else if(id==4){
                      console.log(`查询${id}`,)
                 }
-                  else if(id==5){
+                else if(id==5){
+                     console.log(`查询${id}`,)
+                }
+                else if(id==6){
+                     console.log(`查询${id}`,)
+                }
+                else if(id==7){
                      console.log(`查询${id}`,)
                 }
             },
@@ -967,6 +1125,7 @@ export default {
                 this.newName=id
                if(id==1){
                     this.newVisible=true
+                    this.popupTitle='批量修改'  
                }
                else if(id==2){
                    this.newVisible2=true
@@ -1038,13 +1197,15 @@ export default {
                 let multipleSelection=[],
                     teacherInfoImg=[],
                     classid=[];
-                if(id==1){
+                if(this.multipleSelection.length<1){
+                        this.$message({
+                        message: '请你选择删除数据！'              
+                    }); 
+                }
+                else{
                     console.log(this.multipleSelection)
-                    if(this.multipleSelection.length<1){
-                          this.$message({
-                            message: '请你选择删除数据！'              
-                        });       
-                    }else{
+                          
+                   
                         //  this.multipleSelection.forEach((data)=>{
                         //    if(data.studentInfoId!=''||data.studentInfoId!=null){
                         //        multipleSelection.push(data.studentInfoId)
@@ -1054,101 +1215,43 @@ export default {
                         //    }
                           
                         // })
-                        //   this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
-                        //     confirmButtonText: '确定',
-                        //     cancelButtonText: '取消',
-                        //     type: 'warning'
-                        //     }).then(() => {
-                        //         deleteStudentInfo({
-                        //             studentInfoId :multipleSelection.join(','),
-                        //             }).then(res=>{
-                        //             console.log('删除多个学生',res)
-                        //             if(res.status==200&&res.data.code==200){
-                        //                 this.queryStudents()                                                                          
-                        //                 this.$message({type: 'success',message: '删除成功!'});
-                        //             }else{
-                        //                 this.$message({                                           
-                        //                     message: '删除失败'+res.data.msg
-                        //                 });
-                        //             }
-                        //         })
-                               
-                        //     }) 
-                    }
-                }
-                else if(id==2){
-                    console.log(this.multipleSelection)
-                     if(this.multipleSelection.length<1){
-                          this.$message({
-                            message: '请你选择删除数据！'              
-                        });       
-                    }else{
-                        
-                        
-                    }
-                }
-                 else if(id==3){
-                     console.log(this.multipleSelection)
-                      if(this.multipleSelection.length<1){
-                          this.$message({
-                            message: '请你选择删除数据！'              
-                        });       
-                    }else{                       
-                      
-                    }
-                }
-                else if(id==4){
-                     console.log(this.multipleSelection)
-                      if(this.multipleSelection.length<1){
-                          this.$message({
-                            message: '请你选择删除数据！'              
-                        });       
-                    }
-                }
-                else if(id==5){
-                     console.log(this.multipleSelection)
-                      if(this.multipleSelection.length<1){
-                          this.$message({
-                            message: '请你选择删除数据！'              
-                        });       
-                    }
-                }
-            },
-             //删除单个
-            handleDelete(scope,row){                             
-                    console.log('删除单个',row)
-                      this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+                          this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
                             confirmButtonText: '确定',
                             cancelButtonText: '取消',
                             type: 'warning'
                             }).then(() => {
-                                 if(this.activeName=='赤眸'){
-                                    
-                                }
-                                else if(this.activeName=='闸机'){
-                                }
-                                else if(this.activeName=='摄像头'){
-                                }
-                                else if(this.activeName=='大屏'){
-                                }
-                                else if(this.activeName=='固件更新'){
-                                }
-                            // deleteStudentInfo({
-                            //     studentInfoId:row.studentInfoId ,
-                            //     studentInfoImg:row.studentInfoImg
-                            //     }).then(res=>{
-                            //     if(res.status==200&&res.data.code==200){
-                            //         this.queryStudents()
-                            //         this.$message({type: 'success',message: '删除成功!'});
-                            //     }else{
-                            //         this.$message({                                           
-                            //             message: '删除失败'+res.data.msg
-                            //         });
-                            //     }
-                            // })
-                            
-                        })  
+                             
+                               
+                            }) 
+                    }              
                 
+            },
+             //删除单个
+            handleDelete(scope,row){                             
+                    console.log('删除单个',row)
+                    this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                        }).then(() => {
+                                if(this.activeName=='赤眸'){
+                                
+                            }
+                            else if(this.activeName=='闸机'){
+                            }
+                            else if(this.activeName=='摄像头'){
+                            }
+                            else if(this.activeName=='大屏'){
+                            }
+                            else if(this.activeName=='固件更新'){
+                            }
+                            else if(this.activeName=='未绑定终端'){
+                        }
+                        else if(this.activeName=='同步日志'){
+                        }
+                        
+                    })  
+        
               
             },
             //选中的表格数据
@@ -1174,6 +1277,7 @@ export default {
                 this.popupTitle='修改'   
                if(this.activeName=='赤眸'){
                      this.newVisible=true
+                      this.newName=6
                 }
                 else if(this.activeName=='闸机'){
                     this.newVisible2=true
@@ -1187,22 +1291,14 @@ export default {
                  else if(this.activeName=='固件更新'){
                       this.newVisible5=true
                 }
+                 else if(this.activeName=='未绑定终端'){
+                    this.newVisible=true
+                    this.newName=6
+                    this.popupTitle='绑定'   
+                }
             },
-            //编辑宿管确认
-            updateHousemasterInfos(newStaffMessage,img,manageFloor){
-                this.newVisible=false
-                
-            },
-            //编辑辅导员确认
-            updateTeacherInfos(newStaffMessage,img,classId){
-                this.newVisible=false
-              
-            },
-            //修改学生
-            updateStudentInfos(newStaffMessage){
-                let numbers=/^[0-9]*$/
-                
-            },
+                  
+           
             //编辑保存
             editSave(newStaffMessage){
                  let phone=/^1[3456789]\d{9}$/,
@@ -1220,8 +1316,11 @@ export default {
                  else if(this.activeName=='大屏'){
                       this.newVisible4=false
                 }
-                 else if(this.activeName=='固件更新'){
+                else if(this.activeName=='固件更新'){
                       this.newVisible5=false
+                }
+                 else if(this.activeName=='未绑定终端'){
+                      this.newVisible=false
                 }
                
             },
@@ -1241,6 +1340,10 @@ export default {
                     }
                     else if(this.activeName=='固件更新'){
                     }
+                     else if(this.activeName=='未绑定终端'){
+                    }
+                     else if(this.activeName=='同步日志'){
+                    }
             },
             //点击分页
              handleCurrentChange(val) {
@@ -1257,6 +1360,10 @@ export default {
                 }
                 else if(this.activeName=='固件更新'){
                 }
+                else if(this.activeName=='未绑定终端'){
+                }
+                    else if(this.activeName=='同步日志'){
+                }
             },
         },
        
@@ -1271,6 +1378,7 @@ export default {
     padding:50px 20px 20px 20px;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     .ClassManage-top{
         min-height:150px;
         width: 100%;
@@ -1297,7 +1405,7 @@ export default {
             display: flex;
             min-height:32px;
             align-items: center;
-            
+            flex-wrap: wrap;
         }
         .collegeNmae2{
             margin-right: 10px;
@@ -1306,6 +1414,7 @@ export default {
         .spanName{
             color: $haedColor;
             margin-left: 10px;
+           
         }
        
     }
@@ -1315,11 +1424,10 @@ export default {
         border-radius:15px;
         display: flex;
         flex-direction: column;
-        margin-bottom: 10px;
         // position: relative;
         .tableBox{
             flex: 1;
-            overflow: auto;  
+            overflow: hidden;
             border-radius:15px 15px 0 0;
             // th,td{
             //     text-align: center;
@@ -1329,6 +1437,9 @@ export default {
             }  
             td{
             color: $haedColor;
+            }
+            .statusColor{
+                color:  $bcgColor;
             }
         }
         .operate{

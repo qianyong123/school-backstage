@@ -107,7 +107,7 @@
                                 v-for="(item,index) in types1"
                                 :key="index"
                                 :label="item.label"                            
-                                :value="item.name">
+                                :value="item.value">
                                 </el-option>
                             </el-select> 
                            
@@ -251,8 +251,9 @@
                     element-loading-spinner="el-icon-loading"
                     element-loading-background="rgba(255, 255, 255, 0.8)"
                     :data="tableData"                
-                    stripe                         
-                    height="100%"                     
+                    stripe      
+                    tooltip-effect="dark"                   
+                    height="100%"                 
                     style="width:100%;">   
                    <el-table-column
                    width="30"
@@ -269,41 +270,26 @@
                     :label="item.name"
                    >                 
                     </el-table-column>
-                    <el-table-column v-if="activeIndex==0" :label="'处理状态'" width="250">
+                    <el-table-column :label="'处理状态'" width="250">
                         <template slot-scope="scope">
-                            <div>                               
+                            <div v-show="activeIndex==0">                               
                                 <span :class="{scheduleColor:scope.row.applyChangeBedApprovalResult=='0'}"> {{scope.row.applyChangeBedApprovalResult | applyLeaveApprovalResults2}}</span>
-                            </div>                          
-                        </template>
-                    </el-table-column>
-                     <el-table-column v-else-if="activeIndex==1" :label="'处理状态'" width="250">
-                        <template slot-scope="scope">
-                            <div>                               
+                            </div>  
+                            <div v-show="activeIndex==1">                               
                                 <span :class="{scheduleColor:scope.row.applyGoodsApprovalResult=='0'}"> {{scope.row.applyGoodsApprovalResult | applyLeaveApprovalResults}}</span>
-                            </div>                          
-                        </template>
-                    </el-table-column>
-                     <el-table-column v-else-if="activeIndex==2" :label="'处理状态'" width="250">
-                        <template slot-scope="scope">
-                            <div>                               
+                            </div>   
+                             <div v-show="activeIndex==2">                               
                                 <span :class="{scheduleColor:scope.row.applyRepairApprovalResult=='0'}"> {{scope.row.applyRepairApprovalResult | applyLeaveApprovalResults}}</span>
-                            </div>                          
-                        </template>
-                    </el-table-column>
-                     <el-table-column v-else-if="activeIndex==3" :label="'处理状态'" width="250">
-                        <template slot-scope="scope">
-                            <div>                               
+                            </div>   
+                             <div v-show="activeIndex==3">                               
                                 <span :class="{scheduleColor:scope.row.applyVisitorApprovalResult=='0'}"> {{scope.row.applyVisitorApprovalResult | applyLeaveApprovalResults}}</span>
-                            </div>                          
-                        </template>
-                    </el-table-column>
-                     <el-table-column v-else-if="activeIndex==4" :label="'处理状态'" width="250">
-                        <template slot-scope="scope">
-                            <div>                               
+                            </div>  
+                             <div v-show="activeIndex==4">                               
                                 <span :class="{scheduleColor:scope.row.applyLeaveApprovalResult=='0'}"> {{scope.row.applyLeaveApprovalResult | applyLeaveApprovalResults}}</span>
-                            </div>                          
+                            </div>                    
                         </template>
                     </el-table-column>
+                    
                     <el-table-column v-if="navjurisdiction2()" label="操作" width="100">
                         <template slot-scope="scope" style="position: relative;">
                             <div>
@@ -627,7 +613,8 @@ export default {
         },
         created(){
             this.roleInfoMenu=this.$store.state.roleInfoMenu
-              console.log(this.roleInfoMenu)
+            let type=this.$route.params.type
+              console.log(this.roleInfoMenu,type)
                let roleId=localStorage.getItem('roleId')  
                 this.roleId=roleId
                if(this.roleInfoMenu.length<1){  
@@ -653,6 +640,9 @@ export default {
                     if(this.roleId==1){               
                         return true
                     }
+                     else if(this.roleInfoMenu.length<1){
+                        return true
+                    }
                     else{
                          return this.roleInfoMenu[6].indexOf('7')==-1?false:true
                     }
@@ -664,7 +654,8 @@ export default {
              activeIndex(){                     
                 this.pageNum=1
                 this.tableData=[]
-                this.loading=true            
+                this.loading=true     
+                 this.total=0       
                 console.log(this.activeName)
                 if(this.activeName=='调寝'){
                     this.dataHeader=Students1
@@ -1139,12 +1130,13 @@ export default {
 
 <style lang="scss">
 @import '../../stylecss/commonStyle.scss';
-
 .ApplyRecord{
     flex: 1;
     padding:50px 20px 20px 20px;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+   
     .ClassManage-top{
         min-height:150px;
         width: 100%;
@@ -1153,6 +1145,7 @@ export default {
         justify-content: space-between;
         text-align: left;
         padding-top:20px;
+        // flex-wrap: wrap;
         // visibility: hidden;
         h4{
             color: $haedColor;
@@ -1190,19 +1183,17 @@ export default {
         border-radius:15px;
         display: flex;
         flex-direction: column;
-        margin-bottom: 10px;
-        // position: relative;
+        overflow: hidden;        
         .tableBox{
-            flex: 1;
-            overflow: auto;  
+            flex: 1;         
             border-radius:15px 15px 0 0;
-            // overflow: hidden;
+            overflow: hidden; 
            .scheduleColor{
                color: #E01763;
            }  
-            tr{
-                padding:0 20px!important;
-            }  
+            // tr{
+            //     padding:0 20px!important;
+            // }  
             th{
                 color: $color;
             } 

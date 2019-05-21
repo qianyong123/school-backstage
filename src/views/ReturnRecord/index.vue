@@ -4,7 +4,7 @@
             <h4>归寝记录</h4>
            <div class="collegeNmaeBox">                          
                 <div class="collegeNmae2">
-                    <div style="margin-bottom:10px;">
+                    <div class="collegeNmae2-div">
                         <span class="spanName" style="margin-left:0;">区域：</span>
                         <el-select style="width:120px;margin-right:10px;" @change="handArea" v-model="Select1" placeholder="请选择">   
                             <el-option :label="'全部'" :value="null"></el-option>                     
@@ -16,7 +16,7 @@
                             </el-option>
                         </el-select>
                     </div>
-                     <div style="margin-bottom:10px;">
+                     <div class="collegeNmae2-div">
                           <span class="spanName">楼栋：</span>
                             <el-select style="width:120px;margin-right:10px;"  v-model="Select2" placeholder="请选择">
                                   <el-option :label="'全部'" :value="null"></el-option>  
@@ -28,7 +28,7 @@
                                 </el-option>
                             </el-select>
                      </div>
-                    <div style="margin-bottom:10px;">
+                    <div class="collegeNmae2-div">
                         <span class="spanName">院系：</span>
                         <el-select style="width:120px;margin-right:10px;" @change="handCollege" v-model="Select3" placeholder="请选择">
                             <el-option :label="'全部'" :value="null"></el-option>  
@@ -40,7 +40,7 @@
                             </el-option>
                         </el-select>
                     </div>
-                      <div style="margin-bottom:10px;">
+                      <div class="collegeNmae2-div">
                             <span class="spanName">专业：</span>
                             <el-select style="width:120px;margin-right:10px;" @change="handMajorYear" v-model="Select4" placeholder="请选择">
                                 <el-option :label="'全部'" :value="null" ></el-option>  
@@ -52,7 +52,7 @@
                                 </el-option>
                             </el-select>
                       </div>
-                   <div style="margin-bottom:10px;">
+                   <div class="collegeNmae2-div">
                         <span class="spanName">年级：</span>
                         <el-select style="width:120px;margin-right:10px;" @change="handMajorYear"  v-model="Select5" placeholder="请选择">
                             <el-option :label="'全部'" :value="null" ></el-option>  
@@ -64,7 +64,7 @@
                             </el-option>
                         </el-select>
                    </div>
-                    <div style="margin-bottom:10px;">
+                    <div class="collegeNmae2-div">
                          <span class="spanName">班级：</span>
                         <el-select style="width:120px;margin-right:10px;"  v-model="Select6" placeholder="请选择">
                               <el-option :label="'全部'" :value="null"></el-option>  
@@ -76,7 +76,7 @@
                             </el-option>
                         </el-select>
                     </div>
-                    <div  style="margin-bottom:10px;">
+                    <div class="collegeNmae2-div">
                         <span class="spanName">时间：</span>     
                         <el-date-picker
                         v-model="queryTime1"
@@ -98,7 +98,7 @@
                         placeholder="年/月/日">
                         </el-date-picker>
                     </div>
-                    <div style="margin-bottom:10px;margin-right:10px;">
+                    <div style="margin-right:10px;" class="collegeNmae2-div">
                          <span class="spanName">归寝状态：</span>
                         <el-select style="width:120px;"  v-model="value1" placeholder="请选择">
                             <el-option
@@ -111,12 +111,12 @@
                     </div>
                     
                    
-                    <el-input style="width:120px;margin:0 10px 10px 0;" v-model="value2" placeholder="姓名/学号"></el-input>                       
-                    <el-button size="small" @click="queryName" style="margin-bottom:10px;margin-right:10px;">查询</el-button> 
-                    <el-button v-if="isdownload==1" size="small" style="margin-left:0px;margin-bottom:10px;" icon="el-icon-download"  @click="handleExport"></el-button>
+                    <el-input style="width:120px;margin-right:10px;" class="collegeNmae2-div" v-model="value2" placeholder="姓名/学号"></el-input>                       
+                    <el-button class="collegeNmae2-div" size="small" @click="queryName" style="margin-right:10px;">查询</el-button> 
+                    <el-button class="collegeNmae2-div" v-if="isdownload==1" size="small" style="margin-left:0px;" icon="el-icon-upload2"  @click="handleExport"></el-button>
                 </div>   
-                <div v-if="isdownload==0" style="margin-bottom:10px;">
-                    <el-button size="small" icon="el-icon-download"  @click="handleExport"></el-button>                                
+                <div v-if="isdownload==0" style="height:32px;">
+                    <el-button v-if="isdownload==0" class="collegeNmae2-div" size="small" icon="el-icon-upload2"  @click="handleExport"></el-button>                                
                 </div>                       
             </div> 
         </div>
@@ -159,7 +159,7 @@
                     label="时间"
                    >    
                         <template slot-scope="scope" style="position: relative;">
-                            <div>{{scope.row.dormRecorTime}}</div>                    
+                            <div>{{scope.row.dormRecordTime}}</div>                    
                         </template>         
                     </el-table-column>
                     <el-table-column                 
@@ -167,7 +167,7 @@
                     label="归寝状态"
                    >    
                         <template slot-scope="scope" style="position: relative;">
-                            <div :class="{statusColor:scope.row.dormRecorType==0,statusColor2:scope.row.dormRecorType==1,statusColor3:scope.row.dormRecorType==2}">{{scope.row.dormRecorType | status2}}</div>                    
+                            <div :class="{statusColor:scope.row.dormRecordType==0,statusColor2:scope.row.dormRecordType==1,statusColor3:scope.row.dormRecordType==2}">{{scope.row.dormRecordType | status2}}</div>                    
                         </template>         
                     </el-table-column>
                      <el-table-column                 
@@ -214,7 +214,7 @@
         <div class="ApplyRecordNew">
             <!-- <i class="el-icon-close close" @click="$emit('newCall')"></i>            -->
             <div class="logImg">
-                <div style="background:#ccc;width:130px;height:150px;">
+                <div style="width:130px;height:150px;">
                     <img :src="studentInfoMsg.studentInfoImg" alt="">
                 </div>
                 <!-- <img src="../../../static/img/t1.png" alt=""> -->
@@ -266,15 +266,15 @@
         <div class="ApplyRecordNew">
            
             <div class="userIfoBox">
-                <div class="div">
+                <div class="div" style="width:40%;">
                     <span class="span3">姓名</span>
                     <span>{{studentInfoMsg.studentInfoName}}</span>
                 </div>
-                <div class="div">
+                <div class="div" style="width:60%;">
                     <span class="span3">学号</span>
                     <span>{{studentInfoMsg.studentInfoNo}}</span>
                 </div>
-                <div class="div" style="width:100%">
+                <div class="div" style="width:100%;align-items:center;">
                     <span class="span3">时间</span>
                      <el-date-picker
                         v-model="time1"
@@ -433,7 +433,7 @@ export default {
             })
             bus.$on('newCall',this.newCall)
             let widths=document.documentElement.clientWidth
-            if(widths<2020){
+            if(widths<=2070){
                 this.isdownload=1
             }
             console.log(widths)
@@ -468,6 +468,9 @@ export default {
             navjurisdiction2(){
                 return function(){
                     if(this.roleId==1){
+                        return true
+                    }
+                     else if(this.roleInfoMenu.length<1){
                         return true
                     }
                     else{
@@ -710,6 +713,7 @@ export default {
     padding:50px 20px 20px 20px;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     .ClassManage-top{
         min-height:120px;
         width: 100%;
@@ -729,6 +733,7 @@ export default {
            min-height:32px;
           width: 100%;
           justify-content: space-between;
+          align-items: center;
         //   padding: 5px 0;
           flex-wrap: wrap;
          
@@ -736,7 +741,11 @@ export default {
             display: flex;
             min-height:32px;
            align-items: center;
-             flex-wrap: wrap;             
+             flex-wrap: wrap;  
+             padding-bottom:6px; 
+             .collegeNmae2-div{
+                 margin-top: 10px;
+             }          
         }
         .spanName{
             color: $haedColor;
@@ -752,11 +761,10 @@ export default {
         border-radius:15px;
         display: flex;
         flex-direction: column;
-        margin-bottom: 10px;
         // position: relative;
         .tableBox{
             flex: 1;
-            overflow: auto; 
+            overflow: hidden;
             border-radius:15px 15px 0 0; 
              .statusColor{
                  color: #FB9AA3;
@@ -816,6 +824,7 @@ export default {
             flex: 1;
             // padding-left: 20px;
             flex-wrap: wrap;
+            margin-top:6px;
             align-content: flex-start;
             justify-content: space-between;
         }
@@ -838,11 +847,11 @@ export default {
         }
         .div{
             width: 50%; 
-            min-height: 32px; 
+            min-height:10px; 
             display: flex;
             // line-height:32px;
-            align-items: center;   
-            margin-bottom: 10px;
+            align-items: flex-start;   
+            margin-bottom: 20px;
             .span{
                 display: inline-block;
                 min-width:85px;
@@ -858,10 +867,10 @@ export default {
         }     
         .div2{
             width: 100%; 
-            min-height: 32px; 
+            min-height:10px; 
             display: flex;
-            align-items:center;  
-            margin-bottom:10px;
+            align-items:flex-start;  
+            margin-bottom:20px;
             // margin-top: 6px;
             // cursor: pointer;
             .span2{

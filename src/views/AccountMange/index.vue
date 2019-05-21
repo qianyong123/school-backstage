@@ -78,7 +78,7 @@
       :page-size="pageSize"
       layout="prev, pager, next,jumper,slot"
       :total="total">
-      <span style="margin-left:1%;"> <el-button style="border:1px solid #dcdfe6">确认</el-button></span>
+      <span style="margin-left:1%;"> <el-button class="pagination-btn" style="border:1px solid #dcdfe6">确认</el-button></span>
     </el-pagination>
     </div>
      </div>
@@ -252,6 +252,9 @@ export default {
               if(this.roleId==1){
                   return true
               }
+               else if(this.roleInfoMenu.length<1){
+                        return true
+                    }
               else{
                   return this.roleInfoMenu[15].indexOf('16')==-1?false:true
               }
@@ -592,6 +595,7 @@ export default {
   padding: 50px 20px 20px 20px;
   display: flex;
   flex-direction: column;
+   overflow: hidden;
   .header {
     min-height:120px;
     width: 100%;
@@ -632,7 +636,7 @@ export default {
     flex-direction: column;
     .tablesx {
       flex: 1;
-      overflow: auto;
+       overflow: hidden;
       border-radius:15px 15px 0 0;
     }
    .operate{
@@ -721,6 +725,7 @@ export default {
      z-index: 55;
      width: 100%;
     display: flex;
+    height: 50px;
     align-items: center;
 }
 .pagination_2{

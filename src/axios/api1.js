@@ -1,12 +1,24 @@
 import qs from 'qs'
 import service from './request'
-let url ='http://192.168.2.118:8080/dormitoryManagement'
+let url ='http://192.168.2.115:8081/dormitoryManagement'
 // let url ='http://94.191.13.156:8080/dormitoryManagement'
 
 
 //登录
 export const requestLogin = data => { 
     return service({url: `${url}/auth/login`,method: 'post',data:qs.stringify(data)}) 
+};
+//发送验证码
+export const sendCode = data => { 
+    return service({url: `${url}/auth/sendCode`,method: 'post',data:qs.stringify(data)}) 
+};
+//验证码登录
+export const quickLogin = data => { 
+    return service({url: `${url}/auth/quickLogin`,method: 'post',data:qs.stringify(data)}) 
+};
+//找回密码登录
+export const forgetPassword = data => { 
+    return service({url: `${url}/auth/forgetPassword`,method: 'post',data:qs.stringify(data)}) 
 };
 //账号管理 列表页面
 export const accountListx = data => { 
@@ -132,4 +144,12 @@ export const bedGetBedNo = data => {
 //床位管理   分配床位
 export const distribution = data => { 
     return service({url: `${url}/bed/distribution`,method: 'post',data:data})
+};
+//床位管理   获取原居住人信息
+export const getOldResidenceInformation = data => { 
+    return service({url: `${url}/bed/getOldResidenceInformation`,method: 'get',params:data})
+};
+//床位管理   根据房间查询床位号
+export const getBedListByRoomId = data => { 
+    return service({url: `${url}/bed/getBedListByRoomId`,method: 'get',params:data})
 };

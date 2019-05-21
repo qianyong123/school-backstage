@@ -1,7 +1,7 @@
 <template>
       <div class="tableBox">
         <el-table  
-            v-show="activeName=='未归'"             
+            v-if="activeName=='未归'"             
             v-loading="loading"               
             element-loading-text="拼命加载中"
             element-loading-spinner="el-icon-loading"
@@ -49,7 +49,7 @@
             </el-table-column>
         </el-table>
          <el-table  
-            v-show="activeName=='晚归'"             
+            v-else-if="activeName=='晚归'"             
             v-loading="loading"               
             element-loading-text="拼命加载中"
             element-loading-spinner="el-icon-loading"
@@ -97,7 +97,7 @@
             </el-table-column>
         </el-table>
          <el-table  
-            v-show="activeName=='无记录'"             
+            v-else-if="activeName=='无记录'"             
             v-loading="loading"               
             element-loading-text="拼命加载中"
             element-loading-spinner="el-icon-loading"
@@ -145,7 +145,7 @@
             </el-table-column>
         </el-table>
          <el-table  
-            v-show="activeName=='连进连出'"             
+            v-else-if="activeName=='连进连出'"             
             v-loading="loading"               
             element-loading-text="拼命加载中"
             element-loading-spinner="el-icon-loading"
@@ -194,7 +194,7 @@
             </el-table-column>
         </el-table>
          <el-table  
-            v-show="activeName=='翻越'"             
+            v-else-if="activeName=='翻越'"             
             v-loading="loading"               
             element-loading-text="拼命加载中"
             element-loading-spinner="el-icon-loading"
@@ -240,7 +240,7 @@
             </el-table-column>
         </el-table>
          <el-table  
-            v-show="activeName=='尾随'"             
+            v-else-if="activeName=='尾随'"             
             v-loading="loading"               
             element-loading-text="拼命加载中"
             element-loading-spinner="el-icon-loading"
@@ -285,7 +285,7 @@
             </el-table-column>
         </el-table>
          <el-table  
-            v-show="activeName=='黑名单'"             
+            v-else-if="activeName=='黑名单'"             
             v-loading="loading"               
             element-loading-text="拼命加载中"
             element-loading-spinner="el-icon-loading"
@@ -326,7 +326,7 @@
             </el-table-column>
         </el-table>
          <el-table  
-            v-show="activeName=='访客超时'"             
+            v-else-if="activeName=='访客超时'"             
             v-loading="loading"               
             element-loading-text="拼命加载中"
             element-loading-spinner="el-icon-loading"
@@ -374,7 +374,7 @@
             </el-table-column>
         </el-table>
          <el-table  
-            v-show="activeName=='设备异常'"             
+            v-else-if="activeName=='设备异常'"             
             v-loading="loading"               
             element-loading-text="拼命加载中"
             element-loading-spinner="el-icon-loading"

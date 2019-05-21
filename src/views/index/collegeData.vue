@@ -9,87 +9,102 @@
             
         </div>      
         <div class="collegeDetailData">
-            <div class="collegeDetail-div">
-                <p>学生/辅导员</p>
-                <div class="collegeDetail-box">
-                   
-                    <div class="p2">
-                        <span>3000</span>
-                        <span class="span">学生人数</span>
+            <div class="collegeDetail-div">         
+                <div class="collegeDetail-div1">
+                    <p>学生/辅导员</p>
+                    <div class="collegeDetail-box">
+                    
+                        <div class="p2">
+                            <span>3000</span>
+                            <span class="span">学生人数</span>
+                        </div>
+                        <div class="p2">
+                            <span>2</span>
+                            <span class="span">辅导员人数</span>                      
+                        </div>
+                    
                     </div>
-                    <div class="p2">
-                        <span>2</span>
-                        <span class="span">辅导员人数</span>                      
-                    </div>
-                   
                 </div>
-            </div>
-            <div class="collegeDetail-div2"> 
-                 <p>学生/辅导员</p>
-                  <div class="collegeDetail-box2">
-                  
-                    <div class="p3">
-                        <span class="span">专业数</span>
-                        <span class="amounts">3</span>
-                        <span class="redios2"></span> 
+                <div class="collegeDetail-div2"> 
+                    <p>学生/辅导员</p>
+                    <div class="collegeDetail-box2">
+                    
+                        <div class="p3">
+                            <span class="span">专业数</span>
+                            <span class="amounts">3</span>
+                            <span class="redios2"></span> 
+                        </div>
+                        <div class="p3" style="margin-top:30px;">
+                            <span class="span">班级数</span>
+                            <span class="amounts">20</span>
+                            <span class="redios3"></span>                       
+                        </div>                 
                     </div>
-                    <div class="p3" style="margin-top:30px;">
-                        <span class="span">班级数</span>
-                        <span class="amounts">20</span>
-                        <span class="redios3"></span>                       
-                    </div>                 
                 </div>
-            </div>
-            
+             </div>
         </div>
     </div>
-    <div class="collegeStatistics" v-if="!switchValue">
+    <div class="collegeStatistics">
        <div style="display: flex;">
             <span class="span"></span>
             <p class="p" style="margin-bottom:30px;">数据统计</p>
         </div>
         <div class="collegeChart1Box">
             <div class="collegeChart1">
-                <div class="collegeChart1-top">
-                    <div>
+                <div class="collegeChart1-top" :class="{'collegeChart1-top2':isdownload==1}">
+                    <div class="collegeChart-p" v-if="isdownload==1">
+                        <p class="top" style=" font-weight: 600;">异常行为统计</p>
+                        <p style="cursor: pointer;" @click="checkForms(1)">异常报表</p>
+                    </div>
+                    <div :class="{'collegeChart-p':isdownload==1}">
                         <el-dropdown @command="handleCommand" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;">
-                                {{collegeName}}<i class="el-icon-arrow-down el-icon--right"></i>
+                                {{majorNmae}}<i class="el-icon-arrow-down el-icon--right"></i>
                             </div>
                             <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item  :command="{college_name:'全部',id:''}">全部</el-dropdown-item>
-                                <el-dropdown-item v-for="item in collegeList" :key="item.id" :command="item">{{item.college_name}}</el-dropdown-item>                                                   
+                                <el-dropdown-item  :command="{year_name:'全部',id:''}">全部</el-dropdown-item>
+                                <el-dropdown-item v-for="item in majorList" :key="item.id" :command="item">{{item.year_name}}</el-dropdown-item>                                                   
                             </el-dropdown-menu>
                         </el-dropdown>     
-                         <el-dropdown @command="handleGrade(1)" placement="bottom-start">
+                         <el-dropdown @command="handleGrade" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;margin:0 15px;">
                                 {{grade}}<i class="el-icon-arrow-down el-icon--right"></i>
                             </div>
                             <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item  :command="{college_name:'全部',id:''}">全部</el-dropdown-item>
-                                <el-dropdown-item v-for="item in collegeList" :key="item.id" :command="item">{{item.college_name}}</el-dropdown-item>                                                   
+                                <el-dropdown-item  :command="{year_name:'全部',id:''}">全部</el-dropdown-item>
+                                <el-dropdown-item v-for="item in yearList" :key="item.id" :command="item">{{item.year_name}}</el-dropdown-item>                                                   
                             </el-dropdown-menu>
                         </el-dropdown>  
-                         <el-dropdown @command="handleClasss(1)" placement="bottom-start">
+                         <el-dropdown @command="handleClasss" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;">
                                 {{classs}}<i class="el-icon-arrow-down el-icon--right"></i>
                             </div>
                             <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item  :command="{college_name:'全部',id:''}">全部</el-dropdown-item>
-                                <el-dropdown-item v-for="item in collegeList" :key="item.id" :command="item">{{item.college_name}}</el-dropdown-item>                                                   
+                                <el-dropdown-item  :command="{year_name:'全部',id:''}">全部</el-dropdown-item>
+                                <el-dropdown-item v-for="item in majorList" :key="item.id" :command="item">{{item.year_name}}</el-dropdown-item>                                                   
                             </el-dropdown-menu>
                         </el-dropdown>                                       
                     </div>
-                    <p class="top" style=" font-weight: 600;">异常行为统计</p>
+                    <p v-if="isdownload==0" class="top" style=" font-weight: 600;">异常行为统计</p>
                      <div class="collegeChart2-right">
                         <el-date-picker
                         v-model="timeValue"
-                        type="month"
+                        type="year"
                         style="width:100px;"
                         :clearable="false" 
-                        format="yyyy/MM"    
-                        placeholder="年/月">
+                         format="yyyy" 
+                        @change="selectYear"   
+                         value-format="timestamp"
+                        placeholder="年">
                         </el-date-picker>
+                         <el-dropdown @command="handleMonth" placement="bottom-start">
+                            <div class="el-dropdown-link" style="color:#333;margin-left:15px;">
+                                {{monthName}}<i class="el-icon-arrow-down el-icon--right"></i>
+                            </div>
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item v-for="item in monthList" :key="item.id" :command="item">{{item.name}}</el-dropdown-item>                                                   
+                            </el-dropdown-menu>
+                        </el-dropdown>
                         <el-dropdown @command="handleWeekName" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;margin:0 15px;">
                                 {{weekName}}<i class="el-icon-arrow-down el-icon--right"></i>
@@ -99,53 +114,67 @@
                                 <el-dropdown-item v-for="item in weekList" :key="item.id" :command="item">{{item.name}}</el-dropdown-item>                                                   
                             </el-dropdown-menu>
                         </el-dropdown>
-                        <p>异常报表</p>
+                        <p v-if="isdownload==0" style="cursor: pointer;" @click="checkForms(1)">异常报表</p>
                     </div>
                 </div>
                 <div id="collegeCharts1" style="height:420px;width:100%;"></div>
             </div>
             <div class="collegeChart2" style="margin-left:20px;">
-                <div class="collegeChart1-top">
-                    <div>
+                <div class="collegeChart1-top" :class="{'collegeChart1-top2':isdownload==1}">
+                    <div class="collegeChart-p" v-if="isdownload==1">
+                        <p class="top" style=" font-weight: 600;">违纪次数统计</p>
+                        <p style="cursor: pointer;" @click="checkForms(1)">违规报表</p>
+                    </div>
+                    <div :class="{'collegeChart-p':isdownload==1}">
                         <el-dropdown @command="handleCommand2" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;">
-                                {{collegeName2}}<i class="el-icon-arrow-down el-icon--right"></i>
+                                {{majorNmae2}}<i class="el-icon-arrow-down el-icon--right"></i>
                             </div>
                             <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item  :command="{college_name:'全部',id:''}">全部</el-dropdown-item>
-                                <el-dropdown-item v-for="item in collegeList" :key="item.id" :command="item">{{item.college_name}}</el-dropdown-item>                                                   
+                                <el-dropdown-item  :command="{year_name:'全部',id:''}">全部</el-dropdown-item>
+                                <el-dropdown-item v-for="item in majorList" :key="item.id" :command="item">{{item.year_name}}</el-dropdown-item>                                                   
                             </el-dropdown-menu>
                         </el-dropdown>
-                         <el-dropdown @command="handleGrade(2)" placement="bottom-start">
+                         <el-dropdown @command="handleGrade2" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;margin:0 15px;">
-                                {{grade}}<i class="el-icon-arrow-down el-icon--right"></i>
+                                {{grade2}}<i class="el-icon-arrow-down el-icon--right"></i>
                             </div>
                             <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item  :command="{college_name:'全部',id:''}">全部</el-dropdown-item>
-                                <el-dropdown-item v-for="item in collegeList" :key="item.id" :command="item">{{item.college_name}}</el-dropdown-item>                                                   
+                                <el-dropdown-item  :command="{year_name:'全部',id:''}">全部</el-dropdown-item>
+                                <el-dropdown-item v-for="item in yearList" :key="item.id" :command="item">{{item.year_name}}</el-dropdown-item>                                                   
                             </el-dropdown-menu>
                         </el-dropdown>  
-                         <el-dropdown @command="handleClasss(2)" placement="bottom-start">
+                         <el-dropdown @command="handleClasss2" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;">
-                                {{classs}}<i class="el-icon-arrow-down el-icon--right"></i>
+                                {{classs2}}<i class="el-icon-arrow-down el-icon--right"></i>
                             </div>
                             <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item  :command="{college_name:'全部',id:''}">全部</el-dropdown-item>
-                                <el-dropdown-item v-for="item in collegeList" :key="item.id" :command="item">{{item.college_name}}</el-dropdown-item>                                                   
+                                <el-dropdown-item  :command="{year_name:'全部',id:''}">全部</el-dropdown-item>
+                                <el-dropdown-item v-for="item in majorList" :key="item.id" :command="item">{{item.year_name}}</el-dropdown-item>                                                   
                             </el-dropdown-menu>
                         </el-dropdown>
                         
                     </div>
-                    <p class="top" style=" font-weight: 600;">违纪次数统计</p>
+                    <p v-if="isdownload==0" class="top" style=" font-weight: 600;">违纪次数统计</p>
                     <div class="collegeChart2-right">
                         <el-date-picker
                         v-model="timeValue2"
-                        type="month"
+                        type="year"
                         style="width:100px;"
                         :clearable="false" 
-                        format="yyyy/MM"    
-                        placeholder="年/月">
+                         format="yyyy" 
+                        @change="selectYear2"   
+                         value-format="timestamp"
+                        placeholder="年">
                         </el-date-picker>
+                         <el-dropdown @command="handleMonth2" placement="bottom-start">
+                            <div class="el-dropdown-link" style="color:#333;margin-left:15px;">
+                                {{monthName2}}<i class="el-icon-arrow-down el-icon--right"></i>
+                            </div>
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item v-for="item in monthList" :key="item.id" :command="item">{{item.name}}</el-dropdown-item>                                                   
+                            </el-dropdown-menu>
+                        </el-dropdown>
                         <el-dropdown @command="handleWeekName2" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;margin:0 15px;">
                                 {{weekName2}}<i class="el-icon-arrow-down el-icon--right"></i>
@@ -155,7 +184,7 @@
                                 <el-dropdown-item v-for="item in weekList" :key="item.id" :command="item">{{item.name}}</el-dropdown-item>                                                   
                             </el-dropdown-menu>
                         </el-dropdown>
-                        <p>违规报表</p>
+                        <p v-if="isdownload==0" style="cursor: pointer;" @click="checkForms(2)">违规报表</p>
                     </div>
                 </div>
                  <div id="collegeCharts2" style="height:420px;width:100%;"></div>
@@ -164,33 +193,37 @@
         </div>
         <div class="collegeChart1Box">
             <div class="collegeChart3">
-                <div class="collegeChart1-top">
-                    <div>
+                <div class="collegeChart1-top" :class="{'collegeChart1-top2':isdownload==1}">
+                     <div class="collegeChart-p" v-if="isdownload==1">
+                        <p class="top" style=" font-weight: 600;">报警处理统计</p>
+                        <p style="cursor: pointer;" @click="checkForms(1)">报警统计</p>
+                    </div>
+                    <div :class="{'collegeChart-p':isdownload==1}">
                         <el-dropdown @command="handleCommand3" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;">
-                                {{collegeName3}}<i class="el-icon-arrow-down el-icon--right"></i>
+                                {{majorNmae3}}<i class="el-icon-arrow-down el-icon--right"></i>
                             </div>
                             <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item  :command="{college_name:'全部',id:''}">全部</el-dropdown-item>
-                                <el-dropdown-item v-for="item in collegeList" :key="item.id" :command="item">{{item.college_name}}</el-dropdown-item>                                                   
+                                <el-dropdown-item  :command="{year_name:'全部',id:''}">全部</el-dropdown-item>
+                                <el-dropdown-item v-for="item in majorList" :key="item.id" :command="item">{{item.year_name}}</el-dropdown-item>                                                   
                             </el-dropdown-menu>
                         </el-dropdown>
-                         <el-dropdown @command="handleGrade(3)" placement="bottom-start">
+                         <el-dropdown @command="handleGrade3" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;margin:0 15px;">
-                                {{grade}}<i class="el-icon-arrow-down el-icon--right"></i>
+                                {{grade3}}<i class="el-icon-arrow-down el-icon--right"></i>
                             </div>
                             <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item  :command="{college_name:'全部',id:''}">全部</el-dropdown-item>
-                                <el-dropdown-item v-for="item in collegeList" :key="item.id" :command="item">{{item.college_name}}</el-dropdown-item>                                                   
+                                <el-dropdown-item  :command="{year_name:'全部',id:''}">全部</el-dropdown-item>
+                                <el-dropdown-item v-for="item in yearList" :key="item.id" :command="item">{{item.year_name}}</el-dropdown-item>                                                   
                             </el-dropdown-menu>
                         </el-dropdown>  
-                         <el-dropdown @command="handleClasss(3)" placement="bottom-start">
+                         <el-dropdown @command="handleClasss3" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;">
-                                {{classs}}<i class="el-icon-arrow-down el-icon--right"></i>
+                                {{classs3}}<i class="el-icon-arrow-down el-icon--right"></i>
                             </div>
                             <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item  :command="{college_name:'全部',id:''}">全部</el-dropdown-item>
-                                <el-dropdown-item v-for="item in collegeList" :key="item.id" :command="item">{{item.college_name}}</el-dropdown-item>                                                   
+                                <el-dropdown-item  :command="{year_name:'全部',id:''}">全部</el-dropdown-item>
+                                <el-dropdown-item v-for="item in majorList" :key="item.id" :command="item">{{item.year_name}}</el-dropdown-item>                                                   
                             </el-dropdown-menu>
                         </el-dropdown>
                          <el-dropdown @command="handleColltype" placement="bottom-start">
@@ -204,16 +237,26 @@
                         </el-dropdown>
                        
                     </div>
-                    <p class="top" style=" font-weight: 600;">报警处理统计</p>
+                    <p v-if="isdownload==0" class="top" style=" font-weight: 600;">报警处理统计</p>
                      <div class="collegeChart2-right">
                         <el-date-picker
                         v-model="timeValue3"
-                        type="month"
+                        type="year"
                         style="width:100px;"
                         :clearable="false" 
-                        format="yyyy/MM"    
-                        placeholder="年/月">
+                         format="yyyy" 
+                        @change="selectYear3"   
+                         value-format="timestamp"
+                        placeholder="年">
                         </el-date-picker>
+                         <el-dropdown @command="handleMonth3" placement="bottom-start">
+                            <div class="el-dropdown-link" style="color:#333;margin-left:15px;">
+                                {{monthName3}}<i class="el-icon-arrow-down el-icon--right"></i>
+                            </div>
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item v-for="item in monthList" :key="item.id" :command="item">{{item.name}}</el-dropdown-item>                                                   
+                            </el-dropdown-menu>
+                        </el-dropdown>
                         <el-dropdown @command="handleWeekName3" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;margin:0 15px;">
                                 {{weekName3}}<i class="el-icon-arrow-down el-icon--right"></i>
@@ -223,39 +266,43 @@
                                 <el-dropdown-item v-for="item in weekList" :key="item.id" :command="item">{{item.name}}</el-dropdown-item>                                                   
                             </el-dropdown-menu>
                         </el-dropdown>
-                        <p>报警统计</p>
+                        <p v-if="isdownload==0" style="cursor: pointer;" @click="checkForms(3)">报警统计</p>
                     </div>
                 </div>
                 <div id="collegeCharts3" style="height:420px;width:100%;"></div>
             </div>
             <div class="collegeChart4" style="margin-left:20px;">
-               <div class="collegeChart1-top">
-                    <div>
+               <div class="collegeChart1-top" :class="{'collegeChart1-top2':isdownload==1}">
+                    <div class="collegeChart-p" v-if="isdownload==1">
+                        <p class="top" style=" font-weight: 600;">申请处理统计</p>
+                        <p style="cursor: pointer;" @click="checkForms(1)">申请统计</p>
+                    </div>
+                    <div :class="{'collegeChart-p':isdownload==1}">
                         <el-dropdown @command="handleCommand4" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;">
-                                {{collegeName4}}<i class="el-icon-arrow-down el-icon--right"></i>
+                                {{majorNmae4}}<i class="el-icon-arrow-down el-icon--right"></i>
                             </div>
                             <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item  :command="{college_name:'全部',id:''}">全部</el-dropdown-item>
-                                <el-dropdown-item v-for="item in collegeList" :key="item.id" :command="item">{{item.college_name}}</el-dropdown-item>                                                   
+                                <el-dropdown-item  :command="{year_name:'全部',id:''}">全部</el-dropdown-item>
+                                <el-dropdown-item v-for="item in majorList" :key="item.id" :command="item">{{item.year_name}}</el-dropdown-item>                                                   
                             </el-dropdown-menu>
                         </el-dropdown>
-                        <el-dropdown @command="handleGrade(4)" placement="bottom-start">
+                        <el-dropdown @command="handleGrade4" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;margin:0 15px;">
-                                {{grade}}<i class="el-icon-arrow-down el-icon--right"></i>
+                                {{grade4}}<i class="el-icon-arrow-down el-icon--right"></i>
                             </div>
                             <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item  :command="{college_name:'全部',id:''}">全部</el-dropdown-item>
-                                <el-dropdown-item v-for="item in collegeList" :key="item.id" :command="item">{{item.college_name}}</el-dropdown-item>                                                   
+                                <el-dropdown-item  :command="{year_name:'全部',id:''}">全部</el-dropdown-item>
+                                <el-dropdown-item v-for="item in yearList" :key="item.id" :command="item">{{item.year_name}}</el-dropdown-item>                                                   
                             </el-dropdown-menu>
                         </el-dropdown>  
-                         <el-dropdown @command="handleClasss(4)" placement="bottom-start">
+                         <el-dropdown @command="handleClasss4" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;">
-                                {{classs}}<i class="el-icon-arrow-down el-icon--right"></i>
+                                {{classs4}}<i class="el-icon-arrow-down el-icon--right"></i>
                             </div>
                             <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item  :command="{college_name:'全部',id:''}">全部</el-dropdown-item>
-                                <el-dropdown-item v-for="item in collegeList" :key="item.id" :command="item">{{item.college_name}}</el-dropdown-item>                                                   
+                                <el-dropdown-item  :command="{year_name:'全部',id:''}">全部</el-dropdown-item>
+                                <el-dropdown-item v-for="item in majorList" :key="item.id" :command="item">{{item.year_name}}</el-dropdown-item>                                                   
                             </el-dropdown-menu>
                         </el-dropdown>
                         <el-dropdown @command="handleApplyType" placement="bottom-start">
@@ -269,16 +316,26 @@
                         </el-dropdown>
                        
                     </div>
-                    <p class="top" style=" font-weight: 600;">申请处理统计</p>
+                    <p v-if="isdownload==0" class="top" style=" font-weight: 600;">申请处理统计</p>
                      <div class="collegeChart2-right">
                         <el-date-picker
                         v-model="timeValue4"
-                        type="month"
+                        type="year"
                         style="width:100px;"
                         :clearable="false" 
-                        format="yyyy/MM"    
-                        placeholder="年/月">
+                         format="yyyy" 
+                        @change="selectYear4"   
+                         value-format="timestamp"
+                        placeholder="年">
                         </el-date-picker>
+                          <el-dropdown @command="handleMonth4" placement="bottom-start">
+                            <div class="el-dropdown-link" style="color:#333;margin-left:15px;">
+                                {{monthName4}}<i class="el-icon-arrow-down el-icon--right"></i>
+                            </div>
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item v-for="item in monthList" :key="item.id" :command="item">{{item.name}}</el-dropdown-item>                                                   
+                            </el-dropdown-menu>
+                        </el-dropdown>
                         <el-dropdown @command="handleWeekName4" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;margin:0 15px;">
                                 {{weekName4}}<i class="el-icon-arrow-down el-icon--right"></i>
@@ -288,25 +345,135 @@
                                 <el-dropdown-item v-for="item in weekList" :key="item.id" :command="item">{{item.name}}</el-dropdown-item>                                                   
                             </el-dropdown-menu>
                         </el-dropdown>
-                        <p>申请统计</p>
+                        <p v-if="isdownload==0" style="cursor: pointer;" @click="checkForms(4)">申请统计</p>
                     </div>
                 </div>
                 <div id="collegeCharts4" style="height:420px;width:100%;"></div>
             </div>
         </div>
     </div> 
+       <!-- 报表 -->
+     <el-dialog
+  :title="detailsName"
+  :visible.sync="details"
+  width="900px"
+  center>
+    <el-table
+    v-if="istable==1"
+        :data="tableData"
+        height="400"
+        style="width: 100%">
+        <el-table-column
+        prop="shu"
+        label="班级人数"
+        width="100"
+        >
+        </el-table-column>
+        <el-table-column
+        prop="data"
+        label="未归"
+        width="120"
+        >
+        </el-table-column>
+        <el-table-column
+        prop="name"
+       
+        label="连续*日以上无记录"
+        >
+        </el-table-column>
+        <el-table-column
+        prop="classMsg"
      
+        label="连续*日以上晚归">
+        </el-table-column>
+         <el-table-column
+        prop="name"
+        label="班级信息">
+        </el-table-column>
+        <el-table-column
+        prop="name"
+        label="辅导员信息">
+        </el-table-column>
+    </el-table>
+      <el-table
+      v-else-if="istable==2"
+        :data="tableData"
+        height="400"
+        style="width: 100%">
+        <el-table-column
+        prop="shu"
+        width="120"
+        label="班级人数"
+        >
+        </el-table-column>
+        <el-table-column
+        prop="data"
+        width="120"
+        label="违纪次数"
+        >
+        </el-table-column>
+        <el-table-column
+        prop="name"
+        width="120"
+        label="已处理"
+        >
+        </el-table-column>
+        <el-table-column
+        prop="classMsg"
+        width="120"
+        label="待处理">
+        </el-table-column>
+         <el-table-column
+        prop="name"
+        label="班级信息">
+        </el-table-column>
+        <el-table-column
+        prop="name"
+        label="辅导员信息">
+        </el-table-column>
+    </el-table>
+     <el-table
+        v-else
+        :data="tableData"
+        height="400"
+        style="width: 100%">
+        <el-table-column
+        v-for="(item,index) in tableHader3"
+        :key="index"
+        :prop="item.prop"
+        :label="item.name"
+        width="100"
+        >
+        </el-table-column>
+        <el-table-column
+        prop="name"
+        label="班级信息">
+        </el-table-column>
+        <el-table-column
+        prop="name"
+        label="辅导员信息">
+        </el-table-column>
+    </el-table>
+</el-dialog>
   </div>
 </template>
 
 <script>
-import { article,queryMenuById,queryCollegeByName} from '../../axios/api.js'
+import { 
+    queryMenuById,
+    queryCollegeByName,
+    queryClassById,
+    queryByYearName
+} from '../../axios/api.js'
 import areaData from './areaData'
 import 'quill/dist/quill.js';
 import {mapState}  from 'vuex'
 import { setTimeout } from 'timers';
+const monthData=['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'] 
+const weekData=['一周','二周','三周','四周','五周']
     export default {
         name:"Index",
+        props:['isdownload'],
         components:{
           areaData
         },      
@@ -319,10 +486,10 @@ import { setTimeout } from 'timers';
                 collegeValue1:300,
                 collegeValue2:5,
                 collegeValue3:8,
-                collegeName:'专业',
-                collegeName2:'专业',
-                collegeName3:'专业',
-                collegeName4:'专业',
+                majorNmae:'专业',
+                majorNmae2:'专业',
+                majorNmae3:'专业',
+                majorNmae4:'专业',
                 grade:'年级' ,
                 grade2:'年级' ,
                 grade3:'年级' ,
@@ -333,6 +500,10 @@ import { setTimeout } from 'timers';
                 classs4:'班级',
                 collType:' 报警类型',
                 applyType:'申请类型',
+                monthName:'月',
+                monthName2:'月',
+                monthName3:'月',
+                monthName4:'月',
                 weekName:'周',
                 weekName2:'周',
                 weekName3:'周',
@@ -340,15 +511,35 @@ import { setTimeout } from 'timers';
                 timeValue:'',
                 timeValue2:'',
                 timeValue3:'',
-                timeValue4:'',
-                collegeList:[//college_name
-                   
+                timeValue4:'',            
+                yearList:[],//年级
+                classList:[],//班级
+                majorList:[],//专业
+                optionData:['周一','周二','周三','周四','周五','周六','周日'], 
+                collegeLineData:[10,5,20,14,10,4,5],
+                collegeLineData2:[1,12,15,0,4,0,33],
+                collegeLineData3:[4,10,4,10,11,0,14],
+                 monthList:[
+                    {id:null,name:'全部'},
+                    {id:1,name:'一月'},
+                    {id:2,name:'二月'},
+                    {id:3,name:'三月'},
+                    {id:4,name:'四月'},
+                    {id:5,name:'五月'},
+                    {id:6,name:'六月'},
+                    {id:7,name:'七月'},
+                    {id:8,name:'八月'},
+                    {id:9,name:'九月'},
+                    {id:10,name:'十月'},
+                    {id:11,name:'十一月'},
+                    {id:12,name:'十二月'},
                 ],
                 weekList:[
                     {id:1,name:'一周'},
                     {id:2,name:'二周'},
                     {id:3,name:'三周'},
                     {id:4,name:'四周'},
+                    {id:5,name:'五周'},
                 ],
                 colltypeList:[
                     {id:1,name:'未归'},
@@ -374,15 +565,25 @@ import { setTimeout } from 'timers';
                     theme: "bubble"
                 },
                 myChart:null,
-                loading:null
+                loading:null,
+                 //报表
+                detailsName:'',
+                details:false,
+                tableData:[{name:'计算机学院',shu:12000}],
+                istable:1,
+                tableHader3:[
+                    {name:'类型',prop:'name'},
+                    {name:'待处理',prop:'name'},
+                    {name:'已处理',prop:'name'},
+                    {name:'处理率',prop:'name'},
+                   
+                ],
             }
         },
         created() { 
-            queryCollegeByName({collegeName:'', pageNum:0,pageSize:0}).then(res=>{
-                if(res.data.code==200){
-                    this.collegeList=res.data.data
-                }
-            })
+           
+            //年级
+            this.queryByYearNames()
         },       
         mounted(){          
             this.collegeLine()
@@ -400,6 +601,18 @@ import { setTimeout } from 'timers';
             },
             open(msg) {
                 this.$message(msg);
+            },
+            //全部年级
+            queryByYearNames(){
+                queryByYearName({
+                    YearName:'',
+                    pageNum:0,
+                    pageSize:0
+                }).then(res=>{
+                    if(res.data.code==200){
+                        this.yearList=res.data.data.list
+                    }
+                })
             },
             lodings(){
                let loading= this.$loading({
@@ -424,37 +637,131 @@ import { setTimeout } from 'timers';
                    
                 }
             },
-            //学院下拉
+            //专业下拉
             handleCommand(command){
                 console.log(command)
-                this.collegeName=command.college_name
+                this.majorNmae=command.year_name
             },
-             //学院下拉
+             //专业下拉
             handleCommand2(command){
                 console.log(command)
-                this.collegeName2=command.college_name
+                this.majorNmae2=command.year_name
             },
-             //学院下拉
+             //专业下拉
             handleCommand3(command){
                 console.log(command)
-                this.collegeName3=command.college_name
+                this.majorNmae3=command.year_name
             },
-             //学院下拉
+             //专业下拉
             handleCommand4(command){
                 console.log(command)
-                this.collegeName4=command.college_name
+                this.majorNmae4=command.year_name
             },
             //年级下拉
-            handleGrade(id){
-                console.log(id)
+            handleGrade(command){
+                console.log(command)
+                this.grade=command.year_name
+            },
+             //年级下拉2
+            handleGrade2(command){
+                console.log(command)
+                this.grade2=command.year_name
+            },
+             //年级下拉3
+            handleGrade3(command){
+                console.log(command)
+                this.grade3=command.year_name
+            },
+             //年级下拉4
+            handleGrade4(command){
+                console.log(command)
+                this.grade4=command.year_name
             },
             //班级下拉
-            handleClasss(id){
-                console.log(id)
+            handleClasss(command){
+                console.log(command)
+                this.classs=command.year_name
+            },
+            //班级下拉2
+            handleClasss2(command){
+                console.log(command)
+                this.classs2=command.year_name
+            },
+            //班级下拉3
+            handleClasss3(command){
+                console.log(command)
+                this.classs3=command.year_name
+            },
+            //班级下拉4
+            handleClasss4(command){
+                this.classs4=command.year_name
+                console.log(command)
+            },
+              //选择年份
+            selectYear(data){
+                console.log(data)
+               let monthList=monthData.slice(0,this.collegeLineData.length)
+                this.monthName='月'
+                this.weekName='周'              
+                this.optionData=monthList
+                this.collegeLine()
+            },
+            //选择年份2
+            selectYear2(data){
+                console.log(data)
+                this.monthName2='月'
+                this.weekName2='周'
+            },
+            //选择年份3
+            selectYear3(data){
+                console.log(data)
+                this.monthName3='月'
+                this.weekName3='周'
+            },
+            //选择年份4
+            selectYear4(data){
+                console.log(data)
+                this.monthName4='月'
+                this.weekName4='周'
+            },
+             //选择月份
+            handleMonth(data){
+                this.monthName=data.name
+                this.weekName='周'
+                let monthList=monthData.slice(0,this.collegeLineData.length)
+                if(data.name=='全部'){
+                    this.optionData=monthList                 
+                }else{
+                    this.optionData=weekData
+                }
+                console.log(this.optionData,monthData)
+                this.collegeLine(this.optionData)
+            },
+             //选择月份2
+            handleMonth2(data){
+                this.monthName2=data.name
+                this.weekName2='周'
+            },
+             //选择月份3
+            handleMonth3(data){
+                this.monthName3=data.name
+                this.weekName3='周'
+            },
+             //选择月份4
+            handleMonth4(data){
+                this.monthName4=data.name
+                this.weekName4='周'
             },
             //周下拉
             handleWeekName(item){
                 this.weekName=item.name
+                if(item.name=='全部'){
+                     this.optionData=['一周','二周','三周','四周','五周']
+                }else{
+                    this.optionData=['周一','周二','周三','周四','周五','周六','周日']
+                }
+                this.collegeLine()
+               
             },
               //周下拉
             handleWeekName2(item){
@@ -471,6 +778,24 @@ import { setTimeout } from 'timers';
             //申请类型
             handleApplyType(item){
                 this.applyType=item.name
+            },
+            //查看报表
+            checkForms(id){
+                this.details=true
+                this.istable=id
+                if(id==1){
+                    this.detailsName='2019/12'+'\xa0\xa0\xa0'+'异常报表'
+                }
+                else if(id==2){
+                    this.detailsName='2019/12'+'\xa0\xa0\xa0'+'违规报表'
+                }
+                else if(id==3){
+                    this.detailsName='2019/12'+'\xa0\xa0\xa0'+'报警统计'
+                }
+                else if(id==4){
+                    this.detailsName='2019/12'+'\xa0\xa0\xa0'+'申请统计'
+                }
+                console.log(id)
             },
             //报警类型
             handleColltype(item){
@@ -530,7 +855,7 @@ import { setTimeout } from 'timers';
                             name:'未归',
                             type:'line',
                             // stack: '总量',
-                            color:"#E2E2E2",
+                            color:"#F3F3F3",
                             // smooth: true,
                             data:[120, 132, 101, 134, 90, 230, 210]
                         },
@@ -545,7 +870,7 @@ import { setTimeout } from 'timers';
                             name:'连续晚归无记录',
                             type:'line',
                             // stack: '总量',
-                             color:"#E6E6E6",
+                             color:"#DADADA",
                             data:[150, 232, 201, 154, 190, 330, 700]
                         },                    
                     ]
@@ -842,8 +1167,15 @@ import { setTimeout } from 'timers';
                 p{
                     font-size: 16px;
                 }
-                .collegeDetail-div{
-                    flex: 0.25;
+                  .collegeDetail-div{
+                    width: 50%;
+                    height: 100%;
+                    display: flex;
+                    justify-content: space-between;
+
+                }
+                .collegeDetail-div1{
+                    flex: 0.5;
                     background:linear-gradient(229deg,rgba(253,79,48,1) 0%,rgba(242,33,114,1) 100%);
                     border-radius:15px;
                     padding: 20px;
@@ -877,12 +1209,12 @@ import { setTimeout } from 'timers';
                     
                 }
                 .collegeDetail-div2{
-                    flex: 0.25;
+                    flex: 0.5;
                     background:#141D2C;
                     border-radius:15px;
                     padding: 20px;
                     color: #ffffff;
-                    margin:0 20px;
+                    margin:0  10px 0 20px;
                     display: flex;
                     flex-direction: column;
                     justify-content: space-between;
@@ -979,12 +1311,22 @@ import { setTimeout } from 'timers';
                 margin-bottom: 20px;    
                  .collegeChart1-top{
                             width: 100%;
-                            height: 35px;
+                            min-height: 35px;
                             display: flex;
                             justify-content: space-between;
                             align-items: center; 
                             margin-bottom:10px;
                             position: relative;
+                              .collegeChart-p{
+                                display: flex;
+                                margin-bottom: 15px;
+                                p:nth-child(1){
+                                    margin-right: 15px;
+                                }
+                            }
+                            .collegeChart-p2{
+                                  margin-bottom: 15px;
+                            }
                                // .top{
                             //     position: absolute;  
                             //     width: 100px;                 
@@ -998,11 +1340,13 @@ import { setTimeout } from 'timers';
                             // }
                             
                         }        
-                    
+                     .collegeChart1-top2{
+                            flex-direction: column;
+                        } 
                     .collegeChart2-right{
                         display: flex;
                         align-items: center; 
-                        min-height: 32px;
+                        min-height: 35px;
                     }      
             }
         }

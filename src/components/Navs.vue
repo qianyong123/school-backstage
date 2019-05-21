@@ -15,7 +15,7 @@
       @close="handleClose"
       background-color="#545c64"
       text-color="#fff"
-      style="width:100%;min-height:500px;border:0;"
+      style="width:200px;min-height:500px;border:0;"
       active-text-color="#E01763">
       <el-menu-item  v-if="navjurisdiction('nav1')" :index="index2.path" @click="active('/index',1)">
          <img v-show="home!=1" style="margin-right:5px" src="../../static/img/index.png" alt="">
@@ -283,9 +283,10 @@ import  {getRueryMenuByIdw,getAllNew,queryMenuById}  from '@/axios/api.js';
     color: #333;
   }
   .navs{
-    min-width:200px;
+    min-width:210px;
      height: 100%;
-     overflow: auto;
+     overflow-y:auto;
+     overflow-x:hidden;
      position: relative;
      z-index: 999;
      background: #545c64;

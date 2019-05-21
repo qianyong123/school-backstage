@@ -41,10 +41,10 @@ const hideIndex=()=>import('@/components/hideIndex')//没权限首页
       path: '/',
       name: 'Home',
       component: Home,
-      // meta: {
-      //   title: '',
-      //   requireAuth: true,  // 添加该字段，表示进入这个路由是需要登录的
-      // },
+      meta: {
+        title: '',
+        requireAuth: true,  // 添加该字段，表示进入这个路由是需要登录的
+      },
       redirect:'/index',  
       children:[
         {path: 'hideIndex',name: 'hideIndex',component: hideIndex,props:true}, 
@@ -76,7 +76,7 @@ const hideIndex=()=>import('@/components/hideIndex')//没权限首页
       ]
     
     },
-    { path:"",redirect:"/"},
+    { path:"",redirect:"/index"},
     { path:"/Login",component:Login,name:'Login'},
   ]
 })
@@ -86,26 +86,23 @@ const hideIndex=()=>import('@/components/hideIndex')//没权限首页
 //     store.commit('set_token', localStorage.getItem('token'))
 //   }
   
-// router.beforeEach((to, from, next) => {
-//   let token=localStorage.getItem('token');
-//   if (to.matched.some(record => record.meta.requireAuth)){  // 判断该路由是否需要登录权限
-//     if (token) { 
-//       next();
-//       // if(to.matched[1].name=='news'){
-//       //   sessionStorage.setItem('bagId',2)
-//       // } 
-//     }
-//     else {
-//       next({
-//         path: '/Login',
-//         query: {redirect: to.fullPath}  // 将跳转的路由path作为参数，登录成功后跳转到该路由
-//       })
-//     }
-//   }
-//   else {
-//     next();
-//   }
-// });
+router.beforeEach((to, from, next) => {
+  let token=localStorage.getItem('token');
+  if (to.matched.some(record => record.meta.requireAuth)){  // 判断该路由是否需要登录权限
+    if (token) { 
+      next();    
+    }
+    else {
+      next({
+        path: '/Login',
+        query: {redirect: to.fullPath}  // 将跳转的路由path作为参数，登录成功后跳转到该路由
+      })
+    }
+  }
+  else {
+    next();
+  }
+});
 
 
 export default router

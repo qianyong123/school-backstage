@@ -256,6 +256,9 @@ export default {
                     if(this.roleId==1){
                         return true
                     }
+                     else if(this.roleInfoMenu.length<1){
+                        return true
+                    }
                     else{
                         return this.roleInfoMenu[2].indexOf('3')==-1?false:true
                     }
@@ -438,6 +441,7 @@ export default {
     padding:50px 20px 20px 20px;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     .ClassManage-top{
         min-height:120px;
         width: 100%;
@@ -478,11 +482,10 @@ export default {
         border-radius:15px;
         display: flex;
         flex-direction: column;
-        margin-bottom: 10px;
         // position: relative;
         .tableBox{
             flex: 1;
-            overflow: auto; 
+            overflow: hidden;
             border-radius:15px 15px 0 0; 
             // th,td{
             //     text-align: center;
@@ -498,8 +501,11 @@ export default {
             position:absolute;
             left:-15px;
             top: 0px;
+            bottom: 0;
+            right: 0;
+            margin:auto;
             width:100%;
-            min-height:60px;
+            height:30px;
             background: #fff;
             border-radius: 4px;
             z-index:9999;

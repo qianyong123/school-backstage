@@ -1,14 +1,17 @@
 <template>
   <div class="Index">
-    <super-data v-if="roleId==1"></super-data>
-    <college-data v-else-if="roleId==2"></college-data>
-    <teacher-data v-else-if="roleId==3"></teacher-data>
-    <dormitory v-else-if="roleId==4"></dormitory>
+    <super-data v-if="roleId==1" :isdownload='isdownload'></super-data>
+    <college-data v-else-if="roleId==2" :isdownload='isdownload'></college-data>
+    <teacher-data v-else-if="roleId==3" :isdownload='isdownload'></teacher-data>
+    <dormitory v-else-if="roleId==4" :isdownload='isdownload'></dormitory>
   </div>
 </template>
 
 <script>
-import {queryMenuById} from '../../axios/api.js'
+import {
+    queryMenuById,
+
+} from '../../axios/api.js'
 import superData from './superData'
 import collegeData from './collegeData'
 import teacherData from './teacherData'
@@ -26,12 +29,18 @@ import dormitory from './dormitory'
             return{
                 msg:'',
                 roleInfoMenu:[],  
-                roleId:1,           
+                roleId:1,  
+                isdownload:0
+
             }
         },
         created() {
            sessionStorage.setItem('navColor','/index')  
            this.roleInfoMenu=this.$store.state.roleInfoMenu
+            let widths=document.documentElement.clientWidth
+            if(widths<=1600){
+                this.isdownload=1
+            }
         },       
         mounted(){          
             // console.log(this.roleInfoMenu)

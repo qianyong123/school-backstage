@@ -10,7 +10,7 @@
     <div v-if="newName==1" class="break break2">
         <div class="div div2">
             <span class="span2">学号</span>
-            <el-input @blur='getStudentInfo' style="width:200px" v-model="value.newInput1" placeholder="学号"></el-input>
+            <el-input @blur="$emit('getStudentInfo',value.newInput1)" style="width:200px" v-model="value.newInput1" placeholder="学号"></el-input>
         </div>  
          <div class="div div2">
             <span class="span2">标题</span>
@@ -25,8 +25,8 @@
     <div class="break">
         <i class="el-icon-close close" @click="$emit('newCall')"></i>           
         <div class="logImg">
-            <div style="background:#ccc;width:130px;height:150px;">
-                <img :src="studentInfoMsg.studentInfoImg" alt="">
+            <div style="width:130px;height:150px;">
+                <img style="width:130px;height:150px;" :src="studentInfoMsg.studentInfoImg==null?'':studentInfoMsg.studentInfoImg" alt="">
             </div>
             <!-- <img src="../../../static/img/t1.png" alt=""> -->
         </div> 
@@ -70,46 +70,51 @@
         <div class="userIfoBox2">       
             <div class="userIfoBox">   
                 <div class="div2">
-                    <div class="div div3">
+                    <div class="div div3" style="margin:0">
                         <span class="span4">提交人：</span>
-                        <span>小于</span>
+                        <span>{{studentInfoMsg.sbmintRoleInfoName}}</span>
                     </div>           
-                    <div class="div div3">
-                        <span class="span3">角色：</span>
-                        <span>系统管理员</span>
+                    <div class="div div3" style="margin:0">
+                        <span class="span4">角色：</span>
+                        <span>{{studentInfoMsg.sbmintRoleInfo}}</span>
                     </div>
-                    <div class="div div3">
+                    <div class="div div3" style="margin:0">
                         <span class="span4" style="width:77px">联系方式：</span>
-                        <span>{{studentInfoMsg.applyLeaveApprovalInfo}}</span>
+                        <span>{{studentInfoMsg.sbmintUserInfoPhone}}</span>
                     </div>  
                 </div> 
                   
                 <div class="div div2">
                     <span class="span4">提交时间：</span>
-                    <span>{{studentInfoMsg.applyLeaveApprovalInfo}}</span>
+                    <span>{{studentInfoMsg.disciplineRecordSubmintTime}}</span>
                 </div>   
                  <div class="div div2">
                     <span class="span4">标题：</span>
-                    <span>{{studentInfoMsg.applyLeaveApprovalInfo}}</span>
+                    <span>{{studentInfoMsg.disciplineRecordTitle}}</span>
                 </div>   
                 <div class="div div2">
                     <span class="span4">违纪内容：</span>
-                    <span>{{studentInfoMsg.applyLeaveApprovalInfo}}</span>
+                    <span>{{studentInfoMsg.disciplineRecordContent}}</span>
                 </div>   
                 <div class="div div2">
                     <span class="span4">处理人：</span>
-                    <span>{{studentInfoMsg.applyLeaveApprovalInfo}}</span>
+                    <span>{{studentInfoMsg.handleUserInfoMsg}}</span>
                 </div>   
-                <div class="div div2">
+                <div v-if="studentInfoMsg.disciplineRecordType==0" class="div div2" style="align-items:center;">
                     <span class="span4">处理意见：</span>
                     <el-input v-model="value.newInput4" style="width:435px;" placeholder="请输入内容"></el-input>
                 </div> 
+                <div v-else class="div div2">
+                    <span class="span4">处理意见：</span>
+                    <span>{{studentInfoMsg.disciplineRecordInfo}}</span>
+                </div>
             </div>         
         </div>
     </div>   
-    <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="$emit('newSave',value)" size="small">确 定</el-button>
-        <el-button @click="$emit('newCall')" size="small">取 消</el-button>
+    <span v-if="studentInfoMsg.disciplineRecordType!=1" slot="footer" class="dialog-footer">
+        <el-button v-if="popupTitle=='提交违纪'" type="primary" @click="$emit('newSave',value)" size="small">确定</el-button>
+        <el-button v-else type="primary" @click="$emit('newSave2',value)" size="small">确定</el-button>
+        <el-button @click="$emit('newCall')" size="small">取消</el-button>
     </span>
     </el-dialog> 
 </template>
@@ -117,7 +122,7 @@
 <script>
 import { arealist_2,floorlist_2,roomGetRoomNumber,bedGetBedNo} from '@/axios/api1'
 import { 
-    
+   queryStudentByStudentInfoNo 
      
 } from '@/axios/api'
 import bus from '../../js/bus.js'
@@ -129,9 +134,9 @@ export default {
             imageUrl:'',
             imageUr2:'',
             dialogImageUrl: '',
-            dialogVisible: false,  
+            dialogVisible: false,              
             value:{
-                newInput1:'',   
+                newInput1:null,   
                 newInput2:'',   
                 newInput3:'',   
                 newInput4:'', 
@@ -151,10 +156,10 @@ export default {
            console.log('关闭模态框')
            bus.$emit('newCall')             
            this.value={
-                newInput1:'',   
+                newInput1:null,   
                 newInput2:'',   
                 newInput3:'',   
-                newInput4:''
+                newInput4:'',             
             } 
        },
        //显示审核意见
@@ -164,11 +169,7 @@ export default {
            }
           
        },
-       
-        //获取学生信息
-        getStudentInfo(){
-            console.log(this.value.newInput1)
-        }               
+                  
       
     },
 }
@@ -196,6 +197,7 @@ export default {
             // padding-left: 20px;
             flex-wrap: wrap;
             align-content: flex-start;
+            margin-top: 10px;
             justify-content: space-between;
         }
          .userIfoBox2{           
@@ -217,11 +219,11 @@ export default {
         }
         .div{
             width: 50%; 
-            min-height: 32px; 
+            min-height:10px; 
             display: flex;
             line-height: 20px;
-            align-items: center;            
-            margin-bottom: 10px;
+            align-items: flex-start;            
+            margin-bottom: 20px;
             .span{
                 display: inline-block;
                 min-width:85px;
@@ -231,8 +233,9 @@ export default {
         .div2{
             width: 100%; 
             display: flex;
-            align-items: center;  
-            margin-bottom: 10px;  
+            min-height:10px; 
+            align-items: flex-start;  
+            margin-bottom: 20px;  
             // justify-content: space-between;
             .div3{
                 min-width: 120px;
@@ -253,6 +256,7 @@ export default {
      .break2{
          flex-direction: column;
          padding-bottom:15px;
+        //  background: #ccc;
          border-bottom: 1px solid #EDEDED;
          margin-bottom: 20px;
           .span2{

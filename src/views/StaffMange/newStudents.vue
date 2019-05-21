@@ -7,7 +7,7 @@
     width="670px"
     :show-close="false"
     center>
-    <div v-if="newName==1" class="newren">   
+    <div v-if="newName==1" class="staffnewren">   
         <div class="newrenTop">  
             <div>
                 <div class="div">
@@ -31,8 +31,8 @@
                     <el-option
                     v-for="(item,index) in select3"
                     :key="index"
-                    :label="item.name"                            
-                    :value="item.name">
+                    :label="item.value"                            
+                    :value="item.value">
                     </el-option>
                 </el-select>
                 </div> 
@@ -267,7 +267,7 @@
             </div>
         </div>  
     </div>   
-    <div v-if="newName!=1&&newName!=5" class="newren">
+    <div v-if="newName!=1&&newName!=5" class="staffnewren">
         <div style="width:100%;padding-left:180px;">             
             <div class="div">
                 <span class="span">姓名</span>
@@ -314,8 +314,8 @@
                     <el-option
                     v-for="(item,index) in select3"
                     :key="index"
-                    :label="item.name"                            
-                    :value="item.name">
+                    :label="item.value"                            
+                    :value="item.value">
                     </el-option>
                 </el-select>
             </div> 
@@ -515,7 +515,8 @@ import {
     queryMajorByTerm,
     queryAllCalss,
     queryByYearName,
-    addTeacherInfo,    
+    addTeacherInfo,  
+    queryNation
 } from '@/axios/api'
 import bus from '../../js/bus.js'
 export default {
@@ -566,7 +567,7 @@ export default {
                 //学生下拉框
                 selectValue1:'男',//性别
                 selectValue2:'群众',//政治面貌
-                selectValue3:'汉',//民族
+                selectValue3:'汉族',//民族
                 selectValue4:'',//学院
                 selectValue5:'',//专业
                 selectValue6:'',//年级
@@ -610,8 +611,8 @@ export default {
                 {value:4,name:'其他'},
             ],
             select3:[
-                {value:2,name:'汉'},
-                {value:3,name:'其他'},
+                {id:2,value:'汉族'},
+                {id:3,value:'其他'},
             ],
             select33:[//学历
                 {value:2,name:'本科生'},
@@ -647,7 +648,7 @@ export default {
         }
     },
     created() {
-        
+        this.queryNations()
     },
 
     methods: {
@@ -690,7 +691,7 @@ export default {
                 //学生下拉框
                 selectValue1:'男',//性别
                 selectValue2:'群众',//政治面貌
-                selectValue3:'汉',//民族
+                selectValue3:'汉族',//民族
                 selectValue4:'',//学院
                 selectValue5:'',//专业
                 selectValue6:'',//年级
@@ -731,6 +732,15 @@ export default {
             this.select10=[]  
             this.select11=[]    
        },
+              //民族
+        queryNations(){
+          queryNation().then(res=>{
+            console.log('民族',res)
+            if(res.data.code==200){
+              this.select3=res.data.data
+            }
+          })
+        },
         //添加宿舍管理区域
         addEarea(id){
             console.log('添加管理区域')
@@ -1058,21 +1068,22 @@ export default {
 
 <style lang="scss">
      //新增弹框
-     .el-upload-list__item {
+     .staffnewren /deep/.el-upload-list__item {
          margin: 0;
      }
-     .close{
+    .close{
          position: absolute;
          top: 20px;
          right: 20px;
          font-size: 16px;
          cursor: pointer;
-     }   
-    .newren{
+     } 
+    .staffnewren{
         width: 100%;
         min-height:100px;      
         position: relative; 
         // padding-left: 180px;
+      
         .div{
             min-width:200px;  
             height: 32px; 
@@ -1129,7 +1140,7 @@ export default {
                 padding-left: 18px;
             }
         }
-    }
+    
      
       .div2{
             width: 100%; 
@@ -1201,10 +1212,17 @@ export default {
     .newclass3{
           height:120px;
     }
+}
     .avatar-uploader{
         width:100%;
         height: 100%;
     }
+    .avatar {
+    width:100%;
+    height: 100%;
+    display: block;
+  }
+
     .avatar-uploader .el-upload {
     width:100%;
     height: 100%;
@@ -1226,9 +1244,5 @@ export default {
     justify-content: center;
     align-items: center;
   }
-  .avatar {
-    width:100%;
-    height: 100%;
-    display: block;
-  }
+
 </style>

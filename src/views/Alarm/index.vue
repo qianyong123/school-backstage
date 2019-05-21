@@ -49,7 +49,7 @@
                         </div>  
                         <div>
                             <el-button @click="setRecord(1)" size="small" icon="el-icon-setting"></el-button>   
-                             <el-button size="small" icon="el-icon-download"></el-button>   
+                             <el-button size="small" icon="el-icon-upload2"></el-button>   
                         </div>                  
                     </div>
                 </el-tab-pane>
@@ -98,7 +98,7 @@
                         </div>                    
                          <div>
                             <el-button @click="setRecord(2)" size="small" icon="el-icon-setting"></el-button>   
-                             <el-button  size="small" icon="el-icon-download"></el-button>   
+                             <el-button  size="small" icon="el-icon-upload2"></el-button>   
                         </div>                           
                     </div>
                                                                 
@@ -161,7 +161,7 @@
                         </div>                    
                         <div>
                             <el-button @click="setRecord(3)" size="small" icon="el-icon-setting"></el-button>   
-                             <el-button size="small" icon="el-icon-download"></el-button>   
+                             <el-button size="small" icon="el-icon-upload2"></el-button>   
                         </div>                                            
                     </div>   
                 </el-tab-pane>
@@ -225,7 +225,7 @@
                         </div>                    
                          <div>
                             <el-button @click="setRecord(4)" size="small" icon="el-icon-setting"></el-button>   
-                             <el-button size="small" icon="el-icon-download"></el-button>   
+                             <el-button size="small" icon="el-icon-upload2"></el-button>   
                         </div>    
                                             
                     </div> 
@@ -258,7 +258,7 @@
                         </div>                    
                          <div>
                             <el-button @click="setRecord(5)" size="small" icon="el-icon-setting"></el-button>   
-                             <el-button size="small" icon="el-icon-download"></el-button>   
+                             <el-button size="small" icon="el-icon-upload2"></el-button>   
                         </div>                                    
                     </div>
                 </el-tab-pane>
@@ -289,7 +289,7 @@
                         </div>                    
                         <div>
                             <el-button @click="setRecord(6)" size="small" icon="el-icon-setting"></el-button>   
-                             <el-button  size="small" icon="el-icon-download"></el-button>   
+                             <el-button  size="small" icon="el-icon-upload2"></el-button>   
                         </div>   
                     </div>
                 </el-tab-pane>
@@ -332,7 +332,7 @@
                         </div>                    
                         <div>
                             <el-button @click="setRecord(7)" size="small" icon="el-icon-setting"></el-button>   
-                             <el-button size="small" icon="el-icon-download"></el-button>   
+                             <el-button size="small" icon="el-icon-upload2"></el-button>   
                         </div>   
                     </div>
                 </el-tab-pane>
@@ -363,7 +363,7 @@
                         </div>                    
                          <div>
                             <el-button @click="setRecord(8)" size="small" icon="el-icon-setting"></el-button>   
-                             <el-button  size="small" icon="el-icon-download"></el-button>   
+                             <el-button  size="small" icon="el-icon-upload2"></el-button>   
                         </div>   
                     </div>
                 </el-tab-pane>
@@ -391,9 +391,9 @@
                             placeholder="年/月/日">
                             </el-date-picker>
                              <span class="spanName">设备类型：</span>
-                             <el-select style="width:120px;" v-model="Select5" placeholder="请选择">
+                             <el-select style="width:120px;" v-model="Select6" placeholder="请选择">
                                 <el-option                              
-                                v-for="(item,index) in types"
+                                v-for="(item,index) in types2"
                                 :key="index"
                                 :label="item.name"                            
                                 :value="item.value">
@@ -606,11 +606,12 @@ export default {
             studentInfoMsg:{},//学生信息  
             applyLeaveId:null,    
             //查询
-            Select1:'',
-            Select2:'',
-            Select3:'',
-            Select4:'',
-            Select5:'',
+            Select1:0,
+            Select2:0,
+            Select3:0,
+            Select4:0,
+            Select5:0,
+            Select6:0,
            
             
            timevalue1:'',
@@ -632,9 +633,19 @@ export default {
             setValue1:'',
             //类型
             types: [
-            {value: '',name:'全部'}, 
-            {value: '2',name:'未处理'}, 
-            {value: '3',name:'已处理'}, 
+            // {value:null,name:'全部'}, 
+            {value:0,name:'未处理'}, 
+            {value:1,name:'已处理'}, 
+            
+            
+            ],
+             //设备类型
+            types2: [
+            // {value:null,name:'全部'}, 
+            {value: 0,name:'摄像头'}, 
+            {value: 1,name:'赤眸'}, 
+             {value:2,name:'闸机'}, 
+            {value:3,name:'大屏'},
             
             ],
             types1: [
@@ -686,14 +697,14 @@ export default {
             value: '',
             multipleSelection: [], //表格多选
             tableData: [
-                {studentInfoName:'姓名',
-                props:'studentInfoName',
-                studentInfoNo:'学号',
-                studentInfoSex:'监测时间',
-                teacherMsg:'未归级别',
-                parentMsg:'处理意见',
-                teacherMsg:'处理时间',
-                parentMsg:'处理人',},                    
+                // {studentInfoName:'姓名',
+                // props:'studentInfoName',
+                // studentInfoNo:'学号',
+                // studentInfoSex:'监测时间',
+                // teacherMsg:'未归级别',
+                // parentMsg:'处理意见',
+                // teacherMsg:'处理时间',
+                // parentMsg:'处理人',},                    
             ],
             tableData2: [  ],
             roleId:null,
@@ -747,7 +758,11 @@ export default {
         created(){
             this.roleInfoMenu=this.$store.state.roleInfoMenu
              this.userInfoId=localStorage.getItem('userInfoId')  
-              console.log(this.roleInfoMenu)
+             let type=this.$route.params.type
+            //  if(type){
+            //      this.activeName=type
+            //  }
+              console.log(this.roleInfoMenu,type)
                let roleId=localStorage.getItem('roleId')  
                 this.roleId=roleId
                if(this.roleInfoMenu.length<1){   
@@ -804,33 +819,7 @@ export default {
                     }
                 }
             },
-            // navjurisdiction2(){
-            //     return function(){
-            //         if(this.roleId==1){     
-            //             if(this.activeName=='翻越'||this.activeName=='尾随'||this.activeName=='访客超时'||this.activeName=='设备异常'){
-            //                 return false
-            //             }          
-            //             else  return true
-            //         }
-            //         else if(this.activeName=='未归'){
-            //              return this.roleInfoMenu[5].indexOf('6-1')==-1?false:true                      
-            //         }
-            //         else if(this.activeName=='晚归'){
-            //            return this.roleInfoMenu[5].indexOf('6-2')==-1?false:true
-            //         }
-            //          else if(this.activeName=='无记录'){
-            //             return this.roleInfoMenu[5].indexOf('6-3')==-1?false:true
-            //         }
-            //          else if(this.activeName=='连进连出'){
-            //               return this.roleInfoMenu[5].indexOf('6-4')==-1?false:true
-            //         }
-            //          else if(this.activeName=='黑名单'){
-            //               return this.roleInfoMenu[5].indexOf('6-5')==-1?false:true
-            //         }
-                  
-                    
-            //     }
-            // }
+         
         },
          watch: {
              activeIndex(){                     
@@ -1162,32 +1151,66 @@ export default {
             handleSizeChange2(val) {
                 console.log(`每页 ${val} 条`);
                     this.pageSize=val
-                    if(this.activeIndex=='0'){
-                    }
-                    else if(this.activeIndex=='1'){
-                    }
-                    else if(this.activeIndex=='2'){
-                    }
-                    else if(this.activeIndex=='3'){
-                    }
-                    else if(this.activeIndex=='4'){
-                        
-                    }
+                if(this.activeName=='未归'){
+                  
+                  
+                }
+                else if(this.activeName=='翻越'){
+                  
+                }
+                  else if(this.activeName=='无记录'){
+                    
+                }
+                  else if(this.activeName=='连进连出'){
+                   
+                }
+                else if(this.activeName=='翻越'){
+                    
+                }
+                 else if(this.activeName=='尾随'){
+                  
+                }
+                 else if(this.activeName=='黑名单'){
+                   
+                }
+                 else if(this.activeName=='访问时间'){
+                    
+                }
+                 else if(this.activeName=='设备异常'){
+                   
+                }
             },
             //点击分页
              handleCurrentChange(val) {
                 console.log(`当前页: ${val}`);   
                 this.pageNum=val   
-                if(this.activeIndex=='0'){
+                 if(this.activeName=='未归'){
+                  
+                  
                 }
-                else if(this.activeIndex=='1'){
+                else if(this.activeName=='翻越'){
+                  
                 }
-                else if(this.activeIndex=='2'){
+                  else if(this.activeName=='无记录'){
+                    
                 }
-                 else if(this.activeIndex=='3'){
+                  else if(this.activeName=='连进连出'){
+                   
                 }
-                 else if(this.activeIndex=='4'){
-                     
+                else if(this.activeName=='翻越'){
+                    
+                }
+                 else if(this.activeName=='尾随'){
+                  
+                }
+                 else if(this.activeName=='黑名单'){
+                   
+                }
+                 else if(this.activeName=='访问时间'){
+                    
+                }
+                 else if(this.activeName=='设备异常'){
+                   
                 }
             },
         },
@@ -1203,6 +1226,7 @@ export default {
     padding:50px 20px 20px 20px;
     display: flex;
     flex-direction: column;
+     overflow: hidden;
     .ClassManage-top{
         min-height:150px;
         width: 100%;
@@ -1248,11 +1272,10 @@ export default {
         border-radius:15px;
         display: flex;
         flex-direction: column;
-        margin-bottom: 10px;
         // position: relative;
         .tableBox{
             flex: 1;
-            overflow: auto;  
+            overflow: hidden;
             // overflow: hidden;
             border-radius:15px 15px 0 0;
            .scheduleColor{

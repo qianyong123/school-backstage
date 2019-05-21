@@ -19,7 +19,7 @@
                 :auto-upload='false'
                 :on-exceed="handleExceed"
                 :file-list="fileList">
-                  <el-button size="small" icon="el-icon-upload2"></el-button>
+                  <el-button size="small" icon="el-icon-download"></el-button>
                 <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
                 </el-upload>
               <!-- <el-button size="small"  icon="el-icon-upload2" @click="dialogAdd = true"></el-button> -->
@@ -27,7 +27,7 @@
                 <el-button size="small" @click="search">查询</el-button>             
             </div>        
              
-            <el-button size="small" icon="el-icon-download" @click="regionexports"></el-button>
+            <el-button size="small" icon="el-icon-upload2" @click="regionexports"></el-button>
             
           </div>
         </el-tab-pane>
@@ -250,7 +250,7 @@
               <el-select
                 v-model="value_4_4"
                 placeholder="请选择"
-                style="width:130px"      
+                style="width:130px;margin-right:10px;"      
               >
                 <el-option
                   v-for="item in options_3"
@@ -258,13 +258,9 @@
                   :label="item.label"
                   :value="item.id"
                 ></el-option>
-              </el-select>
-     
-          
-              <el-input v-model="input_4_4" style="width:130px;margin:0 10px;" placeholder="学生姓名/学号"></el-input>
-        
-            
-              <el-button size="small" @click="search">查询</el-button>
+              </el-select>            
+              <el-input :class="{respondCss:isdownload==1}" v-model="input_4_4" style="width:130px;margin-right:10px;" placeholder="学生姓名/学号"></el-input>                
+              <el-button :class="{respondCss:isdownload==1}" size="small" @click="search">查询</el-button>
           
           </div>
        
@@ -357,14 +353,14 @@
     </div>
     <!--  table -->
     <!-- 区域管理 新增弹框 -->
-    <el-dialog :title="regionId ==null?'新增':'修改'" center :visible.sync="dialogArea" width="350px">
+    <el-dialog :title="regionId ==null?'新增':'修改'" center :visible.sync="dialogArea" width="320px">
       <div class="adds">
         <div>
-          <span>区域名</span>
+          <span style="width:60px;">区域名</span>
           <el-input v-model="input_area" style="width:180px" placeholder="请输入内容"></el-input>
         </div>
         <div style="margin-top:10px;">
-          <span>楼栋数</span>
+          <span style="width:60px;">楼栋数</span>
           <el-input v-model="input_floor" type="number" style="width:180px" placeholder="请输入内容"></el-input>
         </div>
       </div>
@@ -522,7 +518,7 @@
       </div>
     </el-dialog>
     <!-- 床位管理 -->
-    <el-dialog title="新增" :visible.sync="dialogBed" center="" width="520px">
+    <el-dialog title="新增" :visible.sync="dialogBed" center width="520px">
       <div class="adds_2">
         <div>
           <span>所属区域</span>
@@ -607,7 +603,7 @@
       </div>
     </el-dialog>
       <!-- 床位分配-->
-    <el-dialog title="床位分配"   @close="shutModal" :visible.sync="bedIdFP"  width="760px">
+    <el-dialog title="床位分配" center  @close="shutModal" :visible.sync="bedIdFP"  width="760px">
       <div style="  min-height:126px;width:100%">
           <div class="bedFP" v-show="isfenpeng">
             <div class="div" style="margin-left:0">
@@ -788,18 +784,110 @@
       title="提示"
       :close-on-click-modal="false"
       :visible.sync="dialogMsg"
+      center
       width="350px"
     >
       <span style="color:#333;">请选择需要更换的寝室</span>
       
     </el-dialog>
-    
-    <el-dialog title="通知" :close-on-click-modal="false" :visible.sync="dialogMsg_2" width="350px">
-      <span>是否确定调换到目标寝室？</span>
+    <!-- //调寝 -->
+    <el-dialog title="调寝" @close="dialogBeds2" :close-on-click-modal="false" center :visible.sync="dialogMsg_2" width="500px">
+       <div class="adds_2">
+        <div>
+          <span>所属区域</span>
+          <el-select
+            v-model="select_4_1"
+            placeholder="请选择"
+            style="width:128px"
+            @change="newSlect"          
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.regionName"
+              :value="item.regionId"
+            ></el-option>
+          </el-select>
+        </div>
+        <div>
+          <span>所属楼栋</span>
+          <el-select
+            v-model="select_4_2"
+            placeholder="请选择"
+            style="width:128px"
+            @change="newSlect2"
+          >
+            <el-option
+              v-for="item in newfloorList"
+              :key="item.floorId"
+              :label="item.floorName"
+              :value="item.floorId"
+            ></el-option>
+          </el-select>
+        </div>
+        <div style="margin-top:10px;">
+          <span>所属楼层</span>
+          <el-select
+            v-model="select_4_3"
+            placeholder="请选择"
+            style="width:128px"
+            @change="newSlect3"
+          >
+            <el-option
+              v-for="item in newfloorList2"
+              :key="item"
+              :label="item"
+              :value="item"
+            ></el-option>
+          </el-select>
+        </div>
+        <div style="margin-top:10px;">
+          <span>房间号</span>
+         <el-select
+            v-model="select_4_4"
+            placeholder="请选择"
+            style="width:128px"
+            @change="newSlect4"
+          >
+            <el-option
+              v-for="item in newfloorList3"
+              :key="item.roomId"
+              :label="item.roomNo"
+              :value="item.roomId"
+            ></el-option>
+          </el-select>
+        </div>
+        <div style="margin-top:10px;">
+          <span>床位号</span>
+         <el-select
+            v-model="select_4_5"
+            placeholder="请选择"
+            style="width:128px"
+          >
+            <el-option
+              v-for="item in newfloorList4"
+              :key="item.bedId"
+              @click.native="newSlect5(item)"
+              :label="item.bedNo"
+              :value="item.bedId"
+            ></el-option>
+          </el-select>
+        </div>       
+      </div>
+      <div class="tiaoqin">
+        <div class="div">
+          <span class="span">原居住人</span>
+          <span>{{getUserInfo.studentInfoName}}</span>
+        </div>
+        <div class="div">
+          <span class="span">辅导员</span>
+          <span>{{getUserInfo.teacherInfoName}}&nbsp;&nbsp;{{getUserInfo.teacherInfoPhone}}</span>
+        </div>
+      </div>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" type="primary" @click="oNdialogMso(1)">确 定</el-button>
-        <el-button size="small" @click="oNdialogMso(2)">重新选择</el-button>
-        <el-button size="small" @click="oNdialogMso(3)">取 消</el-button>
+        <!-- <el-button size="small" @click="oNdialogMso(2)">重新选择</el-button> -->
+        <el-button size="small" @click="dialogMsg_2=false">取 消</el-button>
       </div>
     </el-dialog>
     <!-- 床位编辑 -->
@@ -807,6 +895,7 @@
       title="修改" 
       :visible.sync="chuangwei"
       width="300px"
+      center
     >
       <div>
         <span style="color:#333;">床位号</span>
@@ -852,7 +941,9 @@ import {
   bedbatchRetirement,
   bedExchangeBed,
   distribution,
-  importRegionTemplateExcel
+  importRegionTemplateExcel,
+  getOldResidenceInformation,
+  getBedListByRoomId
 } from "@/axios/api1.js";
 import {
   queryCollegeByName,
@@ -962,12 +1053,14 @@ export default {
       select_4_2: null,
       select_4_3: null,
       select_4_4: null,
+      select_4_5:null,
       bedId:null,
       input_4_1: "",
       input_4_2: "",
       input_4_3: null,
       input_4_5:'',//编辑床位
       newfloorList3:[], //房间下拉列表
+      newfloorList4:[], //床位下拉列表
       jurisdictional: true, //管辖范围 显示隐藏
       tableId: [],
       options_6:[],//查询楼栋列表
@@ -1117,6 +1210,9 @@ export default {
       allYear:[],
       roleInfoMenu:[],
       roleId:null,
+      getUserInfo:{},
+      bedMsg:{},
+      isdownload:0,
       numbers:/^([1-9]|1\d|20)$/  //1到20的正则
     };
   },
@@ -1132,6 +1228,10 @@ export default {
       this.roleInfoMenu=this.$store.state.roleInfoMenu
     let roleId=localStorage.getItem('roleId')  
     this.roleId=roleId
+     let widths=document.documentElement.clientWidth
+        if(widths<=1460){
+            this.isdownload=1
+        }
     if(this.roleInfoMenu.length<1){
         
         if(roleId!=1){
@@ -1163,6 +1263,9 @@ export default {
               if(this.roleId==1){
                   return true
               }
+               else if(this.roleInfoMenu.length<1){
+                        return true
+                    }
               else{
                   return this.roleInfoMenu[8].indexOf('9')==-1?false:true
               }
@@ -1274,15 +1377,17 @@ export default {
     },
     //tab列表请求
     list() {
+      this.loading=true
       areaList({
         pageNum: this.pageNum,
         pageSize: this.pageSize,
         regionName: this.input_search
       }).then(res => {
         console.log(res);
+        this.loading=false
         if (res.status === 200 && res.data.code === 200) {
           console.log('区域分页',res);
-          this.loading=false
+          
           this.total = res.data.data.total;
           this.tableData = res.data.data.list;
            arealist_2().then(res => {
@@ -1297,7 +1402,7 @@ export default {
       });
     },
     list_2() {
-    
+        this.loading=true     
       floorList({
          regionId: this.value_2_1,
           pageNum: this.pageNum,
@@ -1307,9 +1412,9 @@ export default {
           floorName: this.input_2_5
       }).then(res => {
         console.log(res);
+        this.loading=false
         if (res.status === 200 && res.data.code === 200) {
           console.log(res);
-            this.loading=false
           this.total = res.data.data.total;
           this.tableData = res.data.data.list
         }else{
@@ -1318,6 +1423,7 @@ export default {
       });
     },
     list_3() {
+      this.loading=true
       houseList({
         pageNum: this.pageNum,
           pageSize: this.pageSize,
@@ -1338,6 +1444,7 @@ export default {
       });
     },
     list_4() {
+      this.loading=true
       bedList({
          pageNum: this.pageNum,
           pageSize: this.pageSize,
@@ -1367,18 +1474,25 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
       console.log(val);
-      if (this.dialogMsg === true) {
-        this.dialogMsg_2 = true;
-        this.dialogMsg = false;
-      }
+      // if (this.dialogMsg === true) {
+      //   this.dialogMsg_2 = true;
+      //   this.dialogMsg = false;
+      // }
     },
       //调寝
     handleAdjust(val) {
-      if(this.multipleSelection.length<1){
-      this.dialogMsg = true;
-      }else{
-        this.dialogMsg_2=true
-      }
+      // if(this.multipleSelection.length<1){
+      // this.dialogMsg = true;
+      // }else{
+      //   this.dialogMsg_2=true
+      // }
+      this.dialogMsg_2=true
+      getOldResidenceInformation({bedId:val.bedId}).then(res=>{
+        if(res.data.code==200){
+          this.getUserInfo=res.data.data
+        }
+        console.log(res)
+      })
       console.log(val);
       this.dialogVal=val
     },
@@ -1386,23 +1500,22 @@ export default {
     oNdialogMso(id){
       
         if(id==1){
-          if( this.multipleSelection.length>1){
-              this.$message({message: "调寝只能选择一个床位！",});           
+          if( this.select_4_5==null){
+              this.$message({message: "请选择床位号！",});           
           }
-          else if(this.dialogVal.bedId==this.multipleSelection[0].bedId){
-              this.$message({message: "调寝床位不能一样！",});
-          }
+          else if(this.dialogVal.bedId==this.bedMsg.bedId){
+              this.$message({message: "选择的床位号不能跟当前床位号一样",});  
+          }     
           else{
             bedExchangeBed({
               firstBedId:this.dialogVal.bedId,
               firstStudentId:this.dialogVal.studentInfoId,
-              lastBedId:this.multipleSelection[0].bedId,
-              lastStudentId:this.multipleSelection[0].studentInfoId,
+              lastBedId:this.bedMsg.bedId,
+              lastStudentId:this.bedMsg.studentInfoId,
             }).then(res=>{
               this.dialogMsg_2 = false;
               console.log('调寝',res)
-              this.multipleSelection=[]
-              this.$refs.multipleTable.clearSelection()
+             
               if(res.data.code==200){
                   this.$message({type: "success",message: "调寝成功",})
                   this.list_4()
@@ -1411,19 +1524,8 @@ export default {
               }
             })
           }
-        }
-        else if(id==2){
-          this.dialogMsg_2 = false;
-          this.dialogMsg = false;
-          this.multipleSelection=[]
-          this.$refs.multipleTable.clearSelection()
-        }else{
-          this.dialogMsg_2 = false;
-          this.dialogMsg = false;
-          this.multipleSelection=[]
-          this.$refs.multipleTable.clearSelection()
-        }
-        
+        }    
+       
     },
       //查询全部班级下拉
         queryAllCalsss(){    
@@ -1551,6 +1653,8 @@ export default {
     },
     //关闭分配模态框
     shutModal(){
+      
+
         this.select_5_1=null
         this.select_5_2=null
         this.select_5_3=null
@@ -1644,6 +1748,7 @@ export default {
               this.select_4_2=null
               this.select_4_3=null
               this.select_4_4=null
+              this.select_4_5=null
               // this.options_4.unshift({ floorName: "全部", floorId: null });
             }
           });  
@@ -1658,7 +1763,8 @@ export default {
                 this.newfloorList3=[]
 
                this.select_4_3=null
-              this.select_4_4=null        
+              this.select_4_4=null  
+              this.select_4_5=null      
             }
           });
     },
@@ -1669,9 +1775,24 @@ export default {
               console.log('房间',res);
             if (res.data.code === 200) {
               this.newfloorList3=res.data.data   
-               this.select_4_4=null        
+               this.select_4_4=null  
+               this.select_4_5=null      
             }
           });
+    },
+      //房间下拉 查询床位
+    newSlect4(){     
+          getBedListByRoomId({ roomId : this.select_4_4}).then(res => {
+              console.log('床位',res);
+            if (res.data.code === 200) {
+              this.newfloorList4=res.data.data                
+               this.select_4_5=null      
+            }
+          });
+    },
+    //床位下拉
+    newSlect5(msg){
+      this.bedMsg=msg
     },
     indexSelect_7(val) {
       console.log(val);
@@ -2091,7 +2212,6 @@ export default {
       this.tabtext = event.target.innerHTML;
       this.tableData=[]
       console.log(event.target.innerHTML);
-      this.loading = true;
       if (tab.index == "0") {
         console.log(this.normal, this.abnormal);
         this.list();
@@ -2351,6 +2471,8 @@ export default {
       this.select_3_3 = null
       // input_3_1 =  房间号 自动生成
       this.input_3_2 = null
+
+     
       this.regionId = null;
       this.dialogHouse = true;
       this.input_3_1=''
@@ -2363,11 +2485,28 @@ export default {
       this.select_4_2 = null
       this.select_4_3 = null
       this.select_4_4 = null
+      this.select_4_5 = null
       this.input_4_3 = null
       this.dialogBed = true;
       this.newfloorList=[]
       this.newfloorList2=[]
        this.newfloorList3=[]
+       this.newfloorList4=[]
+       this.getUserInfo={}
+    },
+    dialogBeds2(){
+        this.select_4_1 =null
+      this.select_4_2 = null
+      this.select_4_3 = null
+      this.select_4_4 = null
+      this.select_4_5 = null
+      this.input_4_3 = null
+      this.dialogBed = false;
+      this.newfloorList=[]
+      this.newfloorList2=[]
+       this.newfloorList3=[]
+       this.newfloorList4=[]
+       this.getUserInfo={}
     },
     //床位新增保存
     bedsaves(){
@@ -2459,6 +2598,7 @@ export default {
   padding: 50px 20px 20px 20px;
   display: flex;
   flex-direction: column;
+   overflow: hidden;
   .header {
     min-height: 150px;
     width: 100%;
@@ -2493,7 +2633,10 @@ export default {
             display: flex;
             min-height:32px;
             align-items: center;
-            
+            flex-wrap: wrap;
+            .respondCss{
+              margin:10px 0;
+            }
         }
         .collegeNmae2{
             margin-right: 10px;
@@ -2514,7 +2657,7 @@ export default {
     flex-direction: column;
     .tablesx {
       flex: 1;
-      overflow: auto;
+      overflow: hidden;
       border-radius:15px 15px 0 0;
          .operate{
             position:absolute;
@@ -2597,6 +2740,22 @@ export default {
   }
   
 }
+.tiaoqin{
+  margin-top:20px;
+  border-top: 1px solid #ededed;
+  padding-top: 20px;
+  .div{
+    height: 32px;
+    line-height:32px;
+  }
+  .span {
+    display: inline-block;
+    width: 70px;
+    text-align: right;
+    margin-right: 15px;
+  }
+  
+}
 .bedFP{
     // text-align: left;
     display: flex;
@@ -2662,6 +2821,7 @@ p {
 .pagexs {
   z-index: 55;
   width: 100%;
+  height: 50px;
   display: flex;
   align-items: center;
 }

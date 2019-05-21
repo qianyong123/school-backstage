@@ -10,7 +10,7 @@ Vue.use(Vuex)
         token:'',
         headerName:'返回首页',
         organizationList:[],
-        roleInfoMenu:[],
+        roleInfoMenu:[],   
         home:1,
         index:'/index'
         },
@@ -33,14 +33,17 @@ Vue.use(Vuex)
             roleInfoMenus(state,roleInfoMenu){
                 state.roleInfoMenu = roleInfoMenu
             },
+            //导航字体颜色
             indexs(state,index){
-                state.index=index
-                localStorage.setItem('navColor',index)
+                state.index=index       
+                localStorage.setItem('navColor',index)             
             },
+            //导航图标颜色
             homes(state,home){
                 state.home=home
                 localStorage.setItem('iconColor',home)
-            }
+            },
+           
            
     }
 })

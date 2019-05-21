@@ -9,9 +9,20 @@
                         <div class="collegeNmae">
                             <div class="collegeNmae2">
                                 <el-button size="small" icon="el-icon-plus" @click="newly(1)"></el-button>
-                                <el-button size="small" icon="el-icon-delete" @click="deleteDate(1)"></el-button>
-                                <el-button size="small" icon="el-icon-upload2"></el-button>
+                                <el-button size="small" icon="el-icon-delete" @click="deleteDate(1)"></el-button>                               
                             </div>
+                             <el-upload
+                                class="upload-demo"
+                                style="margin-right:10px;"
+                                action="https://jsonplaceholder.typicode.com/posts/"                           
+                                :on-change="handleAvatarSuccess"
+                                :show-file-list="false"                  
+                                :limit="1"
+                                :auto-upload='false'                            
+                                :file-list="fileList">
+                                 <el-button size="small" icon="el-icon-download"></el-button>
+                                <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
+                                </el-upload>
                             <el-input
                             placeholder="学院名"
                             v-model="referName1"
@@ -21,7 +32,7 @@
                             <el-button @click="referData(1)" size="small">查询</el-button>
                         </div>
                        
-                        <el-button size="small" icon="el-icon-download"></el-button> 
+                        <el-button @click="outExcelStudents" size="small" icon="el-icon-upload2"></el-button> 
                      </div>
                 </el-tab-pane>
                 <el-tab-pane label="专业管理" name="专业管理">
@@ -427,7 +438,9 @@ import {
     updataMajor,
     updataYear,
     updataClassInfo,
-    queryMenuById
+    queryMenuById,
+    saveCollegeExcelAll,
+    outCollegeExcel
 } from '@/axios/api.js'
 const collegeList=[
             {name:'学院名',props:'college_name'},      
@@ -468,7 +481,7 @@ const gradeList=[
                 deleteId:null,//操作id
                 loading:true,
                 newName:'',
-                 total:10000,
+                 total:0,
                  pageSize:10,
                  pageNum:1,    
                   roleInfoMenu:[],
@@ -533,6 +546,7 @@ const gradeList=[
                 tableData: [ 
                                 
                 ],
+                fileList:[]
             }
         },
         mounted() {
@@ -580,6 +594,9 @@ const gradeList=[
                     if(this.roleId==1){
                         return true
                     }
+                     else if(this.roleInfoMenu.length<1){
+                        return true
+                    }
                     else{
                         return this.roleInfoMenu[9].indexOf('10')==-1?false:true
                     }
@@ -614,6 +631,64 @@ const gradeList=[
                     this.queryAllCalsss()
                 }
             },
+            //导入
+            handleAvatarSuccess(){
+                 console.log(file)
+                 let fd = new FormData();
+                fd.append('file',file.raw);//传文件
+                this.fileList=[]
+              
+                    // saveCollegeExcelAll(fd).then(res=>{
+                    //     if(res.data.code==200&&res.data.data==''){
+                    //            saveExcelAllStudent(fd).then(res2=>{
+                    //             if(res2.data.code==200){
+                    //                 this.$message({message:'导入成功',type:'success'}); 
+                    //                 this.queryStudents()
+                    //             }else{
+                    //                 this.$message({message:'导入失败' +res2.data.msg}); 
+                    //             }
+                    //         })
+                    //     }else{
+                    //         this.$message({message:'导入失败' +res.data.data}); 
+                    //     }
+
+                    // })
+                
+            },
+            //导出处理
+             blobs(data,msg){
+                const content = data
+                const blob = new Blob([content])
+                const fileName =msg
+                if ('download' in document.createElement('a')) { // 非IE下载
+                const elink = document.createElement('a')
+                elink.download = fileName
+                elink.style.display = 'none'
+                elink.href = URL.createObjectURL(blob)
+                document.body.appendChild(elink)
+                elink.click()
+                URL.revokeObjectURL(elink.href) // 释放URL 对象
+                document.body.removeChild(elink)
+                } else { // IE10+下载
+                navigator.msSaveBlob(blob, fileName)
+                }
+            },
+            //导出
+             outExcelStudents(){             
+                if(this.multipleSelection.length<1){
+                    this.$message('请选择要导出的数据')
+                }
+                else{               
+                     outCollegeExcel({jsonObject:this.multipleSelection}).then(res=>{
+                             if(res.status==200&&res.data!=null){
+                                this.blobs(res.data,'学院.xls')
+                            }else{
+                                this.$message('导出失败',res.data.msg)
+                            }
+                        })
+                }
+                
+             },
               //点击操作
             clickOperate(scope,row){
                 this.deleteId=scope.$index
@@ -1352,7 +1427,7 @@ const gradeList=[
         flex-direction: column;
         .tableBox{
             flex: 1;
-            overflow: auto;  
+            overflow: hidden;
             border-radius:15px 15px 0 0;
             th{
                 color: $color;

@@ -1,7 +1,7 @@
 <template>
   <div class="Login">
       <div class="Login-user">
-          <img class="login-img" src="../../../static/img/Bitmap.png" alt="">
+          <img class="login-img" src="../../../static/img/Bitmap2.png" alt="">
           <div class="login-main" v-if="islogin_2">
                <!-- <h3>账号密码登录</h3> -->
                 <el-input
@@ -23,7 +23,7 @@
                     <el-checkbox style="" v-model="checked">15天内自动登录</el-checkbox>
                     <p @click="forgetPassword">忘记密码？</p>
                 </div>
-                <el-button style="width:100%;" @click="login">登录</el-button>              
+                <el-button style="width:100%;" @click="login(1)">登录</el-button>              
           </div>
             <div class="login-main" v-if="iscode_2">
                 <el-input
@@ -56,11 +56,13 @@
                     class="loginInput"              
                     ></el-input>
                 </div>
-                <p class="login-cuowu">{{msg}}</p>
+                <p class="login-cuowu" v-if="newPassword==1">{{msg}}</p>
+                <i v-if="newPassword==2" class="el-icon-close fanhui" @click="handleLogin()"></i>
                 <div v-if="newPassword==1" class="forget">
                     <el-checkbox v-model="checked">15天内自动登录</el-checkbox>
                 </div>
-                <el-button style="width:100%;" @click="login">登录</el-button>              
+                <el-button  v-if="newPassword==1" style="width:100%;" @click="login2(2)">登录</el-button> 
+                <el-button v-else style="width:100%;margin-top:20px;" @click="login3(3)">登录</el-button> 
           </div>
         <div class="login-main" v-if="iswx_2">
                 <div>
@@ -82,7 +84,7 @@
 </template>
 
 <script>
-import {requestLogin } from '@/axios/api1.js'
+import {requestLogin,sendCode,quickLogin,forgetPassword} from '@/axios/api1.js'
 import { setInterval, clearInterval } from 'timers';
 const item = {
         date: '2016-05-02',
@@ -100,7 +102,7 @@ const item = {
                 password:'',
                 password2:'',
                 password3:'',
-                iscuowu:'',
+                iscuowu:1,
                 yansheng:'',
                 time:60,
                 istime:true,
@@ -133,6 +135,8 @@ const item = {
                 this.islogin_2 =false
                 this.iswx_2 =false
                 this.iswx =true
+                this.iscuowu==1
+                  this.newPassword=1
             },
             //账号密码登录
             handleLogin(){
@@ -142,6 +146,8 @@ const item = {
                 this.islogin_2 =true
                 this.iswx_2 =false
                 this.iswx =true
+                this.newPassword=1
+             
             },
             //微信登录
             handleWx() {
@@ -165,34 +171,49 @@ const item = {
                 this.iswx_2 =false
                 this.iswx =true
                 this.newPassword=2
+                this.iscuowu==2
             },
             //获取验证码
             getYanzheng(){
+                 let name=/^1[3456789]\d{9}$/,
+                    pass=/^\w{4,16}$/;
+                if(!name.test(this.username)||this.username==''){
+                     this.$message.error('请输入11位的手机号码')
+                    return                
+                } 
                 this.istime=false
+                sendCode({phone:this.username,type:this.newPassword==1?0:1}).then(res=>{
+                   if(res.status=='200'&&res.data.code==200){
+                        console.log(res)                        
+                   }else{
+                    //   this.$message(res.data.msg); 
+                   }
+                })
                 let setItems=setInterval(()=>{
                     if(this.time==0){
                        this.istime=true
-                       clearInterval('setItems') 
+                       clearInterval(setItems) 
+                       this.time=60
                     }
                     this.time=this.time-1
                 },1000)
             },
-            login(){
-                
+            login(id){
+                    console.log(id)
                  let name=/^1[3456789]\d{9}$/,
                     pass=/^\w{4,16}$/,             
                     username=this.username,
                     password=this.password;
                      // this.$router.push('/')   
                 if(!name.test(username)||username==''){
-                    this.msg='用户名请输入11位的手机号码';                  
-                } 
+                     this.$message.error('用户名请输入11位的手机号码')
+                }              
                 else if(!pass.test(password)||password==''){
-                    this.msg='密码请输入4~16位字母或数字';
+                     this.$message.error('密码请输入4~16位字母或数字')
                 }  
                 //  else if(name.test(username)&&pass.test(password))
                 else if(pass.test(password)){
-                    this.msg='';  
+                    this.msg=''
                      const loading = this.$loading({
                         lock: true,
                         text: "登录中...",
@@ -205,8 +226,7 @@ const item = {
                         flag :this.checked
                     }).then(res=>{
                          loading.close();
-                        // let datas=JSON.parse(res.data)userInfoId
-                        // console.log(datas)
+                        
                         if(res.status=='200'&&res.data.code==200){                       
                            localStorage.setItem('token',res.data.data.Authorization)
                             this.$router.push('/index')                         
@@ -215,10 +235,84 @@ const item = {
                             this.$store.commit('indexs','/index')
                             this.$store.commit('homes',1)
                         } else{
-                            this.msg=res.data.msg
+                             this.$message.error(res.data.msg);
+                            // this.msg=res.data.msg
                         }                
                     })
                 }                                                     
+            },
+            //验证码登录
+            login2(){
+                if(this.username==''&&this.yansheng==''){
+                    this.$message.error('请输入用户名或验证码')
+                    return                
+                } 
+                  const loading = this.$loading({
+                        lock: true,
+                        text: "登录中...",
+                        spinner: "el-icon-loading",
+                        background: "rgba(255, 255, 255, 0.8)"
+                    }); 
+                quickLogin({
+                    phone:this.username,
+                    code:this.yansheng,
+                    flag :this.checked
+                }).then(res=>{       
+                     loading.close();                                  
+                      if(res.status=='200'&&res.data.code==200){                       
+                           localStorage.setItem('token',res.data.data.Authorization)
+                            this.$router.push('/index')                         
+                            localStorage.setItem('roleId',res.data.data.roleId)
+                            localStorage.setItem('userInfoId',res.data.data.userInfoId)
+                            this.$store.commit('indexs','/index')
+                            this.$store.commit('homes',1)
+                        } else{
+                             this.$message.error(res.data.msg);
+                            // this.msg=res.data.msg
+                        } 
+                })
+            },
+             //忘记密码登录
+            login3(){
+                 let name=/^1[3456789]\d{9}$/,
+                    pass=/^\w{4,16}$/,             
+                    username=this.username,
+                    password=this.password2; 
+                if(this.username==''&&this.yansheng==''){
+                    this.$message.error('请输入用户名或验证码')
+                }                         
+                else if(!pass.test(password)||password==''){
+                    this.$message.error('密码请输入4~16位字母或数字')
+                } 
+                else if(this.password2!==this.password3){
+                    this.$message.error('两次密码不一致')
+                }  
+                else{   
+                    const loading = this.$loading({
+                        lock: true,
+                        text: "登录中...",
+                        spinner: "el-icon-loading",
+                        background: "rgba(255, 255, 255, 0.8)"
+                    });            
+                    forgetPassword({
+                        phone:this.username,
+                        code:this.yansheng,
+                        password
+                    }).then(res=>{
+                         loading.close();
+                        if(res.status=='200'&&res.data.code==200){                       
+                            localStorage.setItem('token',res.data.data.Authorization)
+                                this.$router.push('/index')                         
+                                localStorage.setItem('roleId',res.data.data.roleId)
+                                localStorage.setItem('userInfoId',res.data.data.userInfoId)
+                                this.$store.commit('indexs','/index')
+                                this.$store.commit('homes',1)
+                            } else{
+                                this.$message.error(res.data.msg);
+                                // this.msg=res.data.msg
+                            } 
+                    })
+                }
             }
             
         },
@@ -245,6 +339,7 @@ const item = {
     .Login{
         width: 100%;
         height: 100%;
+         font-size: 14px;        
         // padding: 50px;
         // background:#141D2C url('../../../static/img/Group23.png') no-repeat center center;
         background: #141D2C;
@@ -273,8 +368,8 @@ const item = {
                 left: 0;
                 right: 0;
                 margin: auto;
-                width: 300px;
-                height:35px;              
+                // width: 300px;
+                // height:35px;              
             }
             .else-login{
                 width: 100%;
@@ -298,6 +393,7 @@ const item = {
                 height: 300px;             
                 // margin-top:0px;
                 font-size: 14px;
+                position: relative;
                 h3{
                     margin-bottom: 20px;
                 }
@@ -326,6 +422,14 @@ const item = {
                         //     color: #09f;
                         // }
                     }
+                }
+                .fanhui{
+                    position: absolute;
+                    top: -25px;
+                    right: -25px;
+                    font-size:20px;
+                    cursor: pointer;
+                    color: #888;
                 }
             }
         }

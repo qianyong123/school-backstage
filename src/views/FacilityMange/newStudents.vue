@@ -9,43 +9,10 @@
             :show-close="false"
             center>
                 <div class="newFacilityMange">   
-                     <div class="divBox">
-                        <div class="div">
+                     <div class="divBox" v-if="newName!=1">
+                        <div  class="div">
                             <span class="span">设备名称</span>
-                            <el-input v-model="FacilityMange.newInput1"></el-input>
-                        </div>
-                        <div class="div">
-                            <span class="span">所在位置</span>
-                            <el-select v-model="FacilityMange.selectValue1" @change="queryFloor" placeholder="请选择">
-                                <el-option
-                                v-for="item in options1"
-                                :key="item.regionId"
-                                :label="item.regionName"
-                                :value="item.regionId">
-                                </el-option>
-                            </el-select>
-                            <span style="margin:0 7px;"></span>
-                            <el-select v-model="FacilityMange.selectValue2" placeholder="请选择">
-                                <el-option                              
-                                v-for="item in options2"
-                                :key="item.floorId"
-                                :label="item.floorName"
-                                :value="item.floorId">
-                                </el-option>
-                            </el-select>
-                        </div>                     
-                    </div>
-                     <div class="divBox">
-                        <div class="div">
-                            <span class="span">状态</span>
-                            <el-select v-model="FacilityMange.selectValue3" placeholder="请选择">
-                                <el-option
-                                v-for="item in select1"
-                                :key="item.value"
-                                :label="item.name"
-                                :value="item.value">
-                                </el-option>
-                            </el-select>  
+                            <el-input disabled v-model="FacilityMange.newInput1"></el-input>
                         </div>
                         <div class="div">
                             <span class="span">类型</span>
@@ -57,14 +24,50 @@
                                 :value="item.value">
                                 </el-option>
                             </el-select>                            
-                        </div>                     
-                    </div>
-                    <div class="divBox">
+                        </div> 
                         <div class="div">
                             <span class="span">标识</span>
                             <el-select v-model="FacilityMange.selectValue5" placeholder="请选择">
                                 <el-option
                                 v-for="item in select3"
+                                :key="item.value"
+                                :label="item.name"
+                                :value="item.value">
+                                </el-option>
+                            </el-select>  
+                        </div>                  
+                    </div>
+                    <div class="divBox" v-if="newName!=1">
+                          <div class="div">
+                            <span class="span">所在位置</span>
+                            <el-select v-model="FacilityMange.selectValue1" @change="queryFloor" placeholder="请选择区域">
+                                <el-option
+                                v-for="item in options1"
+                                :key="item.regionId"
+                                :label="item.regionName"
+                                :value="item.regionId">
+                                </el-option>
+                            </el-select>
+                            <!-- <span style="margin:0 7px;"></span> -->
+                            <el-select style="margin:0 10px;" v-model="FacilityMange.selectValue2" placeholder="请选择楼栋">
+                                <el-option                              
+                                v-for="item in options2"
+                                :key="item.floorId"
+                                :label="item.floorName"
+                                :value="item.floorId">
+                                </el-option>
+                            </el-select>
+                             <el-input v-model="FacilityMange.newInput2"></el-input>
+                             <span style="margin-left:10px">号</span>
+                        </div>
+                    </div>
+                
+                    <div class="divBox">
+                          <div class="div">
+                            <span class="span">状态</span>
+                            <el-select v-model="FacilityMange.selectValue3" placeholder="请选择">
+                                <el-option
+                                v-for="item in select1"
                                 :key="item.value"
                                 :label="item.name"
                                 :value="item.value">
@@ -520,7 +523,7 @@
                                 <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
                                 </el-upload> 
                                 <div style="font-size:12px;">{{FacilityMange.demoName}}</div>
-                                <div style="font-size:12px;margin-left:20px;">大小不能超过20M</div>
+                                <!-- <div style="font-size:12px;margin-left:20px;">20M</div> -->
                         </div>
                     </div>
                     <div class="divBox">
@@ -647,7 +650,7 @@ export default {
        shutModal(id){
            console.log('关闭模态框',id)
            bus.$emit('newCall')
-             
+               this.FacilityMange.demoName='' 
        },
         //区域下拉
         queryFloor(id){
@@ -663,15 +666,16 @@ export default {
             }, 
              //导入成功或失败
             handleAvatarSuccess(file){
-                console.log(file)
+               
                 this.FacilityMange.demoName=file.name
                  let fd = new FormData();
                 fd.append('file',file.raw);//传文件
                 this.fileList=[]
                 const isLt2M = file.size / 1024 / 1024 < 20;
+                 console.log(file,isLt2M)
                 if(!isLt2M){
                      this.$message('上传大小不能超过20M');
-                     this.FacilityMange.demoName=''
+                    //  this.FacilityMange.demoName=''
                 }
                    
                 

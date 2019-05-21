@@ -6,67 +6,147 @@
         </div>
         <div class="collegeChart1Box">
             <div class="collegeChart1">
-                <div class="collegeChart1-top">
+                <div class="collegeChart1-top" :class="{'collegeChart1-top2':isdownload==1}">
+                     <div class="collegeChart-p" v-if="isdownload==1">
+                        <p class="top" style=" font-weight: 600;">异常行为统计</p>
+                        <p style="cursor: pointer;" @click="checkForms(1)">异常报表</p>
+                    </div>
                     <div>
                         <el-dropdown @command="handleCommand" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;">
                                 {{collegeName}}<i class="el-icon-arrow-down el-icon--right"></i>
                             </div>
                             <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item  :command="{regionName:'全部',id:''}">全部</el-dropdown-item>
+                                <el-dropdown-item  :command="{regionName:'全部',regionId:null}">全部</el-dropdown-item>
                                 <el-dropdown-item v-for="item in collegeList" :key="item.id" :command="item">{{item.regionName}}</el-dropdown-item>                                                   
                             </el-dropdown-menu>
                         </el-dropdown>
                         <el-dropdown @command="handleFloor" placement="bottom-start">
-                            <div class="el-dropdown-link" style="color:#333;margin-left:15px;">
+                            <div class="el-dropdown-link" style="color:#333;margin-left:10px;">
                                 {{floorName}}<i class="el-icon-arrow-down el-icon--right"></i>
                             </div>
                             <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item  :command="{floorName:'全部',id:''}">全部</el-dropdown-item>
+                                <el-dropdown-item  :command="{floorName:'全部',id:null}">全部</el-dropdown-item>
                                 <el-dropdown-item v-for="item in floorList" :key="item.id" :command="item">{{item.floorName}}</el-dropdown-item>                                                   
                             </el-dropdown-menu>
                         </el-dropdown>
                         <el-date-picker
                         v-model="timeValue"
-                        type="month"
-                        style="width:100px;margin:0 15px;"
+                        type="year"
+                        style="width:100px;margin:0 10px;"
                         :clearable="false" 
-                        format="yyyy/MM"    
-                        placeholder="年/月">
+                        format="yyyy"  
+                        @change="selectYear"    
+                        placeholder="年">
                         </el-date-picker>
-                        <el-dropdown @command="handleWeekName" placement="bottom-start">
+                          <el-dropdown @command="handleMonth" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;">
+                                {{monthName}}<i class="el-icon-arrow-down el-icon--right"></i>
+                            </div>
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item v-for="item in monthList" :key="item.id" :command="item">{{item.name}}</el-dropdown-item>                                                   
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                        <el-dropdown @command="handleWeekName" placement="bottom-start">
+                            <div class="el-dropdown-link" style="color:#333;margin-left:10px;">
                                 {{weekName}}<i class="el-icon-arrow-down el-icon--right"></i>
                             </div>
                             <el-dropdown-menu slot="dropdown">
-                                 <el-dropdown-item  :command="{name:'全部',id:''}">全部</el-dropdown-item>
+                                 <el-dropdown-item  :command="{name:'全部',id:null}">全部</el-dropdown-item>
                                 <el-dropdown-item v-for="item in weekList" :key="item.id" :command="item">{{item.name}}</el-dropdown-item>                                                   
                             </el-dropdown-menu>
                         </el-dropdown>
                     </div>
-                    <p class="top" style=" font-weight: 600;">异常行为统计</p>
-                    <p>异常报表</p>
+                    <p v-if="isdownload==0" class="top" style=" font-weight: 600;">异常行为统计</p>
+                    <p v-if="isdownload==0" style="cursor: pointer;" @click="checkForms(1)">异常报表</p>
                 </div>
                 <div id="areaCharts1" style="height:420px;width:100%;"></div>
             </div>
           <div class="collegeChart4" style="margin-left:20px;">
-               <div class="collegeChart1-top">
-                    <div>
+               <div class="collegeChart1-top" :class="{'collegeChart1-top2':isdownload==1}">
+                     <div class="collegeChart-p" v-if="isdownload==1">
+                        <p class="top" style=" font-weight: 600;">申请处理统计</p>
+                        <p style="cursor: pointer;" @click="checkForms(1)">申请统计</p>
+                    </div>
+                    <div v-if="isdownload==1" class="collegeChart-p2">
+                        <div>
+                            <el-dropdown @command="handleCommand2" placement="bottom-start">
+                                <div class="el-dropdown-link" style="color:#333;">
+                                    {{collegeName2}}<i class="el-icon-arrow-down el-icon--right"></i>
+                                </div>
+                                <el-dropdown-menu slot="dropdown">
+                                    <el-dropdown-item  :command="{regionName:'全部',regionId:null}">全部</el-dropdown-item>
+                                    <el-dropdown-item v-for="item in collegeList" :key="item.id" :command="item">{{item.regionName}}</el-dropdown-item>                                                   
+                                </el-dropdown-menu>
+                            </el-dropdown>
+                            <el-dropdown @command="handleFloor2" placement="bottom-start">
+                                <div class="el-dropdown-link" style="color:#333;margin:0 10px;">
+                                    {{floorName2}}<i class="el-icon-arrow-down el-icon--right"></i>
+                                </div>
+                                <el-dropdown-menu slot="dropdown">
+                                    <el-dropdown-item  :command="{floorName:'全部',id:null}">全部</el-dropdown-item>
+                                    <el-dropdown-item v-for="item in floorList2" :key="item.id" :command="item">{{item.floorName}}</el-dropdown-item>                                                   
+                                </el-dropdown-menu>
+                            </el-dropdown>
+                            <el-dropdown @command="handleApplyType" placement="bottom-start">
+                                <div class="el-dropdown-link" style="color:#333;margin-right:10px;">
+                                    {{applyType}}<i class="el-icon-arrow-down el-icon--right"></i>
+                                </div>
+                                <el-dropdown-menu slot="dropdown">
+                                    <el-dropdown-item  :command="{name:'全部',id:null}">全部</el-dropdown-item>
+                                    <el-dropdown-item v-for="item in applyTypeList" :key="item.id" :command="item">{{item.name}}</el-dropdown-item>                                                   
+                                </el-dropdown-menu>
+                            </el-dropdown>
+                            
+                        </div>
+                        <p v-if="isdownload==0" class="top" style=" font-weight: 600;">申请处理统计</p>
+                        <div class="collegeChart2-right">
+                            <el-date-picker
+                            v-model="timeValue2"
+                            type="year"
+                            style="width:100px;"
+                            :clearable="false" 
+                            format="yyyy" 
+                            @change="selectYear2"    
+                            placeholder="年">
+                            </el-date-picker>
+                            <el-dropdown @command="handleMonth2" placement="bottom-start">
+                                <div class="el-dropdown-link" style="color:#333;margin-left:10px;">
+                                    {{monthName2}}<i class="el-icon-arrow-down el-icon--right"></i>
+                                </div>
+                                <el-dropdown-menu slot="dropdown">
+                                    <el-dropdown-item v-for="item in monthList" :key="item.id" :command="item">{{item.name}}</el-dropdown-item>                                                   
+                                </el-dropdown-menu>
+                            </el-dropdown>
+                            <el-dropdown @command="handleWeekName2" placement="bottom-start">
+                                <div class="el-dropdown-link" style="color:#333;margin:0 10px;">
+                                    {{weekName2}}<i class="el-icon-arrow-down el-icon--right"></i>
+                                </div>
+
+                                <el-dropdown-menu slot="dropdown">
+                                    <el-dropdown-item  :command="{name:'全部',id:null}">全部</el-dropdown-item>
+                                    <el-dropdown-item v-for="item in weekList" :key="item.id" :command="item">{{item.name}}</el-dropdown-item>                                                   
+                                </el-dropdown-menu>
+                            </el-dropdown>
+                            <p v-if="isdownload==0" style="cursor: pointer;" @click="checkForms(2)">申请统计</p>
+                        </div>
+                    </div>
+                    <div v-if="isdownload==0">
                         <el-dropdown @command="handleCommand2" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;">
                                 {{collegeName2}}<i class="el-icon-arrow-down el-icon--right"></i>
                             </div>
                             <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item  :command="{regionName:'全部',id:''}">全部</el-dropdown-item>
+                                <el-dropdown-item  :command="{regionName:'全部',regionId:null}">全部</el-dropdown-item>
                                 <el-dropdown-item v-for="item in collegeList" :key="item.id" :command="item">{{item.regionName}}</el-dropdown-item>                                                   
                             </el-dropdown-menu>
                         </el-dropdown>
                          <el-dropdown @command="handleFloor2" placement="bottom-start">
-                            <div class="el-dropdown-link" style="color:#333;margin:0 15px;">
+                            <div class="el-dropdown-link" style="color:#333;margin:0 10px;">
                                 {{floorName2}}<i class="el-icon-arrow-down el-icon--right"></i>
                             </div>
                             <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item  :command="{floorName:'全部',id:''}">全部</el-dropdown-item>
+                                <el-dropdown-item  :command="{floorName:'全部',id:null}">全部</el-dropdown-item>
                                 <el-dropdown-item v-for="item in floorList2" :key="item.id" :command="item">{{item.floorName}}</el-dropdown-item>                                                   
                             </el-dropdown-menu>
                         </el-dropdown>
@@ -75,38 +155,104 @@
                                 {{applyType}}<i class="el-icon-arrow-down el-icon--right"></i>
                             </div>
                             <el-dropdown-menu slot="dropdown">
-                                 <el-dropdown-item  :command="{name:'全部',id:''}">全部</el-dropdown-item>
+                                 <el-dropdown-item  :command="{name:'全部',id:null}">全部</el-dropdown-item>
                                 <el-dropdown-item v-for="item in applyTypeList" :key="item.id" :command="item">{{item.name}}</el-dropdown-item>                                                   
                             </el-dropdown-menu>
                         </el-dropdown>
                         
                     </div>
-                    <p class="top" style=" font-weight: 600;">申请处理统计</p>
-                    <div class="collegeChart2-right">
+                    <p v-if="isdownload==0" class="top" style=" font-weight: 600;">申请处理统计</p>
+                    <div v-if="isdownload==0" class="collegeChart2-right">
                         <el-date-picker
-                        v-model="timeValue"
-                        type="month"
+                        v-model="timeValue2"
+                        type="year"
                         style="width:100px;"
                         :clearable="false" 
-                        format="yyyy/MM"    
-                        placeholder="年/月">
+                        format="yyyy" 
+                        @change="selectYear2"    
+                        placeholder="年">
                         </el-date-picker>
-                        <el-dropdown @command="handleWeekName2" placement="bottom-start">
-                            <div class="el-dropdown-link" style="color:#333;margin:0 15px;">
-                                {{weekName2}}<i class="el-icon-arrow-down el-icon--right"></i>
+                          <el-dropdown @command="handleMonth2" placement="bottom-start">
+                            <div class="el-dropdown-link" style="color:#333;margin-left:10px;">
+                                {{monthName2}}<i class="el-icon-arrow-down el-icon--right"></i>
                             </div>
                             <el-dropdown-menu slot="dropdown">
-                                 <el-dropdown-item  :command="{name:'全部',id:''}">全部</el-dropdown-item>
+                                <el-dropdown-item v-for="item in monthList" :key="item.id" :command="item">{{item.name}}</el-dropdown-item>                                                   
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                        <el-dropdown @command="handleWeekName2" placement="bottom-start">
+                            <div class="el-dropdown-link" style="color:#333;margin:0 10px;">
+                                {{weekName2}}<i class="el-icon-arrow-down el-icon--right"></i>
+                            </div>
+
+                            <el-dropdown-menu slot="dropdown">
+                                 <el-dropdown-item  :command="{name:'全部',id:null}">全部</el-dropdown-item>
                                 <el-dropdown-item v-for="item in weekList" :key="item.id" :command="item">{{item.name}}</el-dropdown-item>                                                   
                             </el-dropdown-menu>
                         </el-dropdown>
-                        <p>申请统计</p>
+                        <p v-if="isdownload==0" style="cursor: pointer;" @click="checkForms(2)">申请统计</p>
                     </div>
                 </div>
                 <div id="areaCharts2" style="height:420px;width:100%;"></div>
             </div>
             
-        </div>      
+        </div>   
+         <!-- 报表 -->
+     <el-dialog
+    :title="detailsName"
+    :visible.sync="details"
+    width="900px"
+    center>
+    <el-table
+    v-if="istable==1"
+        :data="tableData"
+        height="400"
+        style="width: 100%">
+        <el-table-column
+        prop="shu"
+        label="楼栋人数"
+        width="100"
+        >
+        </el-table-column>
+        <el-table-column
+        prop="data"
+        label="未归"
+        >
+        </el-table-column>
+        <el-table-column
+        prop="name"
+        label="连续*日以上无记录"
+        >
+        </el-table-column>
+        <el-table-column
+        prop="classMsg"
+        label="连续*日以上晚归">
+        </el-table-column>
+        <el-table-column
+        prop="name"
+        label="位置信息">
+        </el-table-column>
+        <el-table-column
+        prop="name"
+        label="宿管信息">
+        </el-table-column>
+    </el-table>
+      
+     <el-table
+        v-else
+        :data="tableData"
+        height="400"
+        style="width: 100%">
+        <el-table-column
+        v-for="(item,index) in tableHader3"
+        :key="index"
+        :prop="item.prop"
+        :label="item.name"
+        >
+        </el-table-column>
+       
+    </el-table>
+</el-dialog>   
     </div>   
       
  
@@ -117,14 +263,20 @@ import { queryCollegeByName} from '../../axios/api.js'
 import {arealist_2,floorlist_2} from '../../axios/api1.js'
 import 'quill/dist/quill.js';
 import {mapState}  from 'vuex'
+    const monthData=['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月']
+    const weekData=['一周','二周','三周','四周','五周',]
     export default {
         name:"Index",
         components:{
         
-        },      
+        },  
+        props:[
+            'switchValue',
+            'isdownload'
+        ],    
         data(){
             return{             
-                switchValue:false,
+                // switchValue:false,
                 roleInfoMenu:[],
                 collegeValue1:300,
                 collegeValue2:5,
@@ -135,10 +287,10 @@ import {mapState}  from 'vuex'
                 floorName2:'楼栋',
                 collType:' 报警类型',
                 applyType:'申请类型',
+                 monthName:'月',
+                monthName2:'月',
                 weekName:'周',
-                weekName2:'周',
-                weekName3:'周',
-                weekName4:'周',
+                weekName2:'周',             
                 timeValue:'',
                 timeValue2:'',
                 timeValue3:'',
@@ -148,11 +300,30 @@ import {mapState}  from 'vuex'
                 ],
                 floorList:[],
                 floorList2:[],
+                optionData:['周一','周二','周三','周四','周五','周六','周日'], 
+                collegeLineData:[10,5,20,14,10,4,5],
+                collegeLineData2:[1,12,15,0,4,0,33],
+                collegeLineData3:[4,10,4,10,11,0,14],
                 weekList:[
                     {id:1,name:'一周'},
                     {id:2,name:'二周'},
                     {id:3,name:'三周'},
                     {id:4,name:'四周'},
+                ],
+                 monthList:[
+                    {id:null,name:'全部'},
+                    {id:1,name:'一月'},
+                    {id:2,name:'二月'},
+                    {id:3,name:'三月'},
+                    {id:4,name:'四月'},
+                    {id:5,name:'五月'},
+                    {id:6,name:'六月'},
+                    {id:7,name:'七月'},
+                    {id:8,name:'八月'},
+                    {id:9,name:'九月'},
+                    {id:10,name:'十月'},
+                    {id:11,name:'十一月'},
+                    {id:12,name:'十二月'},
                 ],
                applyTypeList:[
                     {id:1,name:'调寝'},
@@ -165,10 +336,23 @@ import {mapState}  from 'vuex'
                     // 编辑器的配置
                     // something config college
                     theme: "bubble"
-                }
+                },
+                 details:false,
+                istable:1,
+                detailsName:'',
+                tableData:[{name:'计算机学院',shu:12000}],
+                tableHader3:[
+                    {name:'类型',prop:'name'},
+                    {name:'待处理',prop:'name'},
+                    {name:'已处理',prop:'name'},
+                    {name:'处理率',prop:'name'},
+                    {name:'位置信息',prop:'name'},
+                     {name:'宿管信息',prop:'name'},
+                ],
             }
         },
         created() { 
+            console.log('区域')
             arealist_2().then(res=>{
                 if(res.data.code==200){
                    this.collegeList=res.data.data 
@@ -177,10 +361,17 @@ import {mapState}  from 'vuex'
                     this.open('查询区域失败',res.data.msg)
                 }
             })
-        },       
+        },    
+        watch:{
+           switchValue(){
+               if(this.switchValue){
+                    this.collegeLine()         
+                    this.collegeLine2()
+               }
+           } 
+        },   
         mounted(){                 
-            this.collegeLine()         
-            this.collegeLine2()
+           
         },
         methods: {
          open2(msg) {
@@ -231,15 +422,78 @@ import {mapState}  from 'vuex'
             handleApplyType(item){
                 this.applyType=item.name
             },
+              //选择年份
+            selectYear(data){
+                console.log(data)
+               
+                this.monthName='月'
+                this.weekName='周'              
+                this.optionData=monthData.slice(0,this.collegeLineData.length)
+                this.collegeLine()
+            },
+            //选择年份2
+            selectYear2(data){
+                console.log(data)
+                this.monthName2='月'
+                this.weekName2='周'
+                this.optionData=monthData.slice(0,this.collegeLineData.length)
+                this.collegeLine2()
+            },
+             //选择月份
+            handleMonth(data){
+                this.monthName=data.name
+                this.weekName='周'
+                if(data.name=='全部'){
+                    this.optionData=monthData.slice(0,this.collegeLineData.length)                  
+                }else{
+                    this.optionData=weekData
+                }
+                this.collegeLine()
+            },
+             //选择月份2
+            handleMonth2(data){
+                this.monthName2=data.name
+                this.weekName2='周'
+                  if(data.name=='全部'){
+                    this.optionData=monthData.slice(0,this.collegeLineData.length)                  
+                }else{
+                    this.optionData=weekData  
+                }
+                 this.collegeLine2()
+            },
             //周下拉
             handleWeekName(item){
                 this.weekName=item.name
+                 if(item.name=='全部'){
+                     this.optionData=['一周','二周','三周','四周','五周']
+                }else{
+                    this.optionData=['周一','周二','周三','周四','周五','周六','周日']
+                }
+                this.collegeLine()
             },
-              //周下拉
+              //周下拉2
             handleWeekName2(item){
                 this.weekName2=item.name
+                if(item.name=='全部'){
+                     this.optionData=['一周','二周','三周','四周','五周']
+                }else{
+                    this.optionData=['周一','周二','周三','周四','周五','周六','周日']
+                }
+                this.collegeLine2()
             },
-            
+             //查看报表
+            checkForms(id){
+                this.details=true
+                this.istable=id
+                if(id==1){
+                    this.detailsName='2019/12'+'\xa0\xa0\xa0'+'异常报表'
+                }
+                else if(id==2){
+                    this.detailsName='2019/12'+'\xa0\xa0\xa0'+'申请统计'
+                }
+               
+                console.log(id)
+            },
             //报警类型
             handleColltype(item){
                 console.log(item)
@@ -282,7 +536,7 @@ import {mapState}  from 'vuex'
                     xAxis: {
                         type: 'category',
                         boundaryGap: false,
-                        data: ['周一','周二','周三','周四','周五','周六','周日']
+                        data: this.optionData
                     },
                     yAxis: {
                         type: 'value'
@@ -292,7 +546,7 @@ import {mapState}  from 'vuex'
                             name:'未归',
                             type:'line',
                             // stack: '总量',
-                            color:"#E2E2E2",
+                            color:"#F3F3F3",
                             // smooth: true,
                             data:[120, 132, 101, 134, 90, 230, 210]
                         },
@@ -307,7 +561,7 @@ import {mapState}  from 'vuex'
                             name:'连续晚归无记录',
                             type:'line',
                             // stack: '总量',
-                             color:"#E6E6E6",
+                             color:"#DADADA",
                             data:[150, 232, 201, 154, 190, 330, 700]
                         },                    
                     ]
@@ -350,7 +604,7 @@ import {mapState}  from 'vuex'
                     xAxis: {
                         type: 'category',
                         boundaryGap: false,
-                        data: ['周一','周二','周三','周四','周五','周六','周日']
+                        data: this.optionData
                     },
                     yAxis: {
                         type: 'value'
@@ -552,19 +806,34 @@ import {mapState}  from 'vuex'
                         margin-bottom: 20px;    
                         .collegeChart1-top{
                             width: 100%;
-                            height: 35px;
+                            min-height: 35px;
                             display: flex;
                             justify-content: space-between;
                             align-items: center; 
                             margin-bottom:10px;
                             position: relative;
+                              .collegeChart-p{
+                                display: flex;
+                                margin-bottom: 15px;
+                                p:nth-child(1){
+                                    margin-right: 15px;
+                                }
+                            }
+                             .collegeChart-p2{
+                                 display: flex;
+                                 align-items: center;
+                                 justify-content: center;
+                             }
                             
-                        }        
+                        } 
+                        .collegeChart1-top2{
+                        flex-direction: column;
+                        }         
                     }
                     .collegeChart2-right{
                         display: flex;
                         align-items: center; 
-                        min-height: 32px;
+                        min-height: 35px;
                     }
                 }
                 

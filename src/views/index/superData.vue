@@ -14,48 +14,51 @@
                 inactive-color="#ff4949"            
                 active-text="区域"
                 class="switchColor"
+                :class="{switchColor2:switchValue}"
                 @change="dataType"
                 inactive-text="院系">
                 </el-switch>
             </div>
         </div>      
         <div class="collegeDetailData">
-            <div class="collegeDetail-div">
-                <p>学生/辅导员/宿管</p>
-                <div class="collegeDetail-box">
-                    <div class="p2">
-                        <span>12</span>
-                        <span class="span">宿管人数</span>                    
+            <div class="collegeDetail-div">          
+                <div class="collegeDetail-div1">
+                    <p>学生/辅导员/宿管</p>
+                    <div class="collegeDetail-box">
+                        <div class="p2">
+                            <span>12</span>
+                            <span class="span">宿管人数</span>                    
+                        </div>
+                        <div class="p2">
+                            <span>3000</span>
+                            <span class="span">学生人数</span>
+                        </div>
+                        <div class="p2">
+                            <span>2</span>
+                            <span class="span">辅导员人数</span>                      
+                        </div>
+                    
                     </div>
-                    <div class="p2">
-                        <span>3000</span>
-                        <span class="span">学生人数</span>
-                    </div>
-                    <div class="p2">
-                        <span>2</span>
-                        <span class="span">辅导员人数</span>                      
-                    </div>
-                   
                 </div>
-            </div>
-            <div class="collegeDetail-div2"> 
-                 <p>学生/辅导员/宿管</p>
-                  <div class="collegeDetail-box2">
-                    <div class="p3">
-                        <span class="span">学院数</span> 
-                        <span class="amounts">12</span>
-                        <span class="redios"></span>                   
+                <div class="collegeDetail-div2"> 
+                    <p>学生/辅导员/宿管</p>
+                    <div class="collegeDetail-box2">
+                        <div class="p3">
+                            <span class="span">学院数</span> 
+                            <span class="amounts">12</span>
+                            <span class="redios"></span>                   
+                        </div>
+                        <div class="p3">
+                            <span class="span">专业数</span>
+                            <span class="amounts">3</span>
+                            <span class="redios2"></span> 
+                        </div>
+                        <div class="p3">
+                            <span class="span">班级数</span>
+                            <span class="amounts">20</span>
+                            <span class="redios3"></span>                       
+                        </div>                 
                     </div>
-                    <div class="p3">
-                        <span class="span">专业数</span>
-                        <span class="amounts">3</span>
-                        <span class="redios2"></span> 
-                    </div>
-                    <div class="p3">
-                        <span class="span">班级数</span>
-                        <span class="amounts">20</span>
-                        <span class="redios3"></span>                       
-                    </div>                 
                 </div>
             </div>
             <div class="collegeDetail-div3">
@@ -88,14 +91,18 @@
             </div>
         </div>
     </div>
-    <div class="collegeStatistics" v-if="!switchValue">
+    <div class="collegeStatistics" v-show="!switchValue">
        <div style="display: flex;">
             <span class="span"></span>
             <p class="p" style="margin-bottom:30px;">数据统计</p>
         </div>
         <div class="collegeChart1Box">
             <div class="collegeChart1">
-                <div class="collegeChart1-top">
+                <div class="collegeChart1-top" :class="{'collegeChart1-top2':isdownload==1}">
+                    <div class="collegeChart-p" v-if="isdownload==1">
+                        <p class="top" style=" font-weight: 600;">异常行为统计</p>
+                        <p style="cursor: pointer;" @click="checkForms(1)">异常报表</p>
+                    </div>
                     <div>
                         <el-dropdown @command="handleCommand" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;">
@@ -108,29 +115,46 @@
                         </el-dropdown>
                         <el-date-picker
                         v-model="timeValue"
-                        type="month"
+                        type="year"
                         style="width:100px;margin:0 15px;"
                         :clearable="false" 
-                        format="yyyy/MM"    
-                        placeholder="年/月">
+                        format="yyyy" 
+                        @change="selectYear"   
+                         value-format="timestamp"
+                        placeholder="年">
                         </el-date-picker>
-                        <el-dropdown @command="handleWeekName" placement="bottom-start">
+                        
+                        <el-dropdown @command="handleMonth" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;">
+                                {{monthName}}<i class="el-icon-arrow-down el-icon--right"></i>
+                            </div>
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item v-for="item in monthList" :key="item.id" :command="item">{{item.name}}</el-dropdown-item>                                                   
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                        <el-dropdown @command="handleWeekName" placement="bottom-start">
+                            <div class="el-dropdown-link" style="color:#333;margin-left:15px;">
                                 {{weekName}}<i class="el-icon-arrow-down el-icon--right"></i>
                             </div>
                             <el-dropdown-menu slot="dropdown">
-                                 <el-dropdown-item  :command="{name:'全部',id:''}">全部</el-dropdown-item>
-                                <el-dropdown-item v-for="item in weekList" :key="item.id" :command="item">{{item.name}}</el-dropdown-item>                                                   
+                                 <!-- <el-dropdown-item  :command="{name:'全部',id:''}">全部</el-dropdown-item> -->
+                                <el-dropdown-item :disabled="disableds" v-for="item in weekList" :key="item.id" :command="item">{{item.name}}</el-dropdown-item>                                                   
                             </el-dropdown-menu>
                         </el-dropdown>
-                    </div>
-                    <p class="top" style=" font-weight: 600;">异常行为统计</p>
-                    <p>异常报表</p>
+                    </div>                
+                     <p v-if="isdownload==0" class="top" style=" font-weight: 600;">异常行为统计</p>
+                    <p v-if="isdownload==0" style="cursor: pointer;" @click="checkForms(1)">异常报表</p>
+                  
+                
                 </div>
                 <div id="collegeCharts1" style="height:420px;width:100%;"></div>
             </div>
             <div class="collegeChart2" style="margin-left:20px;">
-                <div class="collegeChart1-top">
+                <div class="collegeChart1-top" :class="{'collegeChart1-top2':isdownload==1}">
+                     <div class="collegeChart-p" v-if="isdownload==1">
+                        <p  class="top" style=" font-weight: 600;">违纪次数统计</p>
+                        <p  style="cursor: pointer;" @click="checkForms(2)">违规报表</p>
+                    </div>
                     <div>
                         <el-dropdown @command="handleCommand2" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;">
@@ -142,25 +166,35 @@
                             </el-dropdown-menu>
                         </el-dropdown>
                         <el-date-picker
-                        v-model="timeValue"
-                        type="month"
+                        v-model="timeValue2"
+                        type="year"
                         style="width:100px;margin:0 15px;"
                         :clearable="false" 
-                        format="yyyy/MM"    
-                        placeholder="年/月">
+                        format="yyyy"  
+                        @change="selectYear2" 
+                         value-format="timestamp"  
+                        placeholder="年">
                         </el-date-picker>
-                        <el-dropdown @command="handleWeekName2" placement="bottom-start">
+                          <el-dropdown @command="handleMonth2" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;">
+                                {{monthName2}}<i class="el-icon-arrow-down el-icon--right"></i>
+                            </div>
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item v-for="item in monthList" :key="item.id" :command="item">{{item.name}}</el-dropdown-item>                                                   
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                        <el-dropdown @command="handleWeekName2" placement="bottom-start">
+                            <div class="el-dropdown-link" style="color:#333;margin-left:15px;">
                                 {{weekName2}}<i class="el-icon-arrow-down el-icon--right"></i>
                             </div>
                             <el-dropdown-menu slot="dropdown">
-                                 <el-dropdown-item  :command="{name:'全部',id:''}">全部</el-dropdown-item>
+                                 <!-- <el-dropdown-item  :command="{name:'全部',id:''}">全部</el-dropdown-item> -->
                                 <el-dropdown-item v-for="item in weekList" :key="item.id" :command="item">{{item.name}}</el-dropdown-item>                                                   
                             </el-dropdown-menu>
                         </el-dropdown>
                     </div>
-                    <p class="top" style=" font-weight: 600;">违纪次数统计</p>
-                    <p>违规报表</p>
+                    <p v-if="isdownload==0" class="top" style=" font-weight: 600;">违纪次数统计</p>
+                    <p v-if="isdownload==0" style="cursor: pointer;" @click="checkForms(2)">违规报表</p>
                 </div>
                  <div id="collegeCharts2" style="height:420px;width:100%;"></div>
             </div>
@@ -168,7 +202,11 @@
         </div>
         <div class="collegeChart1Box">
             <div class="collegeChart3">
-                <div class="collegeChart1-top">
+                <div class="collegeChart1-top" :class="{'collegeChart1-top2':isdownload==1}">
+                     <div class="collegeChart-p" v-if="isdownload==1">
+                        <p class="top" style=" font-weight: 600;">报警处理统计</p>
+                        <p  style="cursor: pointer;" @click="checkForms(3)">报警统计</p>
+                    </div>
                     <div>
                         <el-dropdown @command="handleCommand3" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;">
@@ -189,30 +227,44 @@
                             </el-dropdown-menu>
                         </el-dropdown>
                         <el-date-picker
-                        v-model="timeValue"
-                        type="month"
+                        v-model="timeValue3"
+                        type="year"
                         style="width:100px;margin:0 15px;"
                         :clearable="false" 
-                        format="yyyy/MM"    
-                        placeholder="年/月">
+                        format="yyyy" 
+                        @change="selectYear3" 
+                         value-format="timestamp"     
+                        placeholder="年">
                         </el-date-picker>
-                        <el-dropdown @command="handleWeekName3" placement="bottom-start">
+                        <el-dropdown @command="handleMonth3" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;">
+                                {{monthName3}}<i class="el-icon-arrow-down el-icon--right"></i>
+                            </div>
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item v-for="item in monthList" :key="item.id" :command="item">{{item.name}}</el-dropdown-item>                                                   
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                        <el-dropdown @command="handleWeekName3" placement="bottom-start">
+                            <div class="el-dropdown-link" style="color:#333;margin-left:15px;">
                                 {{weekName3}}<i class="el-icon-arrow-down el-icon--right"></i>
                             </div>
                             <el-dropdown-menu slot="dropdown">
-                                 <el-dropdown-item  :command="{name:'全部',id:''}">全部</el-dropdown-item>
+                                 <!-- <el-dropdown-item  :command="{name:'全部',id:''}">全部</el-dropdown-item> -->
                                 <el-dropdown-item v-for="item in weekList" :key="item.id" :command="item">{{item.name}}</el-dropdown-item>                                                   
                             </el-dropdown-menu>
                         </el-dropdown>
                     </div>
-                    <p class="top" style=" font-weight: 600;">报警处理统计</p>
-                    <p>报警统计</p>
+                    <p v-if="isdownload==0" class="top" style=" font-weight: 600;">报警处理统计</p>
+                    <p v-if="isdownload==0" style="cursor: pointer;" @click="checkForms(3)">报警统计</p>
                 </div>
                 <div id="collegeCharts3" style="height:420px;width:100%;"></div>
             </div>
             <div class="collegeChart4" style="margin-left:20px;">
-               <div class="collegeChart1-top">
+               <div class="collegeChart1-top" :class="{'collegeChart1-top2':isdownload==1}">
+                    <div class="collegeChart-p" v-if="isdownload==1">
+                        <p  class="top" style=" font-weight: 600;">申请处理统计</p>
+                        <p  style="cursor: pointer;" @click="checkForms(4)">申请统计</p>
+                    </div>
                     <div>
                         <el-dropdown @command="handleCommand4" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;">
@@ -233,33 +285,124 @@
                             </el-dropdown-menu>
                         </el-dropdown>
                         <el-date-picker
-                        v-model="timeValue"
-                        type="month"
+                        v-model="timeValue4"
+                        type="year"
                         style="width:100px;margin:0 15px;"
                         :clearable="false" 
-                        format="yyyy/MM"    
-                        placeholder="年/月">
+                        format="yyyy"  
+                        @change="selectYear4" 
+                         value-format="timestamp"    
+                        placeholder="年">
                         </el-date-picker>
-                        <el-dropdown @command="handleWeekName4" placement="bottom-start">
+                        <el-dropdown @command="handleMonth4" placement="bottom-start">
                             <div class="el-dropdown-link" style="color:#333;">
+                                {{monthName4}}<i class="el-icon-arrow-down el-icon--right"></i>
+                            </div>
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item v-for="item in monthList" :key="item.id" :command="item">{{item.name}}</el-dropdown-item>                                                   
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                        <el-dropdown @command="handleWeekName4" placement="bottom-start">
+                            <div class="el-dropdown-link" style="color:#333;margin-left:15px;">
                                 {{weekName4}}<i class="el-icon-arrow-down el-icon--right"></i>
                             </div>
                             <el-dropdown-menu slot="dropdown">
-                                 <el-dropdown-item  :command="{name:'全部',id:''}">全部</el-dropdown-item>
+                                 <!-- <el-dropdown-item  :command="{name:'全部',id:''}">全部</el-dropdown-item> -->
                                 <el-dropdown-item v-for="item in weekList" :key="item.id" :command="item">{{item.name}}</el-dropdown-item>                                                   
                             </el-dropdown-menu>
                         </el-dropdown>
                     </div>
-                    <p class="top" style=" font-weight: 600;">申请处理统计</p>
-                    <p>申请统计</p>
+                    <p v-if="isdownload==0" class="top" style=" font-weight: 600;">申请处理统计</p>
+                    <p v-if="isdownload==0" style="cursor: pointer;" @click="checkForms(4)">申请统计</p>
                 </div>
                 <div id="collegeCharts4" style="height:420px;width:100%;"></div>
             </div>
         </div>
     </div> 
     <div style="width:100%;">
-        <area-data v-if="switchValue"></area-data> 
+        <area-data v-show="switchValue" :switchValue='switchValue' :isdownload='isdownload'></area-data> 
     </div>  
+    <!-- 报表 -->
+     <el-dialog
+  :title="detailsName"
+  :visible.sync="details"
+  width="800px"
+  center>
+    <el-table
+    v-if="istable==1"
+        :data="tableData"
+        height="400"
+        style="width: 100%">
+        <el-table-column
+        prop="shu"
+        label="学院人数"
+        width="100"
+        >
+        </el-table-column>
+        <el-table-column
+        prop="data"
+        label="未归"
+        >
+        </el-table-column>
+        <el-table-column
+        prop="name"
+        label="连续*日以上无记录"
+        >
+        </el-table-column>
+        <el-table-column
+        prop="classMsg"
+        label="连续*日以上晚归">
+        </el-table-column>
+        <el-table-column
+        prop="name"
+        label="学院名">
+        </el-table-column>
+    </el-table>
+      <el-table
+      v-else-if="istable==2"
+        :data="tableData"
+        height="400"
+        style="width: 100%">
+        <el-table-column
+        prop="shu"
+        width="100"
+        label="学院人数"
+        >
+        </el-table-column>
+        <el-table-column
+        prop="data"
+        label="违纪次数"
+        >
+        </el-table-column>
+        <el-table-column
+        prop="name"
+        label="已处理"
+        >
+        </el-table-column>
+        <el-table-column
+        prop="classMsg"
+        label="待处理">
+        </el-table-column>
+        <el-table-column
+        prop="name"
+        label="学院名">
+        </el-table-column>
+    </el-table>
+     <el-table
+        v-else
+        :data="tableData"
+        height="400"
+        style="width: 100%">
+        <el-table-column
+        v-for="(item,index) in tableHader3"
+        :key="index"
+        :prop="item.prop"
+        :label="item.name"
+        >
+        </el-table-column>
+       
+    </el-table>
+</el-dialog>
   </div>
 </template>
 
@@ -269,8 +412,16 @@ import areaData from './areaData'
 import 'quill/dist/quill.js';
 import {mapState}  from 'vuex'
 import { setTimeout } from 'timers';
+  
+   
+    const monthData=['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月']
+    
+    const weekData=['一周','二周','三周','四周','五周']
     export default {
         name:"Index",
+        props:[
+            'isdownload'
+        ],
         components:{
           areaData
         },      
@@ -280,15 +431,31 @@ import { setTimeout } from 'timers';
                 msg:'',
                 switchValue:false,
                 roleInfoMenu:[],
+                //报表
+                detailsName:'',
+                details:false,
+                tableData:[{name:'计算机学院',shu:12000}],
+                istable:1,
+                tableHader3:[
+                    {name:'类型',prop:'name'},
+                    {name:'待处理',prop:'name'},
+                    {name:'已处理',prop:'name'},
+                    {name:'处理率',prop:'name'},
+                    {name:'学院名',prop:'name'},
+                ],
                 collegeValue1:300,
-                collegeValue2:5,
-                collegeValue3:8,
+                collegeValue2:10,
+                collegeValue3:20,
                 collegeName:'学院',
                 collegeName2:'学院',
                 collegeName3:'学院',
                 collegeName4:'学院',
                 collType:' 报警类型',
                 applyType:'申请类型',
+                monthName:'月',
+                monthName2:'月',
+                monthName3:'月',
+                monthName4:'月',
                 weekName:'周',
                 weekName2:'周',
                 weekName3:'周',
@@ -297,15 +464,42 @@ import { setTimeout } from 'timers';
                 timeValue2:'',
                 timeValue3:'',
                 timeValue4:'',
+                monthTime:null,
+
+                optionData:['周一','周二','周三','周四','周五','周六','周日'], 
+                // optionData2:['周一','周二','周三','周四','周五','周六','周日'],                
+                // optionData3:['周一','周二','周三','周四','周五','周六','周日'], 
+                // optionData4:['周一','周二','周三','周四','周五','周六','周日'],                
                 collegeList:[//college_name
                    
                 ],
+                collegeLineData:[10,5,20,14,10,4,5],
+                collegeLineData2:[1,12,15,0,4,0,33],
+                collegeLineData3:[4,10,4,10,11,0,14],
                 weekList:[
+                    {id:null,name:'全部'},
                     {id:1,name:'一周'},
                     {id:2,name:'二周'},
                     {id:3,name:'三周'},
                     {id:4,name:'四周'},
+                    {id:5,name:'五周'},
                 ],
+                monthList:[
+                    {id:null,name:'全部'},
+                    {id:1,name:'一月'},
+                    {id:2,name:'二月'},
+                    {id:3,name:'三月'},
+                    {id:4,name:'四月'},
+                    {id:5,name:'五月'},
+                    {id:6,name:'六月'},
+                    {id:7,name:'七月'},
+                    {id:8,name:'八月'},
+                    {id:9,name:'九月'},
+                    {id:10,name:'十月'},
+                    {id:11,name:'十一月'},
+                    {id:12,name:'十二月'},
+                ],
+                // monthData:['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'],              
                 colltypeList:[
                     {id:1,name:'未归'},
                     {id:2,name:'晚归'},
@@ -348,6 +542,17 @@ import { setTimeout } from 'timers';
             this.collegeLine2()        
         
         },
+        filters:{
+           
+        },
+        computed:{
+              disableds(){
+                if(this.monthName=='全部'||this.monthName=='月'){
+                    return true
+                }
+                else false
+            },
+        },
         methods: {
             open2(msg) {
                 this.$message({
@@ -358,6 +563,7 @@ import { setTimeout } from 'timers';
             open(msg) {
                 this.$message(msg);
             },
+           
             lodings(){
                let loading= this.$loading({
                     lock: true,
@@ -371,51 +577,115 @@ import { setTimeout } from 'timers';
             dataType(val){
                 console.log(val)
                 
-                if(val==false){
-                    setTimeout(()=>{
-                        this.collegeLine()
-                        this.collegeColumnar()
-                        this.collegeColumnar2()
-                        this.collegeLine2()
-                    },200)
+                // if(val==false){
+                //     setTimeout(()=>{
+                //         this.collegeLine()
+                //         this.collegeColumnar()
+                //         this.collegeColumnar2()
+                //         this.collegeLine2()
+                //     },200)
                    
-                }
+                // }
             },
             //学院下拉
             handleCommand(command){
                 console.log(command)
                 this.collegeName=command.college_name
             },
-             //学院下拉
+             //学院下拉2
             handleCommand2(command){
                 console.log(command)
                 this.collegeName2=command.college_name
             },
-             //学院下拉
+             //学院下拉3
             handleCommand3(command){
                 console.log(command)
                 this.collegeName3=command.college_name
             },
-             //学院下拉
+             //学院下拉4
             handleCommand4(command){
                 console.log(command)
                 this.collegeName4=command.college_name
             },
-            //周下拉
+            //选择年份
+            selectYear(data){
+                console.log(data)
+               let monthList=monthData.slice(0,this.collegeLineData.length)
+                this.monthName='月'
+                this.weekName='周'              
+                this.optionData=monthList
+                this.collegeLine()
+            },
+            //选择年份2
+            selectYear2(data){
+                console.log(data)
+                this.monthName2='月'
+                this.weekName2='周'
+            },
+            //选择年份3
+            selectYear3(data){
+                console.log(data)
+                this.monthName3='月'
+                this.weekName3='周'
+            },
+            //选择年份4
+            selectYear4(data){
+                console.log(data)
+                this.monthName4='月'
+                this.weekName4='周'
+            },
+            //选择月份
+            handleMonth(data){
+                this.monthName=data.name
+                this.weekName='周'
+                let monthList=monthData.slice(0,this.collegeLineData.length)
+                if(data.name=='全部'){
+                    this.optionData=monthList                 
+                }else{
+                    this.optionData=weekData
+                }
+                console.log(this.optionData,monthData)
+                this.collegeLine(this.optionData)
+            },
+             //选择月份2
+            handleMonth2(data){
+                this.monthName2=data.name
+                this.weekName2='周'
+            },
+             //选择月份3
+            handleMonth3(data){
+                this.monthName3=data.name
+                this.weekName3='周'
+            },
+             //选择月份4
+            handleMonth4(data){
+                this.monthName4=data.name
+                this.weekName4='周'
+            },
+            //周下拉1
             handleWeekName(item){
                 this.weekName=item.name
+                if(item.name=='全部'){
+                     this.optionData=['一周','二周','三周','四周','五周']
+                }else{
+                    this.optionData=['周一','周二','周三','周四','周五','周六','周日']
+                }
+                this.collegeLine()
             },
-              //周下拉
+              //周下拉2
             handleWeekName2(item){
                 this.weekName2=item.name
+                // this.collegeColumnar()
             },
-              //周下拉
+              //周下拉3
             handleWeekName3(item){
                 this.weekName3=item.name
+                // this.collegeColumnar2()
             },
-              //周下拉
+              //周下拉4
             handleWeekName4(item){
                 this.weekName4=item.name
+                // this.collegeLine2()
             },
             //申请类型
             handleApplyType(item){
@@ -425,6 +695,24 @@ import { setTimeout } from 'timers';
             handleColltype(item){
                 console.log(item)
                 this.collType=item.name
+            },
+            //查看报表
+            checkForms(id){
+                this.details=true
+                this.istable=id
+                if(id==1){
+                    this.detailsName='2019/12'+'\xa0\xa0\xa0'+'异常报表'
+                }
+                else if(id==2){
+                    this.detailsName='2019/12'+'\xa0\xa0\xa0'+'违规报表'
+                }
+                else if(id==3){
+                    this.detailsName='2019/12'+'\xa0\xa0\xa0'+'报警统计'
+                }
+                else if(id==4){
+                    this.detailsName='2019/12'+'\xa0\xa0\xa0'+'申请统计'
+                }
+                console.log(id)
             },
            //学院概况图表
          college(){
@@ -533,7 +821,7 @@ import { setTimeout } from 'timers';
                         }
                         }, 
                         {
-                        value: total2-collegeValue2,
+                        value:0,
                         itemStyle: {
                             normal: {
                                 color: '#E7E7E7'
@@ -557,7 +845,7 @@ import { setTimeout } from 'timers';
                         }
                         }, 
                         {
-                        value: total3-collegeValue3,
+                        value:0,
                         itemStyle: {
                             normal: {
                                 color: '#E7E7E7'
@@ -571,7 +859,7 @@ import { setTimeout } from 'timers';
             //异常行为统计图表 折线
             collegeLine(){
                 // 基于准备好的dom，初始化echarts实例
-                var myChart = this.$echarts.init(document.getElementById('collegeCharts1'));              
+                const myChart = this.$echarts.init(document.getElementById('collegeCharts1'));              
                 myChart.showLoading({
                     text: '数据正在努力加载...',
                     textStyle: { fontSize : 30 , color: '#444' },
@@ -610,7 +898,7 @@ import { setTimeout } from 'timers';
                     xAxis: {
                         type: 'category',
                         boundaryGap: false,
-                        data: ['周一','周二','周三','周四','周五','周六','周日']
+                        data:this.optionData
                     },
                     yAxis: {
                         type: 'value'
@@ -620,23 +908,23 @@ import { setTimeout } from 'timers';
                             name:'未归',
                             type:'line',
                             // stack: '总量',
-                            color:"#E2E2E2",
+                            color:"#F3F3F3",
                             // smooth: true,
-                            data:[120, 132, 101, 134, 90, 230, 210]
+                            data:this.collegeLineData
                         },
                         {
                             name:'连续2日未归',
                             type:'line',
                             // stack: '总量',
                              color:"#141D2C",
-                            data:[220, 182, 191, 234, 290, 330, 310]
+                            data:this.collegeLineData2
                         },
                         {
                             name:'连续晚归无记录',
                             type:'line',
                             // stack: '总量',
-                             color:"#E6E6E6",
-                            data:[150, 232, 201, 154, 190, 330, 700]
+                             color:"#DADADA",
+                            data:this.collegeLineData3
                         },                    
                     ]
                 }
@@ -645,8 +933,9 @@ import { setTimeout } from 'timers';
             },
             //违纪次数柱状
             collegeColumnar(){
-                var myChart = this.$echarts.init(document.getElementById('collegeCharts2'));
-                var itemStyle = {
+                let myChart = this.$echarts.init(document.getElementById('collegeCharts2'));
+                let optionData=this.optionData
+                let itemStyle = {
                     //柱形图圆角，鼠标移上去效果，如果只是一个数字则说明四个参数全部设置为那么多
                     // emphasis: {
                     //     barBorderRadius: 30
@@ -686,7 +975,7 @@ import { setTimeout } from 'timers';
                     xAxis : [
                         {
                             type : 'category',
-                            data : ['周一','周二','周三','周四','周五','周六','周日']
+                            data :this.optionData
                         }
                     ],
                     yAxis : [
@@ -770,7 +1059,7 @@ import { setTimeout } from 'timers';
                     xAxis : [
                         {
                             type : 'category',
-                            data : ['周一','周二','周三','周四','周五','周六','周日']
+                            data :this.optionData
                         }
                     ],
                     yAxis : [
@@ -848,7 +1137,7 @@ import { setTimeout } from 'timers';
                     xAxis: {
                         type: 'category',
                         boundaryGap: false,
-                        data: ['周一','周二','周三','周四','周五','周六','周日']
+                        data:this.optionData
                     },
                     yAxis: {
                         type: 'value'
@@ -898,6 +1187,9 @@ import { setTimeout } from 'timers';
         color: #ff4949;
         
     } 
+    .switchColor{
+        height:30px;
+    }
     .switchColor /deep/ .el-switch__core{
         width:80px!important;    
         height:30px;
@@ -905,9 +1197,14 @@ import { setTimeout } from 'timers';
         &::after{
             width: 22px;
             height: 22px;
-            top:4px;
+            top:3px;
         }
     }
+   .switchColor2 /deep/ .el-switch__core{
+       &::after{
+               margin-left: -25px;
+       }
+   }
   .switchColor /deep/ .el-switch__label {
     position: absolute;
    display: none;
@@ -916,7 +1213,7 @@ import { setTimeout } from 'timers';
  /*打开时文字位置设置*/
   .switchColor /deep/ .el-switch__label--right {
     z-index:10;
-   right:30px;
+   right:35px;
    margin-top:-24px;
  }
  /*关闭时文字位置设置*/
@@ -971,7 +1268,15 @@ import { setTimeout } from 'timers';
                     font-size: 16px;
                 }
                 .collegeDetail-div{
-                    flex: 0.25;
+                    width: 50%;
+                    height: 100%;
+                    display: flex;
+                    justify-content: space-between;
+
+                }
+                .collegeDetail-div1{
+                    flex: 0.5;
+                    margin-right: 20px;
                     background:linear-gradient(229deg,rgba(253,79,48,1) 0%,rgba(242,33,114,1) 100%);
                     border-radius:15px;
                     padding: 20px;
@@ -1003,12 +1308,12 @@ import { setTimeout } from 'timers';
                     
                 }
                 .collegeDetail-div2{
-                    flex: 0.25;
+                    flex: 0.5;
                     background:#141D2C;
                     border-radius:15px;
                     padding: 20px;
                     color: #ffffff;
-                    margin:0 20px;
+                    // margin:0 20px;
                     display: flex;
                     flex-direction: column;
                     justify-content: space-between;
@@ -1055,11 +1360,13 @@ import { setTimeout } from 'timers';
                     }
                 }
                 .collegeDetail-div3{
-                    flex: 0.5;
+                    height: 100%;
+                    width: 50%;
                     background:rgba(255,255,255,1);
                     border-radius:15px;
                     padding: 20px;
                     display: flex;
+                    margin-left: 20px;
                     .collegeDetail-div3_left{
                         width:50%;
                         height: 100%;
@@ -1067,7 +1374,7 @@ import { setTimeout } from 'timers';
                         flex-direction: column;
                         justify-content:space-between;
                         .span2{
-                            min-width:100px;
+                            min-width:90px;
                             text-align: left;
                         }
                     }
@@ -1105,12 +1412,20 @@ import { setTimeout } from 'timers';
                 margin-bottom: 20px;    
                 .collegeChart1-top{
                     width: 100%;
-                    height: 35px;
+                    min-height: 35px;
                     display: flex;
+                    
                     justify-content: space-between;
                     align-items: center; 
                     margin-bottom:10px;
                     position: relative;
+                    .collegeChart-p{
+                        display: flex;
+                        margin-bottom: 15px;
+                        p:nth-child(1){
+                            margin-right: 15px;
+                        }
+                    }
                     // .top{
                     //     position: absolute;  
                     //     width: 100px;                 
@@ -1122,7 +1437,10 @@ import { setTimeout } from 'timers';
                     //     // text-align: center;
                     //     line-height: 35px;
                     // }
-                }        
+                } 
+                .collegeChart1-top2{
+                     flex-direction: column;
+                }       
             }
         }
         

@@ -1,7 +1,7 @@
 import qs from 'qs'
 import service from './request'
-let url=`http://192.168.2.118:8080/dormitoryManagement`
-// let url ='http://192.168.2.111:8080/dormitoryManagement'
+let url=`http://192.168.2.115:8081/dormitoryManagement`
+// let url ='http://192.168.2.120:8080/dormitoryManagement'
 // let url ='http://94.191.13.156:8080/dormitoryManagement'
 
 
@@ -13,11 +13,12 @@ export const getAllNew = data => {
 export const getRueryMenuByIdw = data => { 
     return service({url: `${url}/Menu/queryMenuById`,method: 'post',data:qs.stringify(data)}) 
 };
-//富文本
-export const article= data => { 
-    return service({url: `http://192.168.2.109:8080/api/article/save`,method: 'post',data:data}) 
-};
 
+//全部民族
+ //学院查询
+ export const queryNation = data => {
+  return service({url: `${url}/user/queryNation`,method: 'post',data:qs.stringify(data)}) 
+};
 //班级管理
     //学院新增
     export const addCollege = data => {
@@ -34,6 +35,14 @@ export const article= data => {
      //学院编辑
      export const updataCollege = data => {
         return service({url: `${url}/CollegeInfo/updataCollege`,method: 'post',data:data}) 
+    };
+    //学院导入
+    export const saveCollegeExcelAll= data => {
+      return service({url: `${url}/CollegeInfo/saveExcelAll`,method: 'post',data:data}) 
+  };
+     //学院导出
+   export const outCollegeExcel= data => {
+    return service({url: `${url}/CollegeInfo/outExcel`,method: 'post',data:data,responseType: 'blob'}) 
     };
     //专业新增
     export const addMajor = data => {
@@ -161,6 +170,10 @@ export const article= data => {
       export const queryStudent= data => {
         return service({url: `${url}/TeacherInfo/queryStudent`,method: 'post',data:qs.stringify(data)}) 
     };
+    //根据学生学号查询学生信息
+    export const queryStudentByStudentInfoNo= data => {
+      return service({url: `${url}/TeacherInfo/queryStudentByStudentInfoNo`,method: 'post',data:qs.stringify(data)}) 
+  };
       //删除学生
       export const deleteStudentInfo= data => {
         return service({url: `${url}/TeacherInfo/deleteStudentInfo`,method: 'post',data:qs.stringify(data)}) 
@@ -362,8 +375,11 @@ export const updateApplyChangeBed= data => {
    //出入记录查询
    export const queryAccessRecord= data => {
     return service({url: `${url}/AccessRecord/queryAccessRecord`,method: 'post',data:qs.stringify(data)}) 
-    };
-
+    }
+      //导出
+   export const accessRecordExcelOut= data => {
+    return service({url: `${url}/AccessRecord/accessRecordExcelOut`,method: 'post',data:qs.stringify(data),responseType: 'arraybuffer',headers:{'filename':'utf-8'},}) 
+    }
 //归寝管理
    //归寝规则查询
    export const queryDormRule= data => {
@@ -385,3 +401,67 @@ export const updateApplyChangeBed= data => {
    export const dormRecordExcel= data => {
     return service({url: `${url}/DormRule/dormRecordExcel`,method: 'post',data:data,responseType: 'blob'}) 
     };
+//访客记录
+    //访客查询
+   export const queryVisitorRecord= data => {
+    return service({url: `${url}/VisitorRecord/queryVisitorRecord`,method: 'post',data:qs.stringify(data)}) 
+    }
+     //导出
+   export const visitorRecordExcelOut= data => {
+    return service({url: `${url}/VisitorRecord/visitorRecordExcelOut`,method: 'post',data:qs.stringify(data),responseType: 'blob'}) 
+    };
+//快递站点
+    //查询
+   export const queryExpressSiteAll= data => {
+    return service({url: `${url}/ExpressSite/queryExpressSiteAll`,method: 'post',data:qs.stringify(data)}) 
+    };
+      //新增
+   export const addExpressSite= data => {
+    return service({url: `${url}/ExpressSite/addExpressSite`,method: 'post',data:data}) 
+    };
+       //删除
+   export const deleteExpressSiteById= data => {
+    return service({url: `${url}/ExpressSite/deleteExpressSiteById`,method: 'post',data:qs.stringify(data)}) 
+    };
+    //修改
+   export const updateExpressSite= data => {
+    return service({url: `${url}/ExpressSite/updateExpressSite`,method: 'post',data:data}) 
+    };
+//违纪记录
+      //查询
+   export const queryDisciplineRecord= data => {
+    return service({url: `${url}/DisciplineRecord/queryDisciplineRecord`,method: 'post',data:qs.stringify(data)}) 
+    };
+       //新增
+   export const addDisciplineRecord= data => {
+    return service({url: `${url}/DisciplineRecord/addDisciplineRecord`,method: 'post',data:data}) 
+    };
+      //删除
+   export const BreakRecordDelete= data => {
+    return service({url: `${url}/DisciplineRecord/deleteExpressSiteById`,method: 'post',data:qs.stringify(data)}) 
+    };
+       //立即处理
+   export const updateDisciplineRecord= data => {
+    return service({url: `${url}/DisciplineRecord/updateDisciplineRecord`,method: 'post',data:data}) 
+    };
+    //导出
+   export const disciplineRecordExcel= data => {
+    return service({url: `${url}/DisciplineRecord/disciplineRecordExcel`,method: 'post',data:data,responseType: 'blob'}) 
+    };
+//公告通知
+    //新增
+    export const addNotice= data => {
+      return service({url: `${url}/noticeController/addNotice`,method: 'post',data:data}) 
+      };
+   //删除
+   export const deleteNotice= data => {
+    return service({url: `${url}/noticeController/deleteNotice`,method: 'post',data:qs.stringify(data)}) 
+    };
+      //查询
+   export const queryNotice= data => {
+    return service({url: `${url}/noticeController/queryNotice`,method: 'post',data:qs.stringify(data)}) 
+    };
+    //富文本
+export const article= data => { 
+  return service({url: `http://192.168.2.109:8080/api/article/save`,method: 'post',data:data}) 
+};
